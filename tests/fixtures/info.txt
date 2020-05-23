@@ -1,0 +1,1 @@
+Ovdje dolaze staticne datoteke i podaci koji trebaju za testiranje, npr "instance" usera, slike za upload i sl.

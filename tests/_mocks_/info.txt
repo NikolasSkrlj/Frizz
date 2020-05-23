@@ -1,0 +1,1 @@
+Tu idu "klonovi" funkcija koje ne zelimo da se izvrsavaju kao inace jer bi uzrokovali nesto sta ne zelimo i ne trebamo testirati.

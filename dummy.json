@@ -1,0 +1,44 @@
+[
+  {
+    "index": 1,
+    "dayName": "Ponedjeljak",
+    "startWorktime": 8,
+    "endWorktime": 16
+  },
+  {
+    "index": 2,
+    "dayName": "Utorak",
+    "startWorktime": 8,
+    "endWorktime": 16
+  },
+  {
+    "index": 3,
+    "dayName": "Srijeda",
+    "startWorktime": 14,
+    "endWorktime": 21
+  },
+  {
+    "index": 4,
+    "dayName": "Četvrtak",
+    "startWorktime": 8,
+    "endWorktime": 16
+  },
+  {
+    "index": 5,
+    "dayName": "Petak",
+    "startWorktime": 8,
+    "endWorktime": 16
+  },
+  {
+    "index": 6,
+    "dayName": "Subota",
+    "startWorktime": 14,
+    "endWorktime": 21
+  },
+  {
+    "index": 7,
+    "dayName": "Nedjelja",
+    "startWorktime": null,
+    "endWorktime": null
+  }
+]
