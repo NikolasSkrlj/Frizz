@@ -1,4 +1,4 @@
-const Hair_Salon = require("../models/Hair_Salon");
+const HairSalon = require("../models/HairSalon");
 
 module.exports.createSalon = async (req, res, next) => {
   const wk = [
@@ -45,7 +45,7 @@ module.exports.createSalon = async (req, res, next) => {
       endWorktime: null,
     },
   ];
-  const salon = new Hair_Salon({
+  const salon = new HairSalon({
     name: "Elida 4",
     address: {
       street: "Lupoglav 25c",

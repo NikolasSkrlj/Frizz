@@ -34,17 +34,31 @@ const workHours = new mongoose.Schema({
   },
 });
 
-const hairdresserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
+const hairdresserSchema = new mongoose.Schema(
+  {
+    salonId: {
+      type: mongoose.Types.ObjectId,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+    },
+    workDays: [workHours],
   },
-  phone: {
-    type: String,
-    required: true,
-  },
-  workDays: [workHours],
-});
+  {
+    toObject: {
+      virtuals: true,
+    },
+    toJSON: {
+      virtuals: true,
+    },
+  }
+);
 
 const Hairdresser = mongoose.model("Hairdresser", hairdresserSchema);
 module.exports = Hairdresser;
