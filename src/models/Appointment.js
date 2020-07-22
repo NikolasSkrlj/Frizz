@@ -3,19 +3,19 @@ const mongoose = require("mongoose");
 const appointmentSchema = new mongoose.Schema(
   {
     salonId: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     userId: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     hairdresserId: {
-      type: mongoose.Types.ObjectId,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
     },
     appointmentType: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     appointmentDate: {

@@ -3,7 +3,7 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const workHours = new mongoose.Schema({
+const workingHoursSchema = new mongoose.Schema({
   index: {
     type: Number,
     required: true,
@@ -46,15 +46,18 @@ const HairSalonSchema = new mongoose.Schema(
       trim: true,
     },
     phone: {
-      type: String,
+      type: String, //treba validacija
       required: true,
     },
     email: {
       type: String,
       required: true,
+      trim: true,
+      unique: true, // da nemogu dva emaila bit
+      lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new Error("Insert a valid email!");
+          throw new Error("Email is invalid!");
         }
       },
     },
@@ -78,27 +81,36 @@ const HairSalonSchema = new mongoose.Schema(
     },
     gallery: [Buffer],
     workingHours: {
-      type: [workHours],
+      type: [workingHoursSchema],
     },
-    appointmentTypes: {
-      type: [mongoose.Types.ObjectId],
-      default: [],
-      ref: "AppointmentType",
-    },
-    appointments: {
-      type: [mongoose.Types.ObjectId],
-      default: [],
-      ref: "Appointment",
-    },
-    hairdressers: {
-      type: [mongoose.Types.ObjectId],
-      default: [],
-      ref: "Hairdresser",
-    },
-    reviews: {
-      type: [mongoose.Types.ObjectId],
-      default: [],
-      ref: "Review",
+    appointmentTypes: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "AppointmentType",
+      },
+    ],
+    appointments: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Appointment",
+      },
+    ],
+    hairdressers: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Hairdresser",
+      },
+    ],
+    reviews: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Review",
+      },
+    ],
+    globalRating: {
+      type: Number,
+      min: 1,
+      max: 5,
     },
   },
   //ovdje treba nadodati tip podatka za spremat rezervacije, nekako u formatu kalendara, za to jos trazim rjesenja

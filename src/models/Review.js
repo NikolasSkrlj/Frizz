@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const reviewSchema = new mongoose.Schema(
   {
     salonId: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
     user: {
@@ -11,7 +11,7 @@ const reviewSchema = new mongoose.Schema(
       enum: ["registered", "anon"], // recenzije moze dati registrirani i anoniman, ako je reg onda se njemu sprema u bazu
     },
     userId: {
-      type: mongoose.Types.ObjectId, //psotojat ce ako je user reg
+      type: mongoose.Schema.Types.ObjectId, //psotojat ce ako je user reg
       default: null,
     },
     rating: {
@@ -21,7 +21,7 @@ const reviewSchema = new mongoose.Schema(
       max: 5,
     },
     hairdresserId: {
-      type: mongoose.Types.ObjectId, //ako se ocjenjuje samo salon bit ce null inace
+      type: mongoose.Schema.Types.ObjectId, //ako se ocjenjuje samo salon bit ce null inace
       default: null,
     },
     comment: {
