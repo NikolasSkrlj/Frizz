@@ -20,13 +20,13 @@ const workHours = new mongoose.Schema({
     ],
     required: true,
   },
-  startWorktime: {
+  startTime: {
     type: Number,
     min: 0,
     max: 24,
     default: null,
   },
-  endWorktime: {
+  endTime: {
     type: Number,
     min: 0,
     max: 24,

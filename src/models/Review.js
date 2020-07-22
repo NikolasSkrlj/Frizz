@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const HairSalon = require("./HairSalon");
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -40,6 +41,21 @@ const reviewSchema = new mongoose.Schema(
     },
   }
 );
+
+reviewSchema.post("save", async function () {
+  const review = this;
+  const salon = await HairSalon.findOne({ _id: review.salonId })
+    .populate("reviews")
+    .exec();
+
+  const ratingSum = salon.reviews.reduce((review1, review2) => {
+    return { rating: review1.rating + review2.rating };
+  });
+  salon.globalRating = ratingSum / salon.reviews.length; // NE RADI
+  await salon.save(() => {
+    console.log("Salon global rating updated!");
+  });
+});
 
 const Review = mongoose.model("Review", reviewSchema);
 module.exports = Review;

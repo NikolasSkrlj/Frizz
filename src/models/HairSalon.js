@@ -109,8 +109,9 @@ const HairSalonSchema = new mongoose.Schema(
     ],
     globalRating: {
       type: Number,
-      min: 1,
+      min: 0,
       max: 5,
+      default: 0,
     },
   },
   //ovdje treba nadodati tip podatka za spremat rezervacije, nekako u formatu kalendara, za to jos trazim rjesenja

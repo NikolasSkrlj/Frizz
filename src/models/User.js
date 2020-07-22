@@ -66,6 +66,12 @@ const userSchema = new mongoose.Schema(
     profilePic: {
       type: Buffer,
     },
+    reviews: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Review",
+      },
+    ],
   },
   {
     timestamps: true,
