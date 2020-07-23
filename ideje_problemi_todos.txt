@@ -1,0 +1,9 @@
+- mogucnost zadavanja unaprijed work days ali najvise mjesec dana -> znaci arraya od 4 el(4 tjedna) a svaki sadrzi array od 7 elemenata
+    - treba vidjet kako se moze manipulirat s date objectom
+- mozda i ne treba enum za anon/registriran kod recenzije, ako je hairdresserId null onda nikom nis
+- ideja: uvest broj odradjenih termina za frizera, nesto kao uvid u iskustvo(opcionalno)
+    - trebat ce vjv spremat i appointmente u frizerov model, to ce se modelirat ako korisnik odabere frizera
+
+APPOINTMENTS
+- trebat ce se brisati kad prodje taj datum, ili nekako potvrditi da je obavljen -> boolean mozda
+- 

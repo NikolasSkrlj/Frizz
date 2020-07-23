@@ -51,10 +51,28 @@ reviewSchema.post("save", async function () {
   const ratingSum = salon.reviews.reduce((review1, review2) => {
     return { rating: review1.rating + review2.rating };
   });
-  salon.globalRating = ratingSum / salon.reviews.length; // NE RADI
+
+  salon.globalRating = ratingSum.rating / salon.reviews.length;
+
   await salon.save(() => {
     console.log("Salon global rating updated!");
   });
+
+  if (review.hairdresserId) {
+    const hairdresser = await Hairdresser.findOne({ _id: review.hairdresserId })
+      .populate("reviews")
+      .exec();
+
+    const ratingSum = hairdresser.reviews.reduce((review1, review2) => {
+      return { rating: review1.rating + review2.rating };
+    });
+
+    hairdresser.globalRating = ratingSum.rating / hairdresser.reviews.length;
+
+    await hairdresser.save(() => {
+      console.log("Hairdresser global rating updated!");
+    });
+  }
 });
 
 const Review = mongoose.model("Review", reviewSchema);

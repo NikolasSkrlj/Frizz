@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    phoneNumber: {
+    phone: {
       type: String, //treba validacija
     },
     gender: {
@@ -30,12 +30,16 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    salonId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
     //sve dostupne properties mozemo vidjeti na mongoose -> schema types
     email: {
       type: String,
       required: true,
       trim: true,
-      unique: true, // da nemogu dva emaila bit
+      unique: true, // da ne mogu dva emaila bit
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
@@ -103,7 +107,7 @@ userSchema.methods.generateAuthToken = async function () {
 };
 
 // overwritali smo toJSON funkciju koju koristi mongoose pa ju ne treba uopce zvati pri slanju instance usera natrag.
-/* userSchema.methods.toJSON = function () {
+userSchema.methods.toJSON = function () {
   const user = this;
 
   const userObj = user.toObject(); // to koristimo da mozemo koristiti delete koji brise properties sa objekta;
@@ -113,7 +117,7 @@ userSchema.methods.generateAuthToken = async function () {
   delete userObj.avatar;
 
   return userObj;
-}; */
+};
 
 //ovako se postavlja middleware, pre je prije dogadaja, post je poslije
 // mora biti obicna funkcija ne arrow zbog this rijeci

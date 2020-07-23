@@ -49,6 +49,18 @@ const hairdresserSchema = new mongoose.Schema(
       required: true,
     },
     workDays: [workHours],
+    globalRating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
+    },
+    reviews: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Review",
+      },
+    ],
   },
   {
     toObject: {

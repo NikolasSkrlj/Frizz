@@ -148,12 +148,6 @@ module.exports.submitReview = async (req, res, next) => {
   try {
     const { user, userId, rating, hairdresserId, comment } = req.body;
 
-    /* TODO
-    - razmislit dal da se i frizeru biljeze reviewi ako su za njega
-    - mozda i ne treba enum za anon/registriran, ako je hairdresserId null onda nikom nis
-    - uvest global rating za hairdressera -> onda ima smisla drzat recenzije njegove
-    - ideja: uvest broj odradjenih termina za frizera, nesto kao uvid u iskustvo(opcionalno)
-    */
     const salon = await HairSalon.findOne({ _id: req.params.id });
     if (salon) {
       const review = new Review({
@@ -174,12 +168,13 @@ module.exports.submitReview = async (req, res, next) => {
         console.log("Salon reviews updated!");
       });
 
+      //spremanje recenzije useru u array reviews
       if (userId) {
-        const userCheck = User.findOne({ _id: userId });
+        const userCheck = await User.findOne({ _id: userId });
 
         if (userCheck) {
-          user.reviews.push(review);
-          await review.save(() => {
+          userCheck.reviews.push(review);
+          await userCheck.save(() => {
             console.log("User reviews updated!");
           });
         } else {
@@ -189,6 +184,26 @@ module.exports.submitReview = async (req, res, next) => {
           });
         }
       }
+
+      //spremanje frizeru review u array reviews
+      if (hairdresserId) {
+        const hairdresserCheck = await Hairdresser.findOne({
+          _id: hairdresserId,
+        });
+
+        if (hairdresserCheck) {
+          hairdresserCheck.reviews.push(review);
+          await hairdresserCheck.save(() => {
+            console.log("Hairdresser reviews updated!");
+          });
+        } else {
+          return res.status(404).send({
+            success: false,
+            message: "Frizer/ka s navedenim id-om ne postoji!",
+          });
+        }
+      }
+
       res.send({
         success: true,
         review,
