@@ -7,22 +7,13 @@ const User = require("../models/User");
 
 module.exports.createUser = async (req, res, next) => {
   try {
-    const {
-      name,
-      age,
-      gender,
-      email,
-      phone,
-      password,
-      isSalonAdmin,
-    } = req.body;
+    const { name, age, gender, email, phone, password } = req.body;
 
     const user = new User({
       name,
       age,
       email,
       gender,
-      isSalonAdmin,
       phone,
       password,
     });
@@ -30,7 +21,12 @@ module.exports.createUser = async (req, res, next) => {
     await user.save();
     const token = await user.generateAuthToken();
 
-    res.send({ success: true, user, message: "Korisnik uspjesno unesen!" });
+    res.send({
+      success: true,
+      user,
+      token,
+      message: "Korisnik uspjesno unesen!",
+    });
   } catch (err) {
     res.status(500).send({
       success: false,

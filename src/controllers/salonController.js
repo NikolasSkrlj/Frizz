@@ -5,20 +5,31 @@ const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
 
+//import autentikacijskog middlewarea
+const auth = require("../middleware/auth");
+
 module.exports.createSalon = async (req, res, next) => {
-  const { name, address, email, phone, workingHours } = req.body;
+  const { name, address, email, phone, workingHours, password } = req.body;
 
   const salon = new HairSalon({
     name,
     address,
     email,
+    password,
     phone,
     workingHours,
   });
 
   try {
     await salon.save();
-    res.send({ success: true, salon, message: "Salon uspjesno unesen!" });
+    const token = await salon.generateAuthToken();
+
+    res.send({
+      success: true,
+      salon,
+      token,
+      message: "Salon uspjesno unesen!",
+    });
   } catch (err) {
     res.status(500).send({
       success: false,
@@ -28,20 +39,51 @@ module.exports.createSalon = async (req, res, next) => {
   }
 };
 
+//za ovo treba auth
+module.exports.loginSalon = async (req, res, next) => {
+  try {
+    const salon = await HairSalon.findByCredentials(
+      req.body.email,
+      req.body.password
+    );
+    const token = await salon.generateAuthToken();
+
+    //overwritali smo toJSON metodu da filtriramo sta saljemo, ne zelimo da se vidi password i tokeni u responsu
+    res.send({ salon: salon, token });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+module.exports.logoutSalon = async (req, res, next) => {
+  try {
+    req.salon.tokens = req.salon.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.salon.save();
+    res.send({ success: true, message: "Uspjesno ste odjavljeni" });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+//za ovo treba auth
 module.exports.getSalon = async (req, res, next) => {
   try {
-    const salon = await HairSalon.findOne({ _id: req.params.id })
+    const salon = req.salon;
+    await salon
       .populate("appointmentTypes hairdressers reviews")
-      .exec();
+      .execPopulate(); // kad se ne koristi u kombinaciji sa Model.findNesto koristi se execPopulate a ne populate
 
-    if (salon) {
-      res.send({ success: true, salon });
-    } else {
-      res.status(400).send({
-        success: false,
-        message: "Salon s pripadajucim id-om nije pronadjen!",
-      });
-    }
+    res.send({ success: true, salon });
   } catch (err) {
     res.status(500).send({
       success: false,
@@ -55,11 +97,11 @@ module.exports.addHairdresser = async (req, res, next) => {
   try {
     const { name, phone, workDays } = req.body;
 
-    const salon = await HairSalon.findOne({ _id: req.params.id });
+    const salon = await HairSalon.findOne({ _id: req.salon.id });
 
     if (salon) {
       const hairdresser = new Hairdresser({
-        salonId: req.params.id,
+        salonId: req.salon.id,
         name,
         phone,
         workDays,
@@ -107,11 +149,11 @@ module.exports.createAppointmentType = async (req, res, next) => {
     }
     //ako se next(new Error("nesto")) baci isto je ok baci error ali ovako dobijemo porukicu
 
-    const salon = await HairSalon.findOne({ _id: req.params.id });
+    const salon = await HairSalon.findOne({ _id: req.salon.id });
 
     if (salon) {
       const appoint = new AppointmentType({
-        salonId: req.params.id,
+        salonId: req.salon.id,
         name,
         price,
         duration,

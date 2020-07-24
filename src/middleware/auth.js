@@ -12,15 +12,23 @@ const auth = async (req, res, next) => {
       "tokens.token": token,
     }); // ovaj drugi arg sluzi da gleda ako postoji jos taj token jer pri odjavi cemo ga brisati
 
-    if (!user) {
+    const salon = await HairSalon.findOne({
+      _id: decoded._id,
+      "tokens.token": token,
+    });
+
+    if (!user && !salon) {
       throw new Error();
     }
 
-    //ako je user admin salona salje se i salon, iance se salje samo user u requestu
     req.token = token;
-    req.user = user; //mozemo postavljat svoja polja u header
+    if (user) {
+      req.user = user;
+    } else {
+      req.salon = salon;
+    }
 
-    if (user.isSalonAdmin) {
+    /* if (user.isSalonAdmin) {
       const salon = await HairSalon.findOne({
         _id: user.salonId,
       });
@@ -31,7 +39,7 @@ const auth = async (req, res, next) => {
         });
       }
       req.salon = salon;
-    }
+    } */
     next(); // sa next kontroliramo sta se desi ako prodje req il ne
   } catch (err) {
     res.status(401).send({ error: "Please authenticate" });
