@@ -28,21 +28,12 @@ const auth = async (req, res, next) => {
       req.salon = salon;
     }
 
-    /* if (user.isSalonAdmin) {
-      const salon = await HairSalon.findOne({
-        _id: user.salonId,
-      });
-      if (!salon) {
-        res.status(500).send({
-          success: false,
-          message: "Salon s tim id-em nije pronadjen!",
-        });
-      }
-      req.salon = salon;
-    } */
     next(); // sa next kontroliramo sta se desi ako prodje req il ne
   } catch (err) {
-    res.status(401).send({ error: "Please authenticate" });
+    res.status(401).send({
+      success: false,
+      error: "You're allowed to access this route, please authenticate!",
+    });
   }
 };
 

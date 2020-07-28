@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const HairSalon = require("./HairSalon");
+const Hairdresser = require("./Hairdresser");
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -7,13 +8,9 @@ const reviewSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    user: {
-      type: String,
-      enum: ["registered", "anon"], // recenzije moze dati registrirani i anoniman, ako je reg onda se njemu sprema u bazu
-    },
     userId: {
       type: mongoose.Schema.Types.ObjectId, //psotojat ce ako je user reg
-      default: null,
+      required: true,
     },
     rating: {
       type: Number,
@@ -42,15 +39,20 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-reviewSchema.post("save", async function () {
+reviewSchema.methods.updateRatings = async function () {
   const review = this;
+  console.log(review.toObject());
+
   const salon = await HairSalon.findOne({ _id: review.salonId })
     .populate("reviews")
     .exec();
 
-  const ratingSum = salon.reviews.reduce((review1, review2) => {
-    return { rating: review1.rating + review2.rating };
-  });
+  const ratingSum = salon.reviews.reduce(
+    (review1, review2) => {
+      return { rating: review1.rating + review2.rating };
+    },
+    { rating: 0 }
+  );
 
   salon.globalRating = ratingSum.rating / salon.reviews.length;
 
@@ -73,7 +75,6 @@ reviewSchema.post("save", async function () {
       console.log("Hairdresser global rating updated!");
     });
   }
-});
-
+};
 const Review = mongoose.model("Review", reviewSchema);
 module.exports = Review;

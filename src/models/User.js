@@ -20,19 +20,16 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String, //treba validacija
+      validate(value) {
+        if (!validator.isMobilePhone(value, ["hr-HR"])) {
+          throw new Error("Unesite valjani telefonski broj");
+        }
+      },
     },
     gender: {
       type: String,
       enum: ["M", "Ž"],
       default: "M",
-    },
-    isSalonAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    salonId: {
-      type: mongoose.Schema.Types.ObjectId,
-      default: null,
     },
     //sve dostupne properties mozemo vidjeti na mongoose -> schema types
     email: {
@@ -114,7 +111,6 @@ userSchema.methods.toJSON = function () {
 
   delete userObj.password;
   delete userObj.tokens;
-  delete userObj.avatar;
 
   return userObj;
 };

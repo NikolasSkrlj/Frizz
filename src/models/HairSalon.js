@@ -133,10 +133,6 @@ const HairSalonSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  //ovdje treba nadodati tip podatka za spremat rezervacije, nekako u formatu kalendara, za to jos trazim rjesenja
-  //recenzije isto moraju bit, kombinacija komentara i brojevnih ocjena, array vjerovatno pa se racuna prosjek -> ako bude princip
-  //sa zapolenicima onda treba i mogucnost njih ocjenit i napravit da se to racuna u konacnu ocjenu
-
   {
     timestamps: true,
     toObject: {

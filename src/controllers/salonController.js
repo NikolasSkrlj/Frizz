@@ -8,6 +8,9 @@ const User = require("../models/User");
 //import autentikacijskog middlewarea
 const auth = require("../middleware/auth");
 
+// Desc: Creating hair salon account
+// Route: POST /hairsalon/create
+// Access: Public
 module.exports.createSalon = async (req, res, next) => {
   const { name, address, email, phone, workingHours, password } = req.body;
 
@@ -39,7 +42,9 @@ module.exports.createSalon = async (req, res, next) => {
   }
 };
 
-//za ovo treba auth
+// Desc: Logging in the hair salon account
+// Route: POST /hairsalon/login
+// Access: Public
 module.exports.loginSalon = async (req, res, next) => {
   try {
     const salon = await HairSalon.findByCredentials(
@@ -59,6 +64,9 @@ module.exports.loginSalon = async (req, res, next) => {
   }
 };
 
+// Desc: Logging out of the hair salon account
+// Route: POST /hairsalon/logout
+// Access: Authenticated
 module.exports.logoutSalon = async (req, res, next) => {
   try {
     req.salon.tokens = req.salon.tokens.filter((token) => {
@@ -75,7 +83,9 @@ module.exports.logoutSalon = async (req, res, next) => {
   }
 };
 
-//za ovo treba auth
+// Desc: Getting all info for the logged in hair salon
+// Route: POST /hairsalon/get
+// Access: Authenticated
 module.exports.getSalon = async (req, res, next) => {
   try {
     const salon = req.salon;
@@ -93,6 +103,9 @@ module.exports.getSalon = async (req, res, next) => {
   }
 };
 
+// Desc: Adding hairdressers for a logged in hair salon
+// Route: POST /hairsalon/add_hairdresser
+// Access: Authenticated
 module.exports.addHairdresser = async (req, res, next) => {
   try {
     const { name, phone, workDays } = req.body;
@@ -137,6 +150,9 @@ module.exports.addHairdresser = async (req, res, next) => {
   }
 };
 
+// Desc: Adding appointment types for a logged in hair salon
+// Route: POST /hairsalon/create_appointment_type
+// Access: Authenticated
 module.exports.createAppointmentType = async (req, res, next) => {
   try {
     const { name, price, duration, description, intendedGender } = req.body;
@@ -171,86 +187,6 @@ module.exports.createAppointmentType = async (req, res, next) => {
       });
 
       res.send({ success: true, appoint, message: "Usluga uspjesno unesena!" });
-    } else {
-      res.status(404).send({
-        success: false,
-        message: "Salon s navedenim id-om ne postoji!",
-      });
-    }
-  } catch (err) {
-    res.status(500).send({
-      success: false,
-      message: "Dogodila se pogreška",
-      error: err.toString(),
-    });
-  }
-};
-
-module.exports.submitReview = async (req, res, next) => {
-  try {
-    const { user, userId, rating, hairdresserId, comment } = req.body;
-
-    const salon = await HairSalon.findOne({ _id: req.params.id });
-    if (salon) {
-      const review = new Review({
-        salonId: req.params.id,
-        user,
-        userId,
-        rating,
-        hairdresserId,
-        comment,
-      });
-
-      await review.save(() => {
-        console.log("Review saved!");
-      });
-
-      salon.reviews.push(review);
-      await salon.save(() => {
-        console.log("Salon reviews updated!");
-      });
-
-      //spremanje recenzije useru u array reviews
-      if (userId) {
-        const userCheck = await User.findOne({ _id: userId });
-
-        if (userCheck) {
-          userCheck.reviews.push(review);
-          await userCheck.save(() => {
-            console.log("User reviews updated!");
-          });
-        } else {
-          return res.status(404).send({
-            success: false,
-            message: "Korisnik s navedenim id-om ne postoji!",
-          });
-        }
-      }
-
-      //spremanje frizeru review u array reviews
-      if (hairdresserId) {
-        const hairdresserCheck = await Hairdresser.findOne({
-          _id: hairdresserId,
-        });
-
-        if (hairdresserCheck) {
-          hairdresserCheck.reviews.push(review);
-          await hairdresserCheck.save(() => {
-            console.log("Hairdresser reviews updated!");
-          });
-        } else {
-          return res.status(404).send({
-            success: false,
-            message: "Frizer/ka s navedenim id-om ne postoji!",
-          });
-        }
-      }
-
-      res.send({
-        success: true,
-        review,
-        message: "Recenzija uspjesno unesena!",
-      });
     } else {
       res.status(404).send({
         success: false,
