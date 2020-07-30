@@ -41,20 +41,32 @@ const reviewSchema = new mongoose.Schema(
 
 reviewSchema.methods.updateRatings = async function () {
   const review = this;
-  console.log(review.toObject());
 
   const salon = await HairSalon.findOne({ _id: review.salonId })
     .populate("reviews")
     .exec();
 
-  const ratingSum = salon.reviews.reduce(
+  const salonRatingSum = salon.reviews.reduce(
     (review1, review2) => {
+      if (!review1 && !review2) {
+        return { rating: 0 };
+      }
+      if (!review1) {
+        return { rating: review2.rating };
+      }
+      if (!review2) {
+        return { rating: review1.rating };
+      }
       return { rating: review1.rating + review2.rating };
     },
     { rating: 0 }
   );
 
-  salon.globalRating = ratingSum.rating / salon.reviews.length;
+  let salonReviewsLength = salon.reviews.filter((review) => {
+    return review !== null;
+  }).length;
+
+  salon.globalRating = +(salonRatingSum.rating / salonReviewsLength).toFixed(2);
 
   await salon.save(() => {
     console.log("Salon global rating updated!");
@@ -65,14 +77,33 @@ reviewSchema.methods.updateRatings = async function () {
       .populate("reviews")
       .exec();
 
-    const ratingSum = hairdresser.reviews.reduce((review1, review2) => {
-      return { rating: review1.rating + review2.rating };
-    });
+    const hairdresserRatingSum = hairdresser.reviews.reduce(
+      (review1, review2) => {
+        if (!review1 && !review2) {
+          return { rating: 0 };
+        }
+        if (!review1) {
+          return { rating: review2.rating };
+        }
+        if (!review2) {
+          return { rating: review1.rating };
+        }
+        return { rating: review1.rating + review2.rating };
+      },
+      { rating: 0 }
+    );
 
-    hairdresser.globalRating = ratingSum.rating / hairdresser.reviews.length;
+    let hairdresserReviewsLength = hairdresser.reviews.filter((review) => {
+      return review !== null;
+    }).length;
 
-    await hairdresser.save(() => {
-      console.log("Hairdresser global rating updated!");
+    hairdresser.globalRating = +(
+      hairdresserRatingSum.rating / hairdresserReviewsLength
+    ).toFixed(2);
+
+    await hairdresser.save((err) => {
+      if (err) throw new Error(err);
+      console.log("Haidresser global rating updated!");
     });
   }
 };

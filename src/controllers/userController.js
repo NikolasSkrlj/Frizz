@@ -113,13 +113,45 @@ module.exports.submitReview = async (req, res, next) => {
         comment,
       });
 
-      await review.save((err) => {
+      //Ovakvo nestanje potrebno je zbog redoslijeda spremanja modela jer tocno takav redoslijed treba biti
+      await review.save(async (err) => {
         if (err) throw new Error(err);
-        console.log("review created");
-      });
+        console.log("Review created");
 
+        salon.reviews.push(review);
+        await salon.save(async (err) => {
+          if (err) throw new Error(err);
+          console.log("Salon reviews updated!");
+
+          user.reviews.push(review);
+          await user.save(async (err) => {
+            if (err) throw new Error(err);
+            console.log("User reviews updated!");
+
+            if (hairdresserId) {
+              const hairdresser = await Hairdresser.findOne({
+                _id: hairdresserId,
+              });
+
+              if (!hairdresser) {
+                return res.status(404).send({
+                  success: false,
+                  message: "Frizer/ka s navedenim id-om ne postoji!",
+                });
+              }
+              hairdresser.reviews.push(review);
+              await hairdresser.save(async (err) => {
+                if (err) throw new Error(err);
+                console.log("Hairdresser reviews updated!");
+              });
+            }
+            await review.updateRatings();
+          });
+        });
+      });
+      /* 
       salon.reviews.push(review);
-      await salon.save(() => {
+       await salon.save(() => {
         console.log("Salon reviews updated!");
       });
 
@@ -147,7 +179,7 @@ module.exports.submitReview = async (req, res, next) => {
           });
         }
       }
-      await review.updateRatings();
+      await review.updateRatings(); */
       res.send({
         success: true,
         review,
