@@ -6,4 +6,11 @@
 
 APPOINTMENTS
 - trebat ce se brisati kad prodje taj datum, ili nekako potvrditi da je obavljen -> boolean mozda
-- 
+- kad se klikne datum dobro bi vratit sve sate koji su zauzeti/slobodni i onda prema tome ici dalje 
+    - ako je slobodan period npr od 11 do 12 treba vidjet ako taj appointment type i njegovo trajanje stane u taj period
+
+USE CASE BIRANJA TERMINA:
+-  Odabere se 'rezerviraj termin' -> klikne se datum koji se zeli -> u pozadini se traze termini za taj dan i vrate koji
+    su sati zauzeti/slobodni -> zatim se odabere dropdown koja vrsta termina zelimo i vrijeme kad bi poceli -> ako je 
+    trajanje termina u sukobu sa drugim terminom ne smije se dopustit -> kad je dopusteno omogucuje se odabir frizera ako hoce, 
+    pritom pazeci na to da ovisno koji sat u danu je odaberen moci ce se odabrati samo frizer/i koji su u toj smjeni.

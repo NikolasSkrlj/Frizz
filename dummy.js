@@ -14,7 +14,7 @@ console.log(months);
  */
 
 // reduce() vjezba
-const reviews = [
+/* const reviews = [
   {
     rating: 3.5,
     comment: "blabla",
@@ -45,3 +45,24 @@ let length = reviews.filter((review) => {
 }).length;
 
 console.log("Global rating is: ", ratingSum.rating / length);
+ */
+const {
+  getWeeksInMonth,
+  getDaysInMonth,
+  getISOWeek,
+  getWeekOfMonth,
+} = require("date-fns");
+
+//daje koliko je tjedana u mjesecu s pocetkom na ponedjeljak
+let result = getWeeksInMonth(new Date(), { weekStartsOn: 1 });
+console.log(result);
+
+// koliko dana u mjesecu
+let tmp = getDaysInMonth(new Date());
+console.log(tmp);
+
+//koji je index trenutnog tjedna (datuma)
+let tmp2 = getWeekOfMonth(new Date(), {
+  weekStartsOn: 1,
+});
+console.log(tmp2);

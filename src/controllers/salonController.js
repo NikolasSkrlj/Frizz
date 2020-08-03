@@ -5,9 +5,6 @@ const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
 
-//import autentikacijskog middlewarea
-const auth = require("../middleware/auth");
-
 // Desc: Creating hair salon account
 // Route: POST /hairsalon/create
 // Access: Public
@@ -83,15 +80,26 @@ module.exports.logoutSalon = async (req, res, next) => {
   }
 };
 
+/*
+OVDJE TREBA DORADITI POPULATE SA $match, $sort, $project itd TAKO DA SE IMA MOGUCNOST FILTRIRANJA PODATAKA
+*/
 // Desc: Getting all info for the logged in hair salon
-// Route: POST /hairsalon/get
+// Route: GET /hairsalon/get
 // Access: Authenticated
 module.exports.getSalon = async (req, res, next) => {
   try {
     const salon = req.salon;
+
+    //populate na vise razina, salon ima svoje recenzije i frizere kojima se takodjr populateaju recenzije
     await salon
-      .populate("appointmentTypes hairdressers reviews")
+      .populate({
+        path: "hairdressers reviews appointmentTypes appointments",
+        populate: {
+          path: "reviews appointmentType",
+        },
+      })
       .execPopulate(); // kad se ne koristi u kombinaciji sa Model.findNesto koristi se execPopulate a ne populate
+    //await salon.hairdressers.populate("reviews").execPopulate(); isto radi ali nama treba gornji izraz zbog gnjijezdenja
 
     res.send({ success: true, salon });
   } catch (err) {

@@ -82,6 +82,9 @@ module.exports.logoutUser = async (req, res, next) => {
   }
 };
 
+// Desc: Getting profile info for the logged in user
+// Route: POST /user/profile
+// Access: Authenticated
 module.exports.getProfile = async (req, res, next) => {
   try {
     const user = req.user;
@@ -97,6 +100,61 @@ module.exports.getProfile = async (req, res, next) => {
   }
 };
 
+// Desc: Create an appointment for a specific day
+// Route: POST /user/:id/create_appointment
+// Access: Authenticated
+module.exports.createAppointment = async (req, res, next) => {
+  try {
+    const {
+      hairdresserId,
+      appointmentDate,
+      startTime,
+      endTime,
+      appointmentType,
+    } = req.body;
+    const salonId = req.params.id;
+    const user = req.user;
+
+    /* tu treba provjere dali je slobodno vrijeme u tom danu
+      koji frizer radi i tako to 
+    */
+    const appointment = new Appointment({
+      salonId,
+      userId: user._id,
+      hairdresserId,
+      startTime,
+      endTime,
+      appointmentDate,
+      appointmentType,
+    });
+
+    /* zapravo tu bi trebalo obaviti kontrolu sta se salje dalje sa frizerima jer mora
+      se moc odabrat samo one koje su u smijeni
+    */
+    const salon = await HairSalon.findOne({ _id: salonId });
+
+    await appointment.save(async (err) => {
+      if (err) throw new Error(err);
+      console.log("Appointment saved!");
+
+      salon.appointments.push(appointment);
+      await salon.save(() => {
+        console.log("Salon appointments updated");
+      });
+    });
+    res.send({ success: true, appointment });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Submit review for a specific hair salon
+// Route: POST /user/submit_review
+// Access: Authenticated
 module.exports.submitReview = async (req, res, next) => {
   try {
     const { rating, hairdresserId, comment } = req.body;
@@ -149,37 +207,7 @@ module.exports.submitReview = async (req, res, next) => {
           });
         });
       });
-      /* 
-      salon.reviews.push(review);
-       await salon.save(() => {
-        console.log("Salon reviews updated!");
-      });
 
-      //spremanje recenzije useru u array reviews
-      user.reviews.push(review);
-      await user.save(() => {
-        console.log("User reviews updated!");
-      });
-
-      //spremanje frizeru review u array reviews
-      if (hairdresserId) {
-        const hairdresser = await Hairdresser.findOne({
-          _id: hairdresserId,
-        });
-
-        if (hairdresser) {
-          hairdresser.reviews.push(review);
-          await hairdresser.save(() => {
-            console.log("Hairdresser reviews updated!");
-          });
-        } else {
-          return res.status(404).send({
-            success: false,
-            message: "Frizer/ka s navedenim id-om ne postoji!",
-          });
-        }
-      }
-      await review.updateRatings(); */
       res.send({
         success: true,
         review,

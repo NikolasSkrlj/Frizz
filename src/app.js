@@ -1,6 +1,7 @@
 const express = require("express");
 require("./db/mongoose.js");
 const cors = require("cors");
+const morgan = require("morgan");
 
 const app = express();
 
@@ -10,6 +11,7 @@ const userRouter = require("./routes/userRouter");
 
 app.use(express.json());
 app.use(cors());
+app.use(morgan("dev"));
 
 app.use("/hairsalon", salonRouter);
 app.use("/user", userRouter);
