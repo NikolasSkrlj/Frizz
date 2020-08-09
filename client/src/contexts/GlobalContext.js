@@ -4,9 +4,15 @@ import React, { createContext, useState } from "react";
 export const GlobalContext = createContext();
 
 const GlobalContextProvider = (props) => {
-  const [dummyAuth, setDummyAuth] = useState({ isAuth: true });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authToken, setAuthToken] = useState("");
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const toggleShowLoginModal = () => {
+    setShowLoginModal(!showLoginModal);
+  };
   return (
-    <GlobalContext.Provider value={{ dummyAuth }}>
+    <GlobalContext.Provider value={{ showLoginModal, toggleShowLoginModal }}>
       {props.children}
     </GlobalContext.Provider>
   );

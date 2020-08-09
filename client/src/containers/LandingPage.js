@@ -6,7 +6,7 @@ import { Link, NavLink, withRouter } from "react-router-dom";
 const LandingPage = () => {
   return (
     <div>
-      <Jumbotron>
+      <Jumbotron bg="light">
         <h1>Dobrodošli na Frizz.hr</h1>
         <p>
           kod nas možete pretraživati frizerske salone u vašoj blizini,
@@ -14,14 +14,14 @@ const LandingPage = () => {
         </p>
         <p>
           <Button
-            variant="secondary"
+            variant="primary"
             as={Link}
             to="/user"
             className="mr-2 center"
           >
             Registriraj svoj salon
           </Button>
-          <Button variant="secondary">Registriraj se kao korisnik</Button>
+          <Button variant="primary">Registriraj se kao korisnik</Button>
         </p>
       </Jumbotron>
     </div>
