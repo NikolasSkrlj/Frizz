@@ -32,7 +32,7 @@ const auth = async (req, res, next) => {
   } catch (err) {
     res.status(401).send({
       success: false,
-      error: "You're allowed to access this route, please authenticate!",
+      error: "You're not allowed to access this route, please authenticate!",
     });
   }
 };

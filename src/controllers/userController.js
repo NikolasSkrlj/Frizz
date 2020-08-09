@@ -46,6 +46,7 @@ module.exports.createUser = async (req, res, next) => {
 
 module.exports.loginUser = async (req, res, next) => {
   try {
+    //validacija na frontendu, required polja
     const user = await User.findByCredentials(
       req.body.email,
       req.body.password

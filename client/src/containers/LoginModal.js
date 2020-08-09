@@ -1,31 +1,59 @@
-import React, { useState, useContext } from "react";
-import { Modal, Button, Form } from "react-bootstrap";
-import { Link, withRouter } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { Modal, Button, Form, Alert } from "react-bootstrap";
+import { Link, withRouter, useHistory } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
 import axios from "axios";
 
 const LoginModal = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [successCheck, setSuccessCheck] = useState(true);
 
   //kontroliramo ako se prikazuje modal sa globalni contextom, jednsotavni bool na temelju kojeg togglamo
-  const { showLoginModal, toggleShowLoginModal } = useContext(GlobalContext);
+  const {
+    showLoginModal,
+    toggleShowLoginModal,
+    setUser,
+    setAuthToken,
+    toggleIsLoggedIn,
+  } = useContext(GlobalContext);
 
-  const handleLogin = (e) => {
+  const history = useHistory();
+  useEffect(() => {
+    console.log("render");
+  });
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    const getRes = async () => {
+    //setSuccessCheck(true);
+    //ako je uspjesan login redirecta se na user dashboard inace se mora poruka pokazat, u context se stavljaju podacu o useru/salonu
+    try {
       const res = await axios.post("http://localhost:4000/user/login", {
         email,
         password,
       });
-      console.log(res.data);
-    };
-    getRes();
+
+      setAuthToken(res.data.token);
+      setUser(res.data.user);
+      toggleIsLoggedIn();
+      toggleShowLoginModal();
+      history.push("/user");
+    } catch (err) {
+      if (err.response) {
+        console.log("dap nesto se sjebalo", err);
+        setSuccessCheck(!successCheck);
+      }
+    }
   };
 
   return (
-    <Modal show={showLoginModal} onHide={toggleShowLoginModal}>
+    <Modal
+      show={showLoginModal}
+      onHide={toggleShowLoginModal}
+      onClick={() => {
+        //koristimo event bubbling, kontrola je li prikazan error o uspjesnosti, nakon pogreske klikom na formu nestat ce error
+        setSuccessCheck(true);
+      }}
+    >
       <Modal.Header closeButton>
         <Modal.Title>Prijavi se</Modal.Title>
       </Modal.Header>
@@ -52,6 +80,15 @@ const LoginModal = () => {
               Mora sadržavati minimalno 8 znakova
             </Form.Text>
           </Form.Group>
+          {successCheck ? (
+            <div></div>
+          ) : (
+            <Alert variant="danger">
+              Greška sa prijavom. Molimo provjerite email i/ili lozinku i
+              pokušajte ponovo.
+            </Alert>
+          )}
+
           <Form.Group controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Zapamti me(opcionalno)" />
           </Form.Group>

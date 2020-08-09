@@ -148,12 +148,12 @@ HairSalonSchema.statics.findByCredentials = async (email, password) => {
   const salon = await HairSalon.findOne({ email: email });
 
   if (!salon) {
-    throw new Error("Unable to login, salon with that email doesn't exist!");
+    throw new Error("Unable to login!");
   }
 
   const match = await bcrypt.compare(password, salon.password);
   if (!match) {
-    throw new Error("Unable to login, password don't match!");
+    throw new Error("Unable to login!");
   }
   return salon;
 };

@@ -7,12 +7,28 @@ const GlobalContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [authToken, setAuthToken] = useState("");
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [user, setUser] = useState({});
 
   const toggleShowLoginModal = () => {
     setShowLoginModal(!showLoginModal);
   };
+  const toggleIsLoggedIn = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
+
   return (
-    <GlobalContext.Provider value={{ showLoginModal, toggleShowLoginModal }}>
+    <GlobalContext.Provider
+      value={{
+        showLoginModal,
+        toggleShowLoginModal,
+        isLoggedIn,
+        setUser,
+        setAuthToken,
+        authToken,
+        user,
+        toggleIsLoggedIn,
+      }}
+    >
       {props.children}
     </GlobalContext.Provider>
   );
