@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Navbar, Nav, Button } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
@@ -15,15 +15,21 @@ const NavbarContainer = () => {
     isLoggedIn,
     user,
     authToken,
+    userType,
+    setUserType,
+    salon,
+    setSalon,
   } = useContext(GlobalContext);
 
   const history = useHistory();
 
+  useEffect(() => {
+    console.log("Navbar se rendera!");
+  });
   const handleLogout = async () => {
     try {
-      console.log(authToken);
       const res = await axios.post(
-        "http://localhost:4000/user/logout",
+        `http://localhost:4000/${userType}/logout`,
         {},
         {
           headers: {
@@ -31,8 +37,11 @@ const NavbarContainer = () => {
           },
         }
       );
-      console.log(res.data);
-      setUser({});
+      if (userType === "user") {
+        setUser({});
+      } else {
+        setSalon({});
+      }
       setAuthToken("");
       toggleIsLoggedIn();
       history.push("/");
@@ -42,10 +51,14 @@ const NavbarContainer = () => {
       }
     }
   };
+
   return (
     <Navbar bg="primary" variant="dark">
       <LoginModal />
-      <Navbar.Brand as={Link} to="/">
+      <Navbar.Brand
+        as={Link}
+        to={isLoggedIn ? (userType === "user" ? "/user" : "/hairsalon") : "/"}
+      >
         Frizz.hr
       </Navbar.Brand>
       <Nav className="mr-auto">
