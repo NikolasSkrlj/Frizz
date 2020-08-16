@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { Navbar, Nav, Button } from "react-bootstrap";
+import { Navbar, Nav, Button, Container } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
 import LoginModal from "./LoginModal";
@@ -23,9 +23,6 @@ const NavbarContainer = () => {
 
   const history = useHistory();
 
-  useEffect(() => {
-    console.log("Navbar se rendera!");
-  });
   const handleLogout = async () => {
     try {
       const res = await axios.post(
@@ -53,26 +50,51 @@ const NavbarContainer = () => {
   };
 
   return (
-    <Navbar bg="primary" variant="dark">
-      <LoginModal />
-      <Navbar.Brand
-        as={Link}
-        to={isLoggedIn ? (userType === "user" ? "/user" : "/hairsalon") : "/"}
-      >
-        Frizz.hr
-      </Navbar.Brand>
-      <Nav className="mr-auto">
-        <Nav.Link as={Link} to="/">
-          Naslovna
-        </Nav.Link>
-      </Nav>
-      <Nav className="mr-sm-2 outline-secondary">
-        {isLoggedIn ? (
-          <Nav.Link onClick={() => handleLogout()}>Odjava</Nav.Link>
-        ) : (
-          <Nav.Link onClick={() => toggleShowLoginModal()}>Prijava</Nav.Link>
-        )}
-      </Nav>
+    <Navbar
+      bg="info"
+      variant="dark"
+      expand="md"
+      className="navbaric"
+      fixed="top"
+    >
+      <Container>
+        <LoginModal />
+        <Navbar.Brand
+          as={Link}
+          to={isLoggedIn ? (userType === "user" ? "/user" : "/hairsalon") : "/"}
+        >
+          Frizz.hr
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="mr-auto">
+            <Nav.Link
+              as={Link}
+              to="/"
+              className="d-flex justify-content-center"
+            >
+              Naslovna
+            </Nav.Link>
+          </Nav>
+          <Nav className="mr-md-5">
+            {isLoggedIn ? (
+              <Nav.Link
+                className="d-flex justify-content-center"
+                onClick={() => handleLogout()}
+              >
+                Odjava
+              </Nav.Link>
+            ) : (
+              <Nav.Link
+                className="d-flex justify-content-center"
+                onClick={() => toggleShowLoginModal()}
+              >
+                Prijava
+              </Nav.Link>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
     </Navbar>
   );
 };
