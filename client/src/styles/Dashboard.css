@@ -1,6 +1,6 @@
 .vertical-nav {
-  min-width: 17rem;
-  width: 17rem;
+  min-width: 16rem;
+  width: 16rem;
   height: 100vh;
   position: fixed;
   top: 56px; /* izmjereno da sidebar i navbar se ne preklapaju*/
@@ -10,15 +10,15 @@
 }
 
 .page-content {
-  width: calc(100% - 17rem);
-  margin-left: 17rem;
+  width: calc(100% - 16rem);
+  margin-left: 16rem;
   transition: all 0.4s;
 }
 
 /* for toggle behavior */
 
 #sidebar.active {
-  margin-left: -17rem;
+  margin-left: -16rem;
 }
 
 #content.active {
@@ -28,7 +28,7 @@
 
 @media (max-width: 768px) {
   #sidebar {
-    margin-left: -17rem;
+    margin-left: -16rem;
   }
   #sidebar.active {
     margin-left: 0;
@@ -38,18 +38,10 @@
     margin: 0;
   }
   #content.active {
-    margin-left: 17rem;
-    width: calc(100% - 17rem);
+    margin-left: 16rem;
+    width: calc(100% - 16rem);
   }
 }
-
-/*
-*
-* ==========================================
-* FOR DEMO PURPOSE
-* ==========================================
-*
-*/
 
 body {
   background: #599fd9;

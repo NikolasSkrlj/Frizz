@@ -6,19 +6,7 @@ const SalonDashboard = () => {
   const history = useHistory();
   const { userType } = useContext(GlobalContext);
 
-  useEffect(() => {
-    if (!userType || userType === "user") {
-      console.log("You're not allowed to be here");
-      history.push("/");
-    }
-  });
-  return (
-    <div>
-      {" "}
-      Ovdje ce biti admin interface za salon
-      <button onClick={() => console.log("s")}>yasa</button>
-    </div>
-  );
+  return <div> Ovdje ce biti admin interface za salon</div>;
 };
 
 export default SalonDashboard;

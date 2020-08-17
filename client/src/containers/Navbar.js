@@ -54,7 +54,7 @@ const NavbarContainer = () => {
       bg="info"
       variant="dark"
       expand="md"
-      className="navbaric"
+      className="shadow-sm"
       fixed="top"
     >
       <Container>

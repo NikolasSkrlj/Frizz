@@ -5,7 +5,7 @@ import axios from "axios";
 import { Alert, Button } from "react-bootstrap";
 
 const Salon = () => {
-  const isAuth = useContext(GlobalContext);
+  const isLoggedIn = useContext(GlobalContext);
   const { salon, updateSalon } = useContext(SalonContext);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const Salon = () => {
     getRes();
   }, []);
 
-  return isAuth ? (
+  return isLoggedIn ? (
     <div>Bome jesi prijavljen</div>
   ) : (
     <div>Bome nisi prijavljen</div>

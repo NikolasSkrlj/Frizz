@@ -8,6 +8,7 @@ import UserDashboard from "../src/containers/UserDashboard";
 import SalonDashboard from "../src/containers/SalonDashboard";
 //import LoginModal from "./containers/LoginModal";
 import { Route, Switch } from "react-router-dom";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 function App() {
   return (
@@ -15,8 +16,15 @@ function App() {
       <NavbarContainer />
       <Switch>
         <Route exact path="/" component={LandingPage}></Route>
-        <Route exact path="/user" component={UserDashboard}></Route>
-        <Route exact path="/hairsalon" component={SalonDashboard}></Route>
+        {/* <ProtectedRoute
+          forUser="salon"
+          path="/hairsalon"
+          component={SalonDashboard}
+        />
+        <ProtectedRoute forUser="user" path="/user" component={UserDashboard} />
+ */}
+        <Route path="/user" component={UserDashboard}></Route>
+        <Route path="/hairsalon" component={SalonDashboard}></Route>
         <Route
           path="/"
           render={() => {

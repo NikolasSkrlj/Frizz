@@ -66,3 +66,5 @@ let tmp2 = getWeekOfMonth(new Date(), {
   weekStartsOn: 1,
 });
 console.log(tmp2);
+
+console.error("yo im not havin a good time");
