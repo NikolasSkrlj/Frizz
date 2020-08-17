@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Nav, Button, Navbar, Container, Row, Col } from "react-bootstrap";
-import { withRouter, Link } from "react-router-dom";
+import { FaNewspaper, FaRegUser } from "react-icons/fa";
+import { FiScissors } from "react-icons/fi";
+
+import {
+  Link,
+  withRouter,
+  useHistory,
+  useRouteMatch,
+  useParams,
+  Route,
+  Switch,
+} from "react-router-dom";
 import "../styles/Dashboard.css";
 
-const Sidebar = ({ isToggled }) => {
+const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
+  const [viewport, setViewport] = useState(window.innerWidth);
+
   const base = "vertical-nav bg-white";
   const classNameHtml = !isToggled ? base + " active" : base; // kad ima klasu active onda je sidebar sakriven ??
+
+  const history = useHistory();
+  const { path, url } = useRouteMatch();
+  // The `path` lets us build <Route> paths that are
+  // relative to the parent route, while the `url` lets
+  // us build relative links.
+
+  //kada na mobilnoj verziji kliknemo nesto automatski se zatvori sidebar
+  const handleLinkClick = () => {
+    if (window.innerWidth <= 765) {
+      closeSidebarOnClick();
+    }
+  };
 
   //ovdje moze doc podaci o prijavljenom korisniku/salonu uz avatar
   return (
@@ -31,28 +57,32 @@ const Sidebar = ({ isToggled }) => {
 
       <ul className="nav flex-column bg-white mb-0">
         <li className="nav-item">
-          <a href="#" className="nav-link text-dark font-italic bg-light">
-            <i className="fa fa-th-large mr-3 text-primary fa-fw"></i>
+          <Link
+            onClick={handleLinkClick}
+            className="nav-link text-dark font-italic bg-light"
+            to={`${url}`}
+          >
+            <FaNewspaper className="mr-3" />
             Naslovnica
-          </a>
+          </Link>
         </li>
         <li className="nav-item">
-          <a href="#" className="nav-link text-dark font-italic">
-            <i className="fa fa-address-card mr-3 text-primary fa-fw"></i>
-            Saloni
-          </a>
+          <Link
+            className="nav-link text-dark font-italic bg-light"
+            to={`${url}/saloni`}
+            onClick={handleLinkClick}
+          >
+            <FiScissors className="mr-3" /> Saloni
+          </Link>
         </li>
         <li className="nav-item">
-          <a href="#" className="nav-link text-dark font-italic">
-            <i className="fa fa-cubes mr-3 text-primary fa-fw"></i>
+          <Link
+            className="nav-link text-dark font-italic bg-light"
+            onClick={handleLinkClick}
+          >
+            <FaRegUser className="mr-3" />
             Profil
-          </a>
-        </li>
-        <li className="nav-item">
-          <a href="#" className="nav-link text-dark font-italic">
-            <i className="fa fa-picture-o mr-3 text-primary fa-fw"></i>
-            Postavke
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

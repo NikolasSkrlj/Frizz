@@ -5,10 +5,10 @@ import axios from "axios";
 import { Alert, Button } from "react-bootstrap";
 
 const Salon = () => {
-  const isLoggedIn = useContext(GlobalContext);
+  /*  const isLoggedIn = useContext(GlobalContext);
   const { salon, updateSalon } = useContext(SalonContext);
-
-  useEffect(() => {
+ */
+  /* useEffect(() => {
     const getRes = async () => {
       const res = await axios.get("http://localhost:4000/hairsalon/get", {
         headers: {
@@ -20,13 +20,9 @@ const Salon = () => {
       updateSalon(res.data.salon);
     };
     getRes();
-  }, []);
+  }, []); */
 
-  return isLoggedIn ? (
-    <div>Bome jesi prijavljen</div>
-  ) : (
-    <div>Bome nisi prijavljen</div>
-  );
+  return <div className="pt-5 text-white lead">Wuhuu rendera se salon</div>;
 };
 
 export default Salon;
