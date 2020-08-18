@@ -16,15 +16,15 @@ function App() {
       <NavbarContainer />
       <Switch>
         <Route exact path="/" component={LandingPage}></Route>
-        {/* <ProtectedRoute
+        <ProtectedRoute
           forUser="salon"
           path="/hairsalon"
           component={SalonDashboard}
         />
         <ProtectedRoute forUser="user" path="/user" component={UserDashboard} />
- */}
-        <Route path="/user" component={UserDashboard}></Route>
-        <Route path="/hairsalon" component={SalonDashboard}></Route>
+
+        {/*  <Route path="/user" component={UserDashboard}></Route>
+        <Route path="/hairsalon" component={SalonDashboard}></Route> */}
         <Route
           path="/"
           render={() => {

@@ -57,7 +57,10 @@ const LoginModal = () => {
 
   const handleRadioChange = (e) => {
     const value = e.target.value;
+    e.target.checked = true;
+    console.warn(e.target.checked);
     setUserTypeRadio(value);
+    console.warn("kliknuto i postavljeno");
   };
   return (
     <Modal
@@ -94,23 +97,27 @@ const LoginModal = () => {
               Mora sadržavati minimalno 8 znakova
             </Form.Text>
           </Form.Group>
+
           <Form.Group>
             <Form.Check
               type="radio"
               name="usertype"
               value="user"
-              checked
               label="Kao korisnik"
-              onChange={handleRadioChange}
+              checked={userTypeRadio === "user" ? true : false}
+              onClick={handleRadioChange}
             />
+
             <Form.Check
               type="radio"
               name="usertype"
               value="hairsalon"
+              checked={userTypeRadio === "user" ? false : true}
               label="Kao admin salona"
-              onChange={handleRadioChange}
+              onClick={handleRadioChange}
             />
           </Form.Group>
+
           {successCheck ? (
             <div></div>
           ) : (
