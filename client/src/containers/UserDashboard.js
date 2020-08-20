@@ -12,7 +12,7 @@ import {
   Switch,
 } from "react-router-dom";
 import Sidebar from "./Sidebar";
-import Salon from "../components/user/Salon";
+import SalonFeed from "../components/user/SalonFeed";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 
@@ -21,7 +21,7 @@ const UserDashboard = () => {
   const [sidebarToggled, setSidebarToggled] = useState(true);
   const { path, url } = useRouteMatch();
 
-  const base = "page-content p-4 ";
+  const base = "page-content pt-3 ";
   const classNameHtml = !sidebarToggled ? base + " active" : base; // kad sidebar i content ima klasu active onda je sidebar sakriven i content full screen sa gumbom
 
   const handleClick = () => {
@@ -44,7 +44,7 @@ const UserDashboard = () => {
             </button>
 
             <Switch>
-              <Route path={`${path}/saloni`} component={Salon} />
+              <Route path={`${path}/saloni`} component={SalonFeed} />
               <Route path={path} component={DummyContent} />
             </Switch>
           </div>

@@ -130,7 +130,7 @@ const LoginModal = () => {
           <Form.Group controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Zapamti me(opcionalno)" />
           </Form.Group>
-          <Button variant="primary" type="submit">
+          <Button variant="info" type="submit">
             Prijavi se
           </Button>
         </Form>

@@ -5,6 +5,9 @@ const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
 
+// Desc: Creating a user account
+// Route: POST /user/create
+// Access: Public
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, age, gender, email, phone, password } = req.body;
@@ -44,6 +47,9 @@ module.exports.createUser = async (req, res, next) => {
   }
 };
 
+// Desc: Logging in the user account
+// Route: POST /user/logout
+// Access: Public
 module.exports.loginUser = async (req, res, next) => {
   try {
     //validacija na frontendu, required polja
@@ -92,6 +98,28 @@ module.exports.getProfile = async (req, res, next) => {
     await user.populate("reviews").execPopulate(); // kad se ne koristi u kombinaciji sa Model.findNesto koristi se execPopulate a ne populate
 
     res.send({ success: true, user });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Getting salons
+// Route: POST /user/profile
+// Access: Authenticated
+module.exports.getSalons = async (req, res, next) => {
+  try {
+    const salons = await HairSalon.find({}).populate({
+      path: "hairdressers reviews appointmentTypes appointments",
+      populate: {
+        path: "reviews appointmentType",
+      },
+    }); // tu moraju ic sve opcije i parametri za filtriranje
+
+    res.send({ success: true, salons });
   } catch (err) {
     res.status(500).send({
       success: false,

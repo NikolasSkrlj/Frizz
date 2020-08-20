@@ -35,10 +35,10 @@ const LandingPage = () => {
         </Container>
       </Jumbotron>
       <Container className="mt-0">
-        <Card className="text-center" bg="light">
+        <Card className="text-center pt-3" bg="light">
           <Card.Body>
             <Card.Title className="display-4">Zašto Frizz.hr?</Card.Title>
-            <Card.Text className="py-4">
+            <Card.Text className="py-4 text-muted lead">
               Iskusite brojne pogodnosti uz brz i jednostavan <i>online</i>{" "}
               pristup frizerskim salonima diljem zemlje.
             </Card.Text>
@@ -51,7 +51,7 @@ const LandingPage = () => {
 
                 <Card.Body>
                   <Card.Title>Pametno pretraživanje</Card.Title>
-                  <Card.Text>
+                  <Card.Text className="text-muted">
                     Pronađite salon po vašem ukusu, ovisno o lokaciji, prema
                     tipovima termina i njihovim cijenama, sortirajte s obzirom
                     na recenzije drugih korisnika itd.
@@ -69,7 +69,7 @@ const LandingPage = () => {
 
                 <Card.Body>
                   <Card.Title>Rezervacija termina</Card.Title>
-                  <Card.Text>
+                  <Card.Text className="text-muted">
                     Izbjegnite mukotrpne pozive i dogovaranja za termin.
                     Izaberite salon, provjerite koji su termini slobodni i
                     rezervirajte.
@@ -83,7 +83,7 @@ const LandingPage = () => {
 
                 <Card.Body>
                   <Card.Title>Ocjenjivanje salona i/ili frizera</Card.Title>
-                  <Card.Text>
+                  <Card.Text className="text-muted">
                     Pomognite ostalim korisnicima da odaberu najbolje salone
                     ostavljajući pozitivne ili negativne recenzije, uz mogućnost
                     specificiranja frizera/ke.

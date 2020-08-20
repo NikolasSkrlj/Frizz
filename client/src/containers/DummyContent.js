@@ -7,10 +7,7 @@ const DummyContent = (params) => {
       <div className="pt-5">
         {/*  <!-- Demo content --> */}
         <h2 className="display-4 text-white">Ovo je dummy content</h2>
-        <p className="lead text-white mb-0">
-          Nesto lijepo mora da se desi.
-          <ul></ul>
-        </p>
+        <p className="lead text-white mb-0">Nesto lijepo mora da se desi.</p>
 
         <div className="separator"></div>
         <div className="row text-white">

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Nav, Button, Navbar, Container, Row, Col } from "react-bootstrap";
-import { FaNewspaper, FaRegUser } from "react-icons/fa";
+import { FaNewspaper, FaRegUser, FaCalendarDay } from "react-icons/fa";
 import { FiScissors } from "react-icons/fi";
+import { FiSliders } from "react-icons/fi";
 
 import {
   Link,
@@ -59,7 +60,7 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
         <li className="nav-item">
           <Link
             onClick={handleLinkClick}
-            className="nav-link text-dark font-italic bg-light"
+            className="nav-link text-dark text-bold bg-light"
             to={`${url}`}
           >
             <FaNewspaper className="mr-3" />
@@ -68,17 +69,29 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
         </li>
         <li className="nav-item">
           <Link
-            className="nav-link text-dark font-italic bg-light"
+            className="nav-link text-dark  bg-light"
             to={`${url}/saloni`}
             onClick={handleLinkClick}
           >
-            <FiScissors className="mr-3" /> Saloni
+            <FiScissors className="mr-3" />
+            Saloni
           </Link>
         </li>
         <li className="nav-item">
           <Link
-            className="nav-link text-dark font-italic bg-light"
             onClick={handleLinkClick}
+            className="nav-link text-dark text-bold bg-light"
+            to={`${url}/appointments`}
+          >
+            <FaCalendarDay className="mr-3" />
+            Termini
+          </Link>
+        </li>
+        <li className="nav-item">
+          <Link
+            className="nav-link text-dark text-bold bg-light"
+            onClick={handleLinkClick}
+            to={`${url}/profile`}
           >
             <FaRegUser className="mr-3" />
             Profil
