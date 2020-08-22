@@ -38,9 +38,15 @@
     width: 100%;
     margin: 0;
   }
+
   #content.active {
     margin-left: 16rem;
     width: calc(100% - 16rem);
+  }
+
+  #content.active * {
+    overflow: hidden; /* kad je togglan sidebar da se ne clipa text */
+    white-space: nowrap;
   }
 }
 

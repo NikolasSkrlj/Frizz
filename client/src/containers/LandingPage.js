@@ -60,11 +60,7 @@ const LandingPage = () => {
               </Card>
               <Card>
                 <Card.Header>
-                  <Card.Img
-                    variant="top"
-                    src={booking}
-                    className=" w-50 p-3 "
-                  />
+                  <Card.Img variant="top" src={booking} className="w-50 p-3 " />
                 </Card.Header>
 
                 <Card.Body>
