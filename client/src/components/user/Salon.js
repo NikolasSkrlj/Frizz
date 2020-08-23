@@ -1,31 +1,60 @@
 import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../../contexts/GlobalContext";
-import { SalonContext } from "../../contexts/SalonContext";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import hr from "date-fns/locale/hr";
 import axios from "axios";
-import { Card, Nav, Button, ListGroup, Tab, Form } from "react-bootstrap";
+import {
+  Card,
+  Nav,
+  Button,
+  ListGroup,
+  Tab,
+  Form,
+  Row,
+  Col,
+  Dropdown,
+  DropdownButton,
+  Badge,
+} from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
-//mozda to spremiti podatke nakon fetcha u context koji okruzuje dashboard da se ne mora loadat -> nah nema smisla bas
+
 const Salon = ({ salonData }) => {
   const { authToken } = useContext(GlobalContext);
-  const [appointmentDate, setAppointmentDate] = useState(Date.now());
 
+  //za datepicker
+  const [appointmentDate, setAppointmentDate] = useState(Date.now());
+  const [dateChecked, setDateChecked] = useState(false);
+  const [freeTimes, setFreeTimes] = useState([]);
+
+  //za odabir termina
+  const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi");
+  const [appointmentTypeId, setAppointmentTypeId] = useState("");
+
+  const {
+    id,
+    name,
+    email,
+    address,
+
+    gallery,
+    workingHours,
+    appointmentTypes,
+    hairdressers,
+
+    phone,
+  } = salonData;
+
+  // za kalendar da je na hrvatskom
   registerLocale("hr", hr);
-  /* useEffect(() => {
-    const getRes = async () => {
-      const res = await axios.get("http://localhost:4000/user/salons", {
-        headers: {
-          Authorization: authToken,
-        },
-      });
-      console.log(res.data);
-    };
-    getRes();
-  }, []); */
-  const handleDateChange = (date) => {
+
+  const handleDateChange = async (date) => {
     setAppointmentDate(date);
+  };
+
+  const handleTypeSelect = (e, name) => {
+    setAppointmentTypeSelect(name);
+    setAppointmentTypeId(e.target.getAttribute("apptypid")); // ovako se dohvaca custom props koje zadajemo DOM nodeovima
   };
 
   const DateInput = ({ onClick }) => {
@@ -40,19 +69,13 @@ const Salon = ({ salonData }) => {
       </div>
     );
   };
+  /* 
+  useEffect(() => {
+      const getData = async () => {
 
-  const {
-    name,
-    email,
-    address,
-    externalLinks,
-    gallery,
-    workingHours,
-    appointmentTypes,
-    hairdressers,
-    reviews,
-    phone,
-  } = salonData;
+    } 
+    console.log(id);
+  }, [appointmentDate]); */
 
   return (
     <Card className="mb-3">
@@ -95,7 +118,7 @@ const Salon = ({ salonData }) => {
                 <ListGroup.Item>
                   <h4>Adresa</h4>
                   {Object.values(address).join(", ")}{" "}
-                  <a href="">vidi na karti</a>
+                  <a href="#">vidi na karti</a>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h4>E-mail</h4>
@@ -134,7 +157,7 @@ const Salon = ({ salonData }) => {
                   {phone}
                 </ListGroup.Item>
               </ListGroup>
-              <Button variant="info" href="#reserve">
+              <Button variant="info" href="#">
                 Go somewhere
               </Button>
             </Card.Body>{" "}
@@ -144,13 +167,46 @@ const Salon = ({ salonData }) => {
           </Tab.Pane>
           <Tab.Pane eventKey="reserve">
             <Card.Body>
-              <h5 className="mb-4">Odaberi datum termina</h5>
-              <DatePicker
-                selected={appointmentDate}
-                onChange={handleDateChange}
-                customInput={<DateInput />}
-                locale="hr"
-              />
+              <Row>
+                <Col sm={4} className="mb-3">
+                  <h5 className="mb-3">Datum termina</h5>
+                  <DatePicker
+                    selected={appointmentDate}
+                    onChange={handleDateChange}
+                    customInput={<DateInput />}
+                    locale="hr"
+                    minDate={new Date()}
+                    closeOnScroll
+                    dateFormat="Pp"
+                  />
+                </Col>
+                <Col sm={4}>
+                  <h5 className="mb-3">Vrsta termina</h5>
+                  <DropdownButton
+                    id="dropdown-item-button"
+                    title={appointmentTypeSelect}
+                    variant="outline-info"
+                  >
+                    {appointmentTypes.map((app) => {
+                      return (
+                        <Dropdown.Item
+                          as="button"
+                          key={app.id}
+                          apptypid={app.id}
+                          className="d-flex"
+                          onClick={(e) => handleTypeSelect(e, app.name)} //prosljedjujemo event object kako bi dosli do id atributa
+                        >
+                          <div>{app.name}</div>
+                          <div className="ml-auto">
+                            <div className="border-left my-0 py-0 d-inline mx-2 "></div>
+                            <Badge variant="info">{app.price} kn</Badge>
+                          </div>
+                        </Dropdown.Item>
+                      );
+                    })}
+                  </DropdownButton>
+                </Col>
+              </Row>
             </Card.Body>
           </Tab.Pane>
         </Tab.Content>

@@ -129,6 +129,27 @@ module.exports.getSalons = async (req, res, next) => {
   }
 };
 
+// Desc: Getting which time in a day are taken for a date
+// Route: GET /user/:salonId/check_date
+// Access: Authenticated
+module.exports.checkDate = async (req, res, next) => {
+  try {
+    const salonId = req.params.salonId;
+
+    const salon = await HairSalon.findOne({ _id: salonId }).populate(
+      "appointments"
+    );
+
+    res.send({ success: true, salon });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
 // Desc: Create an appointment for a specific day
 // Route: POST /user/:id/create_appointment
 // Access: Authenticated
@@ -141,7 +162,7 @@ module.exports.createAppointment = async (req, res, next) => {
       endTime,
       appointmentType,
     } = req.body;
-    const salonId = req.params.id;
+    const salonId = req.params.salonId;
     const user = req.user;
 
     /* tu treba provjere dali je slobodno vrijeme u tom danu

@@ -46,7 +46,7 @@ let length = reviews.filter((review) => {
 
 console.log("Global rating is: ", ratingSum.rating / length);
  */
-const {
+/* const {
   getWeeksInMonth,
   getDaysInMonth,
   getISOWeek,
@@ -68,3 +68,7 @@ let tmp2 = getWeekOfMonth(new Date(), {
 console.log(tmp2);
 
 console.error("yo im not havin a good time");
+ */
+const time = setHours(setMinutes(new Date(), 0), 17);
+
+console.log(excludeTimes);

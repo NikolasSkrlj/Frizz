@@ -18,7 +18,7 @@ const SalonFeed = () => {
           Authorization: authToken,
         },
       });
-      console.log(res.data);
+
       setSalons(res.data.salons);
     };
     getData();
