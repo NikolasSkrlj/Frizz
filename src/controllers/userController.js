@@ -134,13 +134,20 @@ module.exports.getSalons = async (req, res, next) => {
 // Access: Authenticated
 module.exports.checkDate = async (req, res, next) => {
   try {
+    console.log(req.body);
     const salonId = req.params.salonId;
+    const appointmentDate = req.body.appointmentDate;
+
+    const appointments = await Appointment.find({
+      salonId,
+      appointmentDate: appointmentDate,
+    });
 
     const salon = await HairSalon.findOne({ _id: salonId }).populate(
       "appointments"
     );
 
-    res.send({ success: true, salon });
+    res.send({ success: true, salon, appointments });
   } catch (err) {
     res.status(500).send({
       success: false,
@@ -168,6 +175,7 @@ module.exports.createAppointment = async (req, res, next) => {
     /* tu treba provjere dali je slobodno vrijeme u tom danu
       koji frizer radi i tako to 
     */
+
     const appointment = new Appointment({
       salonId,
       userId: user._id,

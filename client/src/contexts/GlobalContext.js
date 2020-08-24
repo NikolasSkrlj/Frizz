@@ -14,7 +14,7 @@ const GlobalContextProvider = (props) => {
   //za test
   const [isLoggedIn, setIsLoggedIn] = useState(true); //bool za provjeru
   const [authToken, setAuthToken] = useState(
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjIwMzI4ODU0Njk3NzA4NzhiNTdmYWQiLCJpYXQiOjE1OTgxMTg1MzJ9.8cNfaINHxh25goyUf7LpQTGJTtmuAPuaeGOrjiZIz5c"
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZjIwMzI4ODU0Njk3NzA4NzhiNTdmYWQiLCJpYXQiOjE1OTgxNzg4MDJ9.iStxxiMRbWYxh7At1sDBa8y_ujzGEXvBHMDgktuOBbY"
   ); //token koji se dobije nakon prijave
   const [showLoginModal, setShowLoginModal] = useState(false); // togglanje vidljivosti modala
   const [user, setUser] = useState({}); // podaci o useru

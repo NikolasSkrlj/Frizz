@@ -69,6 +69,19 @@ console.log(tmp2);
 
 console.error("yo im not havin a good time");
  */
-const time = setHours(setMinutes(new Date(), 0), 17);
+const test1 = new Date();
+const test2 = new Date("2020-8-26");
+const test3 = new Date("2020-8-26");
 
-console.log(excludeTimes);
+console.log(test1); // vraca 2020-08-24T13:26:51.694Z
+console.log(test2); // vraca 2020-08-25T22:00:00.000Z -> ovo je ISO format
+
+console.log(test1.toString()); // vraca Mon Aug 24 2020 15:26:51 GMT+0200 (GMT+02:00)
+console.log(test2.toLocaleDateString("hr-HR")); // vraca 2020-8-26
+console.log(test2.toISOString()); // vraca 2020-08-25T22:00:00.000Z
+
+const back1 = new Date(test1.toString());
+const back2 = new Date("26. 08. 2020.");
+
+console.log(back1);
+console.log(back2);

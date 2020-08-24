@@ -1,6 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../../contexts/GlobalContext";
-import DatePicker, { registerLocale } from "react-datepicker";
+import DatePicker, {
+  registerLocale,
+  setHours,
+  setMinutes,
+} from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import hr from "date-fns/locale/hr";
 import axios from "axios";
@@ -16,6 +20,7 @@ import {
   Dropdown,
   DropdownButton,
   Badge,
+  Table,
 } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
 
@@ -23,9 +28,10 @@ const Salon = ({ salonData }) => {
   const { authToken } = useContext(GlobalContext);
 
   //za datepicker
-  const [appointmentDate, setAppointmentDate] = useState(Date.now());
+  const [appointmentDate, setAppointmentDate] = useState(new Date());
+  const [appointmentTime, setAppointmentTime] = useState(new Date());
   const [dateChecked, setDateChecked] = useState(false);
-  const [freeTimes, setFreeTimes] = useState([]);
+  const [takenTimes, setTakenTimes] = useState([]);
 
   //za odabir termina
   const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi");
@@ -49,7 +55,30 @@ const Salon = ({ salonData }) => {
   registerLocale("hr", hr);
 
   const handleDateChange = async (date) => {
-    setAppointmentDate(date);
+    setDateChecked(false);
+    setAppointmentDate(date.setHours(18, 0, 0));
+    //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume, 18 je zbog toga jer ISO vrijeme stavlja par sati nazad pa bude drugi datum
+    // vrijeme cemo spremati u druge varijable
+
+    //vraca salon i termine koji ima tog datuma
+    const res = await axios.post(
+      `http://localhost:4000/user/${id}/check_date`,
+      {
+        appointmentDate: date.toISOString(),
+      },
+      {
+        headers: {
+          Authorization: authToken,
+        },
+      }
+    );
+    setTakenTimes(res.data.appointments);
+    setDateChecked(true);
+  };
+
+  const handleTimeChange = async (time) => {
+    setAppointmentTime(time);
+    console.log(time);
   };
 
   const handleTypeSelect = (e, name) => {
@@ -57,6 +86,7 @@ const Salon = ({ salonData }) => {
     setAppointmentTypeId(e.target.getAttribute("apptypid")); // ovako se dohvaca custom props koje zadajemo DOM nodeovima
   };
 
+  // pomocne komponente za stiliziranje date/time inputa
   const DateInput = ({ onClick }) => {
     return (
       <div>
@@ -69,13 +99,16 @@ const Salon = ({ salonData }) => {
       </div>
     );
   };
-  /* 
-  useEffect(() => {
-      const getData = async () => {
-
-    } 
-    console.log(id);
-  }, [appointmentDate]); */
+  const TimeInput = ({ onClick }) => {
+    return (
+      <Button variant="outline-info" onClick={onClick}>
+        {new Date(appointmentTime).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </Button>
+    );
+  };
 
   return (
     <Card className="mb-3">
@@ -168,7 +201,7 @@ const Salon = ({ salonData }) => {
           <Tab.Pane eventKey="reserve">
             <Card.Body>
               <Row>
-                <Col sm={4} className="mb-3">
+                <Col sm={dateChecked ? 4 : 12} className="mb-3">
                   <h5 className="mb-3">Datum termina</h5>
                   <DatePicker
                     selected={appointmentDate}
@@ -180,7 +213,45 @@ const Salon = ({ salonData }) => {
                     dateFormat="Pp"
                   />
                 </Col>
-                <Col sm={4}>
+
+                {/* Ovdje ide prikaz tablice zauzetih termina */}
+                {dateChecked && (
+                  <Col sm={8}>
+                    <h5 className="mb-3">
+                      Zauzeti termini na datum{" "}
+                      {new Date(appointmentDate).toLocaleDateString()}
+                    </h5>
+                    {takenTimes.length ? (
+                      <Table striped size="sm" variant="light">
+                        <thead>
+                          <tr>
+                            <th>Naziv </th>
+                            <th>Početak</th>
+                            <th>Završetak</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {takenTimes.map((app) => {
+                            return (
+                              <tr>
+                                <td>{app.name}</td>{" "}
+                                {/* Za ime treba populirat appointment type */}
+                                <td>{`${app.startTime.hours}:${app.startTime.minutes}`}</td>
+                                <td>{`${app.endTime.hours}:${app.endTime.minutes}`}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    ) : (
+                      <h6 className="text-muted">
+                        Za taj datum nema rezerviranih termina.
+                      </h6>
+                    )}
+                  </Col>
+                )}
+
+                <Col sm={12} className="mb-3">
                   <h5 className="mb-3">Vrsta termina</h5>
                   <DropdownButton
                     id="dropdown-item-button"
@@ -205,6 +276,21 @@ const Salon = ({ salonData }) => {
                       );
                     })}
                   </DropdownButton>
+                </Col>
+                <Col sm={12} className="mb-3">
+                  <h5 className="mb-3">Vrijeme termina</h5>
+                  <DatePicker
+                    selected={appointmentTime}
+                    onChange={handleTimeChange}
+                    timeCaption="Vrijeme"
+                    locale="hr"
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeFormat="HH:mm"
+                    timeIntervals={30}
+                    dateFormat="HH:mm"
+                    customInput={<TimeInput />}
+                  />
                 </Col>
               </Row>
             </Card.Body>
