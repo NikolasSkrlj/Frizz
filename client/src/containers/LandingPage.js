@@ -1,7 +1,6 @@
 import React from "react";
 import { Jumbotron, Button, Container, Card, CardDeck } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { FaNewspaper } from "react-icons/fa";
 import search from "../search.png";
 import review from "../review.png";
 import booking from "../booking.png";

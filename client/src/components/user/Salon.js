@@ -1,13 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../../contexts/GlobalContext";
-import DatePicker, {
-  registerLocale,
-  setHours,
-  setMinutes,
-} from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import hr from "date-fns/locale/hr";
 import axios from "axios";
+import { isWithinInterval, addMinutes } from "date-fns";
+
 import {
   Card,
   Nav,
@@ -21,42 +19,112 @@ import {
   DropdownButton,
   Badge,
   Table,
+  Alert,
 } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
 
 const Salon = ({ salonData }) => {
   const { authToken } = useContext(GlobalContext);
 
-  //za datepicker
-  const [appointmentDate, setAppointmentDate] = useState(new Date());
-  const [appointmentTime, setAppointmentTime] = useState(new Date());
-  const [dateChecked, setDateChecked] = useState(false);
-  const [takenTimes, setTakenTimes] = useState([]);
-
-  //za odabir termina
-  const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi");
-  const [appointmentTypeId, setAppointmentTypeId] = useState("");
-
   const {
     id,
     name,
     email,
     address,
-
     gallery,
     workingHours,
     appointmentTypes,
     hairdressers,
-
     phone,
   } = salonData;
+
+  //ovo bi trebalo grupirat u razumljiviji state al zasad ne diramo
+  //za datepicker
+  const [appointmentDate, setAppointmentDate] = useState(new Date());
+  const [appointmentTime, setAppointmentTime] = useState(new Date());
+
+  // kontrola rezerviranosti
+  const [dateChecked, setDateChecked] = useState(false);
+  const [timeChecked, setTimeChecked] = useState(false);
+  const [takenTimes, setTakenTimes] = useState([]);
+
+  //za odabir termina
+  const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi");
+  const [appointmentType, setAppointmentType] = useState({});
+
+  //frizeri koji se mogu odabrati ovisno o odabranom vremenu danu i vremenu
+  const [workingHairdressers, setWorkingHairdressers] = useState(hairdressers);
+
+  //za prikaz errora u slucaju zauzetog termina
+  const [message, setMessage] = useState("");
+  const [messageToggled, setMessageToggled] = useState(false);
 
   // za kalendar da je na hrvatskom
   registerLocale("hr", hr);
 
+  // provjeravamo dali vrijeme termina za taj datum se preklapa s nekim postojecim terminom
+  const checkTime = (
+    appointmentDate,
+    appointmentTime,
+    appointmentType,
+    takenTimes
+  ) => {
+    //  console.log(appointmentDate, appointmentTime, appointmentType);
+
+    const appointmentDateTimeStart = new Date(appointmentDate);
+    appointmentDateTimeStart.setHours(
+      appointmentTime.getHours(),
+      appointmentTime.getMinutes()
+    );
+    const appointmentDateTimeEnd = addMinutes(
+      appointmentDateTimeStart,
+      appointmentType.duration
+    );
+    /* const appointmentDateTime = new Date(
+      appointmentDate.getDate(),
+      appointmentDate.getMonth(),
+      appointmentDate.getYear(),
+      appointmentTime.getHours(),
+      appointmentTime.getMinutes(),
+      0
+    ); */
+
+    // console.log(appointmentDate);
+
+    for (const appointment of takenTimes) {
+      const start = new Date(appointment.appointmentDate).setHours(
+        appointment.startTime.hours,
+        appointment.startTime.minutes,
+        0
+      );
+      const end = new Date(appointment.appointmentDate).setHours(
+        appointment.endTime.hours,
+        appointment.endTime.minutes,
+        0
+      );
+      console.log(new Date(start));
+      console.log(new Date(end));
+      console.log(appointmentDateTimeStart);
+      console.log(appointmentDateTimeEnd);
+      console.log("#######################################");
+
+      if (
+        isWithinInterval(appointmentDateTimeEnd, { start, end }) ||
+        isWithinInterval(appointmentDateTimeStart, { start, end })
+      ) {
+        setMessage(
+          "Vrijeme termina kojeg ste odabrali je zauzeto, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+        );
+        setMessageToggled(true);
+      } else {
+        setMessage("");
+        setMessageToggled(false);
+      }
+    }
+  };
+
   const handleDateChange = async (date) => {
-    setDateChecked(false);
-    setAppointmentDate(date.setHours(18, 0, 0));
+    setAppointmentDate(new Date(date.setHours(18, 0, 0)));
     //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume, 18 je zbog toga jer ISO vrijeme stavlja par sati nazad pa bude drugi datum
     // vrijeme cemo spremati u druge varijable
 
@@ -76,14 +144,38 @@ const Salon = ({ salonData }) => {
     setDateChecked(true);
   };
 
-  const handleTimeChange = async (time) => {
+  const handleTimeChange = (time) => {
     setAppointmentTime(time);
-    console.log(time);
+    console.log(`Vrijeme odabrano: ${time.getHours()}:${time.getMinutes()}`);
+    setTimeChecked(true);
+    //  checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
   };
 
-  const handleTypeSelect = (e, name) => {
-    setAppointmentTypeSelect(name);
-    setAppointmentTypeId(e.target.getAttribute("apptypid")); // ovako se dohvaca custom props koje zadajemo DOM nodeovima
+  //Ovim useEffectovima kontroliramo dinamicku pojavu errora kod odabira svakog od stavki, vise use caseva
+  // ovime kontroliramo da se prije postavi time u state a tek onda provjerava dostupnost, inace se ne izvsri kako treba
+  useEffect(() => {
+    checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
+  }, [appointmentTime, appointmentDate, dateChecked]);
+
+  useEffect(() => {
+    checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
+  }, [appointmentTypeSelect, appointmentType]);
+
+  // ovime kontroliramo provjeru da se odabrao tip termina prije vremena
+  useEffect(() => {
+    if (appointmentTypeSelect === "Odaberi" && timeChecked) {
+      setMessage("Odaberite vrstu termina!");
+      setMessageToggled(true);
+    } else {
+      setMessage("");
+      setMessageToggled(false);
+    }
+  }, [appointmentTypeSelect, timeChecked]);
+
+  const handleTypeSelect = (e, appType) => {
+    setAppointmentType(appType);
+    setAppointmentTypeSelect(appType.name);
+    // e.target.getAttribute("apptypid")); // ovako se dohvaca custom props koje zadajemo DOM nodeovima
   };
 
   // pomocne komponente za stiliziranje date/time inputa
@@ -234,10 +326,34 @@ const Salon = ({ salonData }) => {
                           {takenTimes.map((app) => {
                             return (
                               <tr>
-                                <td>{app.name}</td>{" "}
+                                <td>{app.appointmentType.name}</td>{" "}
                                 {/* Za ime treba populirat appointment type */}
-                                <td>{`${app.startTime.hours}:${app.startTime.minutes}`}</td>
-                                <td>{`${app.endTime.hours}:${app.endTime.minutes}`}</td>
+                                <td>{`${app.startTime.hours.toLocaleString(
+                                  undefined,
+                                  {
+                                    minimumIntegerDigits: 2,
+                                    useGrouping: false,
+                                  }
+                                )}:${app.startTime.minutes.toLocaleString(
+                                  undefined,
+                                  {
+                                    minimumIntegerDigits: 2,
+                                    useGrouping: false,
+                                  }
+                                )}`}</td>
+                                <td>{`${app.endTime.hours.toLocaleString(
+                                  undefined,
+                                  {
+                                    minimumIntegerDigits: 2,
+                                    useGrouping: false,
+                                  }
+                                )}:${app.endTime.minutes.toLocaleString(
+                                  undefined,
+                                  {
+                                    minimumIntegerDigits: 2,
+                                    useGrouping: false,
+                                  }
+                                )}`}</td>
                               </tr>
                             );
                           })}
@@ -263,9 +379,8 @@ const Salon = ({ salonData }) => {
                         <Dropdown.Item
                           as="button"
                           key={app.id}
-                          apptypid={app.id}
                           className="d-flex"
-                          onClick={(e) => handleTypeSelect(e, app.name)} //prosljedjujemo event object kako bi dosli do id atributa
+                          onClick={(e) => handleTypeSelect(e, app)} //prosljedjujemo event object kako bi dosli do id atributa
                         >
                           <div>{app.name}</div>
                           <div className="ml-auto">
@@ -287,12 +402,13 @@ const Salon = ({ salonData }) => {
                     showTimeSelect
                     showTimeSelectOnly
                     timeFormat="HH:mm"
-                    timeIntervals={30}
+                    timeIntervals={15}
                     dateFormat="HH:mm"
                     customInput={<TimeInput />}
                   />
                 </Col>
               </Row>
+              {messageToggled && <Alert variant="danger">{message}</Alert>}
             </Card.Body>
           </Tab.Pane>
         </Tab.Content>

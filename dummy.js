@@ -46,11 +46,13 @@ let length = reviews.filter((review) => {
 
 console.log("Global rating is: ", ratingSum.rating / length);
  */
-/* const {
+const {
   getWeeksInMonth,
   getDaysInMonth,
   getISOWeek,
   getWeekOfMonth,
+  isWithinInterval,
+  interva,
 } = require("date-fns");
 
 //daje koliko je tjedana u mjesecu s pocetkom na ponedjeljak
@@ -68,8 +70,13 @@ let tmp2 = getWeekOfMonth(new Date(), {
 console.log(tmp2);
 
 console.error("yo im not havin a good time");
- */
-const test1 = new Date();
+console.log(
+  isWithinInterval(new Date("2020-08-26T19:00:00.000+00:00"), {
+    start: new Date("2020-08-26T12:00:00.000+00:00"),
+    end: new Date("2020-08-26T18:00:00.000+00:00"),
+  })
+);
+/* const test1 = new Date();
 const test2 = new Date("2020-8-26");
 const test3 = new Date("2020-8-26");
 
@@ -85,3 +92,9 @@ const back2 = new Date("26. 08. 2020.");
 
 console.log(back1);
 console.log(back2);
+
+const tmp = {};
+if (tmp) {
+  console.log("nije prazan");
+} else console.log("prazan");
+console.log({} == null); */
