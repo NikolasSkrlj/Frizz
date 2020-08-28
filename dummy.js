@@ -52,10 +52,11 @@ const {
   getISOWeek,
   getWeekOfMonth,
   isWithinInterval,
-  interva,
+  areIntervalsOverlapping,
+  getOverlappingDaysInIntervals,
 } = require("date-fns");
 
-//daje koliko je tjedana u mjesecu s pocetkom na ponedjeljak
+/* //daje koliko je tjedana u mjesecu s pocetkom na ponedjeljak
 let result = getWeeksInMonth(new Date(), { weekStartsOn: 1 });
 console.log(result);
 
@@ -70,11 +71,27 @@ let tmp2 = getWeekOfMonth(new Date(), {
 console.log(tmp2);
 
 console.error("yo im not havin a good time");
+ */
 console.log(
-  isWithinInterval(new Date("2020-08-26T19:00:00.000+00:00"), {
-    start: new Date("2020-08-26T12:00:00.000+00:00"),
-    end: new Date("2020-08-26T18:00:00.000+00:00"),
-  })
+  /* isWithinInterval(new Date("2020-08-26T20:00:00.000+00:00"), {
+    start: new Date("2020-08-26T19:00:00.000+00:00"),
+    end: new Date("2020-08-26T20:00:00.000+00:00"),
+  }), */
+  areIntervalsOverlapping(
+    {
+      start: new Date("2020-08-26T11:50:00.000+00:00"),
+      end: new Date("2020-08-26T12:45:00.000+00:00"),
+    },
+    {
+      start: new Date("2020-08-26T11:45:00.000+00:00"),
+      end: new Date("2020-08-26T12:45:00.000+00:00"),
+    }
+  )
+);
+console.log(
+  (new Date("2020-08-26T11:40:00.000+00:00") -
+    new Date("2020-08-26T11:00:00.000+00:00")) /
+    (1000 * 60)
 );
 /* const test1 = new Date();
 const test2 = new Date("2020-8-26");
