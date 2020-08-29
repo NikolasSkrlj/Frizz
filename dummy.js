@@ -115,3 +115,6 @@ if (tmp) {
   console.log("nije prazan");
 } else console.log("prazan");
 console.log({} == null); */
+
+console.log({});
+console.log({} == null);

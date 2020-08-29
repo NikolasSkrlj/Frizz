@@ -25,7 +25,8 @@ import {
   Table,
   Alert,
 } from "react-bootstrap";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaClock } from "react-icons/fa";
+import { isEmpty } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
 
 const Salon = ({ salonData }) => {
   const { authToken } = useContext(GlobalContext);
@@ -44,21 +45,24 @@ const Salon = ({ salonData }) => {
 
   //ovo bi trebalo grupirat u razumljiviji state al zasad ne diramo
   //za datepicker
-  const [appointmentDate, setAppointmentDate] = useState(new Date());
-  const [appointmentTime, setAppointmentTime] = useState(new Date());
+  const [appointmentDate, setAppointmentDate] = useState(new Date()); // datum termina
+  const [appointmentTime, setAppointmentTime] = useState(new Date()); // vrijeme termina -> kombinira se sa ovim iznad
 
   // kontrola rezerviranosti
-  const [dateChecked, setDateChecked] = useState(false);
-  const [timeChecked, setTimeChecked] = useState(false);
-  const [takenTimes, setTakenTimes] = useState([]);
+  const [dateChecked, setDateChecked] = useState(false); //sluzi za validaciju ispravnog redoslijeda
+  const [timeChecked, setTimeChecked] = useState(false); //sluzi za validaciju ispravnog redoslijeda
+  const [takenTimes, setTakenTimes] = useState([]); // rezervirani termini na datum koji je odabran
 
   //za odabir termina
-  const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi");
-  const [appointmentType, setAppointmentType] = useState({});
-  const [appointmentValid, setAppointmentValid] = useState(false);
+  const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi"); // label dropdowna
+  const [appointmentType, setAppointmentType] = useState({}); //vrsta termina
+  const [appointmentValid, setAppointmentValid] = useState(false); // provjera s kojom omogucujemo potvrdu termina button
 
   //frizeri koji se mogu odabrati ovisno o odabranom vremenu danu i vremenu
-  const [workingHairdressers, setWorkingHairdressers] = useState(hairdressers);
+  const [allHairdressers, setAllHairdressers] = useState(hairdressers); //svi u salonu
+  const [workingHairdressers, setWorkingHairdressers] = useState(hairdressers); //kontrolirani odabirom vremena, ovisno koja smjena
+  const [hairdressersSelect, setHairdressersSelect] = useState("Neodređen/a"); // label dropdowna
+  const [hairdresser, setHairdresser] = useState({}); //odabrani frizer
 
   //za prikaz errora u slucaju zauzetog termina
   const [message, setMessage] = useState("");
@@ -70,12 +74,7 @@ const Salon = ({ salonData }) => {
   registerLocale("hr", hr);
 
   // provjeravamo dali vrijeme termina za taj datum se preklapa s nekim postojecim terminom
-  const checkTime = (
-    appointmentDate,
-    appointmentTime,
-    appointmentType,
-    takenTimes
-  ) => {
+  const checkTime = () => {
     //kontrola da se prije odabira vremena mora odabrat vrsta termina, a prije toga bi trebao datum al nije nuzno
     if (appointmentTypeSelect === "Odaberi" && timeChecked) {
       setMessage("Odaberite vrstu termina!");
@@ -107,6 +106,7 @@ const Salon = ({ salonData }) => {
     //samo za potrebe inicijalnog stanja kad imamo dummy vrijednosti
     if (appointmentDateTimeStart > appointmentDateTimeEnd) return;
 
+    //prolazak kroz termine za odabrani datum i provjera ako se preklapa s nekim i vraca prikladan boolean
     for (const appointment of takenTimes) {
       const start = new Date(appointment.appointmentDate).setHours(
         appointment.startTime.hours,
@@ -133,16 +133,31 @@ const Salon = ({ salonData }) => {
         )
       ) {
         setMessage(
-          "Vrijeme termina kojeg ste odabrali je zauzeto, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+          "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
         );
         setMessageToggled(true);
         return false;
-      } else {
-        setMessage("");
-        setMessageToggled(false);
-        return true;
       }
     }
+    setMessage("");
+    setMessageToggled(false);
+
+    if (appointmentTypeSelect !== "Odaberi" && timeChecked && dateChecked) {
+      return true;
+    }
+  };
+
+  // filtriramo odabir frizera tako da s obzirom na odabereno vrijeme termina omogucimo odabir samo onih frizera koji rade u toj smjeni
+  const filterHairdressers = () => {
+    const dayInWeek = appointmentDate.getDay();
+    const timestamp =
+      appointmentTime.getHours() + appointmentTime.getMinutes() / 60;
+
+    const filtered = allHairdressers.filter((hairdresser) => {
+      const day = hairdresser.workDays.find((wd) => wd.index === dayInWeek); // pronalazak dana u tjednu i radno vrijeme frizera u tom danu
+      return timestamp >= day.startTime && timestamp <= day.endTime;
+    });
+    setWorkingHairdressers(filtered);
   };
 
   const handleDateChange = async (date) => {
@@ -173,9 +188,19 @@ const Salon = ({ salonData }) => {
     //  checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
   };
 
-  const handleTypeSelect = (e, appType) => {
+  const handleTypeSelect = (appType) => {
     setAppointmentType(appType);
     setAppointmentTypeSelect(appType.name);
+  };
+
+  const handleHairdresserSelect = (hairdresser) => {
+    setHairdresser(hairdresser);
+    //ako je odaberen neodređen/a stavljamo frizera {} i ime takvo
+    if (hairdresser.name) {
+      setHairdressersSelect(hairdresser.name);
+    } else {
+      setHairdressersSelect("Neodređen/a");
+    }
     // e.target.getAttribute("apptypid")); // ovako se dohvaca custom props koje zadajemo DOM nodeovima
   };
 
@@ -185,14 +210,13 @@ const Salon = ({ salonData }) => {
     console.log("pali se useeffect funkcija");
 
     // ovisno o uspjesnosti provjere, omogucava se button za potvrdu termina
-    const valid = checkTime(
-      appointmentDate,
-      appointmentTime,
-      appointmentType,
-      takenTimes
-    );
+    const valid = checkTime();
     setAppointmentValid(valid);
   }, [appointmentTime, appointmentDate, appointmentType]);
+
+  useEffect(() => {
+    filterHairdressers();
+  }, [appointmentTime]);
   /* 
 
   useEffect(() => {
@@ -216,8 +240,11 @@ const Salon = ({ salonData }) => {
     return (
       <div>
         <Button disabled variant="light" style={{ pointerEvents: "none" }}>
-          {new Date(appointmentDate).toLocaleDateString()}
+          {dateChecked
+            ? new Date(appointmentDate).toLocaleDateString()
+            : "Odaberite datum"}
         </Button>
+
         <Button variant="outline-info" onClick={onClick}>
           <FaCalendarAlt />
         </Button>
@@ -226,12 +253,19 @@ const Salon = ({ salonData }) => {
   };
   const TimeInput = ({ onClick }) => {
     return (
-      <Button variant="outline-info" onClick={onClick}>
-        {new Date(appointmentTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </Button>
+      <div>
+        <Button disabled variant="light" style={{ pointerEvents: "none" }}>
+          {timeChecked
+            ? new Date(appointmentTime).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+            : "Odaberite vrijeme"}
+        </Button>
+        <Button variant="outline-info" onClick={onClick}>
+          <FaClock />
+        </Button>
+      </div>
     );
   };
 
@@ -294,34 +328,11 @@ const Salon = ({ salonData }) => {
           </Tab.Pane>
           <Tab.Pane eventKey="wh">
             <Card.Body id="wh">
-              <Card.Title>{name}</Card.Title>
-              <Card.Text>
-                {name} je frizerski salon smješten u centru Buzeta gdje već
-                nekoliko godina uspješno posluje i stoji građanima na
-                raspolaganju.
-              </Card.Text>
-              <ListGroup variant="flush">
-                <ListGroup.Item>
-                  <h4>Adresa</h4>
-                  {Object.values(address).join(", ")}{" "}
-                  <a href="">vidi na karti</a>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <h4>E-mail</h4>
-                  {email}
-                </ListGroup.Item>
-                <ListGroup.Item>
-                  <h4>Telefon</h4>
-                  {phone}
-                </ListGroup.Item>
-              </ListGroup>
-              <Button variant="info" href="#">
-                Go somewhere
-              </Button>
+              Ovdje ce biti tablica sa radnim vremenom
             </Card.Body>{" "}
           </Tab.Pane>
           <Tab.Pane eventKey="gallery">
-            <Card.Body>heheasjhadbjashjbheheheh</Card.Body>
+            <Card.Body>Ovdje ce biti mini galerija sa slikama</Card.Body>
           </Tab.Pane>
           <Tab.Pane eventKey="reserve">
             <Card.Body>
@@ -343,23 +354,23 @@ const Salon = ({ salonData }) => {
                 {dateChecked && (
                   <Col sm={8}>
                     <h5 className="mb-3">
-                      Zauzeti termini na datum{" "}
+                      Zauzeti termini na dan{" "}
                       {new Date(appointmentDate).toLocaleDateString()}
                     </h5>
                     {takenTimes.length ? (
                       <Table striped size="sm" variant="light">
                         <thead>
                           <tr>
-                            <th>Naziv </th>
+                            <th>#</th>
                             <th>Početak</th>
                             <th>Završetak</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {takenTimes.map((app) => {
+                          {takenTimes.map((app, idx) => {
                             return (
                               <tr key={app.id}>
-                                <td>{app.appointmentType.name}</td>
+                                <td>{idx + 1}</td>
                                 {/* Za ime treba populirat appointment type */}
                                 <td>{`${app.startTime.hours.toLocaleString(
                                   undefined,
@@ -401,6 +412,7 @@ const Salon = ({ salonData }) => {
                 )}
 
                 <Col sm={12} className="mb-3">
+                  <hr />
                   <h5 className="mb-3">Vrsta termina</h5>
                   <DropdownButton
                     id="dropdown-item-button"
@@ -413,7 +425,7 @@ const Salon = ({ salonData }) => {
                           as="button"
                           key={app.id}
                           className="d-flex"
-                          onClick={(e) => handleTypeSelect(e, app)} //prosljedjujemo event object kako bi dosli do id atributa
+                          onClick={() => handleTypeSelect(app)} //prosljedjujemo event object kako bi dosli do id atributa
                         >
                           <div>{app.name}</div>
                           <div className="ml-auto">
@@ -433,6 +445,7 @@ const Salon = ({ salonData }) => {
                       <span>{appointmentType.price} kn</span>
                     </div>
                   )}
+                  <hr />
                 </Col>
                 <Col sm={12} className="mb-3">
                   <h5 className="mb-3">Vrijeme termina</h5>
@@ -448,6 +461,7 @@ const Salon = ({ salonData }) => {
                     dateFormat="HH:mm"
                     customInput={<TimeInput />}
                   />
+                  <hr />
                 </Col>
                 <Col sm={12} className="mb-3">
                   <h5 className="mb-3">
@@ -455,26 +469,38 @@ const Salon = ({ salonData }) => {
                   </h5>
                   <DropdownButton
                     id="dropdown-item-button"
-                    title={appointmentTypeSelect}
+                    title={hairdressersSelect}
                     variant="outline-info"
                   >
-                    {appointmentTypes.map((app) => {
+                    {/* <Dropdown.Item
+                      as="button"
+                      className="d-flex"
+                      onClick={() => handleHairdresserSelect({})}
+                    >
+                      <div>Neodređen/a</div>
+                    </Dropdown.Item> */}
+                    {workingHairdressers.map((hairdresser) => {
                       return (
                         <Dropdown.Item
                           as="button"
-                          key={app.id}
+                          key={hairdresser.id}
                           className="d-flex"
-                          onClick={(e) => handleTypeSelect(e, app)} //prosljedjujemo event object kako bi dosli do id atributa
+                          onClick={() => handleHairdresserSelect(hairdresser)}
                         >
-                          <div>{app.name}</div>
-                          <div className="ml-auto">
-                            <div className="border-left my-0 py-0 d-inline mx-2 "></div>
-                            <Badge variant="info">{app.price} kn</Badge>
-                          </div>
+                          <div>{hairdresser.name}</div>
                         </Dropdown.Item>
                       );
                     })}
+                    <Dropdown.Divider />
+                    <Dropdown.Item
+                      as="button"
+                      className="d-flex"
+                      onClick={() => handleHairdresserSelect({})}
+                    >
+                      <div>Neodređen/a - zadano</div>
+                    </Dropdown.Item>
                   </DropdownButton>
+                  <hr />
                 </Col>
               </Row>
               {messageToggled && <Alert variant="danger">{message}</Alert>}

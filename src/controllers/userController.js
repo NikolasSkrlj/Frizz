@@ -134,14 +134,15 @@ module.exports.getSalons = async (req, res, next) => {
 // Access: Authenticated
 module.exports.checkDate = async (req, res, next) => {
   try {
-    console.log(req.body);
     const salonId = req.params.salonId;
     const appointmentDate = req.body.appointmentDate;
 
     const appointments = await Appointment.find({
       salonId,
       appointmentDate: appointmentDate,
-    }).populate("appointmentType");
+    })
+      .sort("appointmentDate")
+      .populate("appointmentType");
 
     const salon = await HairSalon.findOne({ _id: salonId }).populate(
       "appointments"
