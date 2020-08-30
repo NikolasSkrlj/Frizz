@@ -40,7 +40,7 @@ const SalonFeed = () => {
 
         {filtersToggle ? <Card.Body>Ovdje ce biti filteri</Card.Body> : <div />}
       </Card>
-      {salons.length ? (
+      {salons !== undefined && salons.length ? (
         salons.map((salon) => {
           return <Salon salonData={salon} key={salon.id} />;
         })
