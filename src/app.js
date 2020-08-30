@@ -12,7 +12,8 @@ const userRouter = require("./routes/userRouter");
 
 app.use(express.json());
 app.use(cors());
-
+app.use("/hairsalon", salonRouter);
+app.use("/user", userRouter);
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(globalPath, "/client/build")));
   app.get("*", (req, res) => {
@@ -22,8 +23,5 @@ if (process.env.NODE_ENV === "production") {
   const morgan = require("morgan");
   app.use(morgan("dev"));
 }
-
-app.use("/hairsalon", salonRouter);
-app.use("/user", userRouter);
 
 module.exports = app;
