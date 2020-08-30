@@ -29,10 +29,6 @@ const SalonFeed = () => {
     setFiltersToggle(!filtersToggle);
   };
 
-  const mappedSalons = salons.map((salon) => {
-    return <Salon salonData={salon} key={salon.id} />;
-  });
-
   return (
     <Card body>
       <Card className="mb-4">
@@ -45,7 +41,9 @@ const SalonFeed = () => {
         {filtersToggle ? <Card.Body>Ovdje ce biti filteri</Card.Body> : <div />}
       </Card>
       {salons.length ? (
-        mappedSalons
+        salons.map((salon) => {
+          return <Salon salonData={salon} key={salon.id} />;
+        })
       ) : (
         <div className="text-center text-muted justify-content-center">
           <h6 className="pb-2">...Učitavanje salona...</h6>
