@@ -1,7 +1,7 @@
 const express = require("express");
 require("./db/mongoose.js");
 const cors = require("cors");
-const morgan = require("morgan");
+
 const path = require("path");
 
 const app = express();
@@ -19,6 +19,7 @@ if (process.env.NODE_ENV === "production") {
     res.sendfile(path.join((__dirname = "client/build/index.html")));
   });
 } else {
+  const morgan = require("morgan");
   app.use(morgan("dev"));
 }
 
