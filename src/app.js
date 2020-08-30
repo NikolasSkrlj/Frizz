@@ -3,7 +3,7 @@ require("./db/mongoose.js");
 const cors = require("cors");
 
 const path = require("path");
-const { globalPath } = require("../globalPath");
+const { globalPath } = require("../globalPath"); // jer inace ako je se koristi .. u pathu za build folder express ne dopusta
 const app = express();
 
 //importing routers
