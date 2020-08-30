@@ -28,7 +28,7 @@ const SalonFeed = () => {
   const handleFilterClick = () => {
     setFiltersToggle(!filtersToggle);
   };
-
+  //treba dodati error messsage u slucaju pogreske
   return (
     <Card body>
       <Card className="mb-4">
@@ -40,7 +40,7 @@ const SalonFeed = () => {
 
         {filtersToggle ? <Card.Body>Ovdje ce biti filteri</Card.Body> : <div />}
       </Card>
-      {salons !== undefined && salons.length ? (
+      {salons.length ? (
         salons.map((salon) => {
           return <Salon salonData={salon} key={salon.id} />;
         })

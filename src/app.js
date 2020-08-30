@@ -12,8 +12,10 @@ const userRouter = require("./routes/userRouter");
 
 app.use(express.json());
 app.use(cors());
+//ovo mora biti iznad ovog ispod idk why al bez toga u productionu ne rade requesti get
 app.use("/hairsalon", salonRouter);
 app.use("/user", userRouter);
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(globalPath, "/client/build")));
   app.get("*", (req, res) => {
