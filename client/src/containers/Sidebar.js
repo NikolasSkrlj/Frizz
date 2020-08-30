@@ -47,7 +47,7 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
           />
           <div className="media-body">
             <h4 className="m-0">Nikolas Škrlj </h4>
-            <p className="font-weight-light text-muted mb-0">Absolute madman</p>
+            <p className="font-weight-light text-muted mb-0">korisnik</p>
           </div>
         </div>
       </div>

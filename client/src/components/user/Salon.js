@@ -142,12 +142,46 @@ const Salon = ({ salonData }) => {
           return false;
         }
       }
-      //ako postoji hairdresser provjeravamo ako je za odabran termin on slobodan ili ne
+      //ako postoji hairdresser provjeravamo ako je za odabran termin on slobodan ili ne, tj ako se preklapaju termini
     } else {
       for (const appointment of takenTimes) {
+        //console.log(hairdresser.id, appointment.hairdresserId.id);
         //ovdje je hairdresserId instanca modela jer smo populirali taj objectId pri pozivu
-        if (hairdresser.id === appointment.hairdresserId.id) {
-          console.log("JASA");
+        if (
+          appointment.hairdresserId &&
+          hairdresser.id === appointment.hairdresserId.id
+        ) {
+          const start = new Date(appointment.appointmentDate).setHours(
+            appointment.startTime.hours,
+            appointment.startTime.minutes,
+            0
+          );
+          const end = new Date(appointment.appointmentDate).setHours(
+            appointment.endTime.hours,
+            appointment.endTime.minutes,
+            0
+          );
+
+          //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
+          if (
+            areIntervalsOverlapping(
+              {
+                start: appointmentDateTimeStart,
+                end: appointmentDateTimeEnd,
+              },
+              {
+                start,
+                end,
+              }
+            ) &&
+            timeChecked
+          ) {
+            setMessage(
+              "Frizer kojeg ste odabrali nije slobodan u odabranom vremenu termina. Molimo izaberite drugo vrijeme ili postavite izbornik frizera kao 'Neodređen/a'."
+            );
+            setMessageToggled(true);
+            return false;
+          }
         }
         /* const start = new Date(appointment.appointmentDate).setHours(
           appointment.startTime.hours,

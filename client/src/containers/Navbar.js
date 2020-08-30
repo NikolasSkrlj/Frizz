@@ -26,7 +26,7 @@ const NavbarContainer = () => {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        `http://localhost:4000/${userType}/logout`,
+        `/${userType}/logout`,
         {},
         {
           headers: {

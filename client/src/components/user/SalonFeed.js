@@ -13,7 +13,8 @@ const SalonFeed = () => {
 
   useEffect(() => {
     const getData = async () => {
-      const res = await axios.get("http://localhost:4000/user/salons", {
+      const res = await axios.get("/user/salons", {
+        // ovo mozemo jer smo stavili proxy u package.json
         headers: {
           Authorization: authToken,
         },

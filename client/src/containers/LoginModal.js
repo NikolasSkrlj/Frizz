@@ -29,13 +29,10 @@ const LoginModal = () => {
     //setSuccessCheck(true);
     //ako je uspjesan login redirecta se na user dashboard inace se mora poruka pokazat, u context se stavljaju podacu o useru/salonu
     try {
-      const res = await axios.post(
-        `http://localhost:4000/${userTypeRadio}/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const res = await axios.post(`/${userTypeRadio}/login`, {
+        email,
+        password,
+      });
 
       setAuthToken(res.data.token);
       if (userTypeRadio === "user") {
