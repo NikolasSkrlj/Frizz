@@ -1,5 +1,5 @@
-export const isEmpty = (object) => {
-  for (let i in object) {
+export const isEmpty = (obj) => {
+  if (Object.keys(obj).length === 0 && obj.constructor === Object) {
     return true;
   }
   return false;

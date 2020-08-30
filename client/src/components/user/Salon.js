@@ -75,6 +75,15 @@ const Salon = ({ salonData }) => {
 
   // provjeravamo dali vrijeme termina za taj datum se preklapa s nekim postojecim terminom
   const checkTime = () => {
+    console.log("Funkcija checkTime se izvrsava");
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+
+    //ovo mora biti na vrhu jer ako je na dnu i dodje do errora returna se false pa ne dodje do te naredbe
+    filterHairdressers();
+
     //kontrola da se prije odabira vremena mora odabrat vrsta termina, a prije toga bi trebao datum al nije nuzno
     if (appointmentTypeSelect === "Odaberi" && timeChecked) {
       setMessage("Odaberite vrstu termina!");
@@ -94,49 +103,83 @@ const Salon = ({ salonData }) => {
       appointmentDateTimeStart,
       appointmentType.duration ? appointmentType.duration : 0
     );
-    /* const appointmentDateTime = new Date(
-      appointmentDate.getDate(),
-      appointmentDate.getMonth(),
-      appointmentDate.getYear(),
-      appointmentTime.getHours(),
-      appointmentTime.getMinutes(),
-      0
-    ); */
 
-    //samo za potrebe inicijalnog stanja kad imamo dummy vrijednosti
-    if (appointmentDateTimeStart > appointmentDateTimeEnd) return;
+    if (isEmpty(hairdresser)) {
+      //samo za potrebe inicijalnog stanja kad imamo dummy vrijednosti
+      if (appointmentDateTimeStart > appointmentDateTimeEnd) return;
 
-    //prolazak kroz termine za odabrani datum i provjera ako se preklapa s nekim i vraca prikladan boolean
-    for (const appointment of takenTimes) {
-      const start = new Date(appointment.appointmentDate).setHours(
-        appointment.startTime.hours,
-        appointment.startTime.minutes,
-        0
-      );
-      const end = new Date(appointment.appointmentDate).setHours(
-        appointment.endTime.hours,
-        appointment.endTime.minutes,
-        0
-      );
-
-      //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
-      if (
-        areIntervalsOverlapping(
-          {
-            start: appointmentDateTimeStart,
-            end: appointmentDateTimeEnd,
-          },
-          {
-            start,
-            end,
-          }
-        )
-      ) {
-        setMessage(
-          "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+      //prolazak kroz termine za odabrani datum i provjera ako se preklapa s nekim i vraca prikladan boolean
+      for (const appointment of takenTimes) {
+        const start = new Date(appointment.appointmentDate).setHours(
+          appointment.startTime.hours,
+          appointment.startTime.minutes,
+          0
         );
-        setMessageToggled(true);
-        return false;
+        const end = new Date(appointment.appointmentDate).setHours(
+          appointment.endTime.hours,
+          appointment.endTime.minutes,
+          0
+        );
+
+        //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
+        if (
+          areIntervalsOverlapping(
+            {
+              start: appointmentDateTimeStart,
+              end: appointmentDateTimeEnd,
+            },
+            {
+              start,
+              end,
+            }
+          ) &&
+          timeChecked
+        ) {
+          setMessage(
+            "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+          );
+          setMessageToggled(true);
+          return false;
+        }
+      }
+      //ako postoji hairdresser provjeravamo ako je za odabran termin on slobodan ili ne
+    } else {
+      for (const appointment of takenTimes) {
+        //ovdje je hairdresserId instanca modela jer smo populirali taj objectId pri pozivu
+        if (hairdresser.id === appointment.hairdresserId.id) {
+          console.log("JASA");
+        }
+        /* const start = new Date(appointment.appointmentDate).setHours(
+          appointment.startTime.hours,
+          appointment.startTime.minutes,
+          0
+        );
+        const end = new Date(appointment.appointmentDate).setHours(
+          appointment.endTime.hours,
+          appointment.endTime.minutes,
+          0
+        );
+
+        //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
+        if (
+          areIntervalsOverlapping(
+            {
+              start: appointmentDateTimeStart,
+              end: appointmentDateTimeEnd,
+            },
+            {
+              start,
+              end,
+            }
+          ) &&
+          timeChecked
+        ) {
+          setMessage(
+            "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+          );
+          setMessageToggled(true);
+          return false;
+        } */
       }
     }
     setMessage("");
@@ -155,7 +198,7 @@ const Salon = ({ salonData }) => {
 
     const filtered = allHairdressers.filter((hairdresser) => {
       const day = hairdresser.workDays.find((wd) => wd.index === dayInWeek); // pronalazak dana u tjednu i radno vrijeme frizera u tom danu
-      return timestamp >= day.startTime && timestamp <= day.endTime;
+      return timestamp >= day.startTime && timestamp < day.endTime;
     });
     setWorkingHairdressers(filtered);
   };
@@ -177,14 +220,18 @@ const Salon = ({ salonData }) => {
         },
       }
     );
+    // console.log(res.data.appointments);
     setTakenTimes(res.data.appointments);
     setDateChecked(true);
   };
 
   const handleTimeChange = (time) => {
     setAppointmentTime(time);
-    console.log(`Vrijeme odabrano: ${time.getHours()}:${time.getMinutes()}`);
+    //  console.log(`Vrijeme odabrano: ${time.getHours()}:${time.getMinutes()}`);
+    setHairdresser(hairdresser);
+    setHairdressersSelect("Neodređen/a");
     setTimeChecked(true);
+
     //  checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
   };
 
@@ -207,35 +254,23 @@ const Salon = ({ salonData }) => {
   //Ovim useEffectovima kontroliramo dinamicku pojavu errora kod odabira svakog od stavki, vise use caseva
   // ovime kontroliramo da se prije postavi time u state a tek onda provjerava dostupnost, inace se ne izvsri kako treba
   useEffect(() => {
-    console.log("pali se useeffect funkcija");
+    //console.log("pali se useeffect funkcija");
 
     // ovisno o uspjesnosti provjere, omogucava se button za potvrdu termina
     const valid = checkTime();
     setAppointmentValid(valid);
-  }, [appointmentTime, appointmentDate, appointmentType]);
+  }, [appointmentTime, appointmentDate, appointmentType, hairdresser]);
 
-  useEffect(() => {
-    filterHairdressers();
-  }, [appointmentTime]);
-  /* 
-
-  useEffect(() => {
-    checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
-  }, [appointmentTypeSelect, appointmentType]);
-
-  // ovime kontroliramo provjeru da se odabrao tip termina prije vremena
-  useEffect(() => {
-    if (appointmentTypeSelect === "Odaberi" && timeChecked) {
-      setMessage("Odaberite vrstu termina!");
-      setMessageToggled(true);
-    } else {
-      setMessage("");
-      setMessageToggled(false);
+  /*  useEffect(() => {
+    //jer se inicijalno radi s dummy vrijednostima pa da ne buga
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
     }
-  }, [appointmentTypeSelect, timeChecked]);
+    filterHairdressers();
+  }, [appointmentTime, timeChecked]);
  */
-
-  // pomocne komponente za stiliziranje date/time inputa
+  // pomocne komponente za stiliziranje date/time inputa -> iz dokumentacije
   const DateInput = ({ onClick }) => {
     return (
       <div>
@@ -364,14 +399,15 @@ const Salon = ({ salonData }) => {
                             <th>#</th>
                             <th>Početak</th>
                             <th>Završetak</th>
+                            <th>Frizer/ka</th>
                           </tr>
                         </thead>
                         <tbody>
                           {takenTimes.map((app, idx) => {
                             return (
                               <tr key={app.id}>
-                                <td>{idx + 1}</td>
-                                {/* Za ime treba populirat appointment type */}
+                                <td>{idx + 1}.</td>
+
                                 <td>{`${app.startTime.hours.toLocaleString(
                                   undefined,
                                   {
@@ -398,6 +434,13 @@ const Salon = ({ salonData }) => {
                                     useGrouping: false,
                                   }
                                 )}`}</td>
+                                <td>
+                                  {app.hairdresserId ? (
+                                    <div>{app.hairdresserId.name}</div>
+                                  ) : (
+                                    "Neodređen/a"
+                                  )}
+                                </td>
                               </tr>
                             );
                           })}
@@ -453,9 +496,12 @@ const Salon = ({ salonData }) => {
                     selected={appointmentTime}
                     onChange={handleTimeChange}
                     timeCaption="Vrijeme"
+                    timeInputLabel="Vrijeme:"
                     locale="hr"
                     showTimeSelect
                     showTimeSelectOnly
+                    closeOnScroll
+                    /* showTimeInput */
                     timeFormat="HH:mm"
                     timeIntervals={15}
                     dateFormat="HH:mm"

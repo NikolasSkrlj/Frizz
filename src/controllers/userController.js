@@ -142,7 +142,7 @@ module.exports.checkDate = async (req, res, next) => {
       appointmentDate: appointmentDate,
     })
       .sort("appointmentDate")
-      .populate("appointmentType");
+      .populate("appointmentType hairdresserId");
 
     const salon = await HairSalon.findOne({ _id: salonId }).populate(
       "appointments"
