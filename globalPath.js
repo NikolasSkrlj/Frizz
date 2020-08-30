@@ -1,1 +1,1 @@
-export const globalPath = __dirname;
+module.exports.globalPath = __dirname;
