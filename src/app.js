@@ -3,7 +3,7 @@ require("./db/mongoose.js");
 const cors = require("cors");
 
 const path = require("path");
-const globalPath = require("../globalPath");
+const { globalPath } = require("../globalPath");
 const app = express();
 
 //importing routers
@@ -16,7 +16,7 @@ app.use(cors());
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(globalPath, "/client/build")));
   app.get("*", (req, res) => {
-    res.sendfile(path.join((globalPath, "/client/build/index.html")));
+    res.sendfile(path.join(globalPath, "/client/build/index.html"));
   });
 } else {
   const morgan = require("morgan");
