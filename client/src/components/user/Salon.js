@@ -75,7 +75,7 @@ const Salon = ({ salonData }) => {
 
   // provjeravamo dali vrijeme termina za taj datum se preklapa s nekim postojecim terminom
   const checkTime = () => {
-    console.log("Funkcija checkTime se izvrsava");
+    //console.log("Funkcija checkTime se izvrsava");
     if (firstRender.current) {
       firstRender.current = false;
       return;
@@ -244,7 +244,7 @@ const Salon = ({ salonData }) => {
 
     //vraca salon i termine koji ima tog datuma
     const res = await axios.post(
-      `http://localhost:4000/user/${id}/check_date`,
+      `/user/${id}/check_date`,
       {
         appointmentDate: date.toISOString(),
       },
