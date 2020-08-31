@@ -50,15 +50,17 @@ const NavbarContainer = () => {
   };
 
   return (
-    <Navbar
-      bg="info"
-      variant="dark"
-      expand="md"
-      className="shadow-sm"
-      fixed="top"
-    >
-      <Container>
+    <Container>
+      <Navbar
+        bg="info"
+        variant="dark"
+        expand="sm"
+        className="shadow-sm"
+        fixed="top"
+        collapseOnSelect="true"
+      >
         <LoginModal />
+
         <Navbar.Brand
           as={Link}
           to={isLoggedIn ? (userType === "user" ? "/user" : "/hairsalon") : "/"}
@@ -81,6 +83,7 @@ const NavbarContainer = () => {
               <Nav.Link
                 className="d-flex justify-content-center"
                 onClick={() => handleLogout()}
+                href="#"
               >
                 Odjava
               </Nav.Link>
@@ -88,14 +91,15 @@ const NavbarContainer = () => {
               <Nav.Link
                 className="d-flex justify-content-center"
                 onClick={() => toggleShowLoginModal()}
+                href="#"
               >
                 Prijava
               </Nav.Link>
             )}
           </Nav>
         </Navbar.Collapse>
-      </Container>
-    </Navbar>
+      </Navbar>
+    </Container>
   );
 };
 

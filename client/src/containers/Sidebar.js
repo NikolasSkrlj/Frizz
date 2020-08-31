@@ -16,8 +16,6 @@ import {
 import "../styles/Dashboard.css";
 
 const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
-  const [viewport, setViewport] = useState(window.innerWidth);
-
   const base = "vertical-nav bg-white";
   const classNameHtml = !isToggled ? base + " active" : base; // kad ima klasu active onda je sidebar sakriven ??
 
@@ -47,7 +45,8 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
           />
           <div className="media-body">
             <h4 className="m-0">Nikolas Škrlj </h4>
-            <p className="font-weight-light text-muted mb-0">korisnik</p>
+            <p className="font-weight-light text-muted mb-0">korisnik</p>{" "}
+            {/* ovdje ce se dinamicki prikazivat podaci o prijavljenom korisniku */}
           </div>
         </div>
       </div>
@@ -57,7 +56,7 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
       </p>
 
       <ul className="nav flex-column bg-white mb-0">
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <Link
             onClick={handleLinkClick}
             className="nav-link text-dark text-bold bg-light"
@@ -66,7 +65,7 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
             <FaNewspaper className="mr-3" />
             Naslovnica
           </Link>
-        </li>
+        </li> */}
         <li className="nav-item">
           <Link
             className="nav-link text-dark  bg-light"

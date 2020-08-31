@@ -55,9 +55,9 @@ const LoginModal = () => {
   const handleRadioChange = (e) => {
     const value = e.target.value;
     e.target.checked = true;
-    console.warn(e.target.checked);
+    //console.warn(e.target.checked);
     setUserTypeRadio(value);
-    console.warn("kliknuto i postavljeno");
+    //console.warn("kliknuto i postavljeno");
   };
   return (
     <Modal
@@ -74,7 +74,7 @@ const LoginModal = () => {
       <Modal.Body>
         <Form onSubmit={handleLogin}>
           <Form.Group controlId="formBasicEmail">
-            <Form.Label>Email adresa</Form.Label>
+            <Form.Label>E-mail</Form.Label>
             <Form.Control
               type="email"
               placeholder="ivan.horvat@primjer.com"
@@ -124,9 +124,9 @@ const LoginModal = () => {
             </Alert>
           )}
 
-          <Form.Group controlId="formBasicCheckbox">
+          {/* <Form.Group controlId="formBasicCheckbox">
             <Form.Check type="checkbox" label="Zapamti me(opcionalno)" />
-          </Form.Group>
+          </Form.Group> */}
           <Button variant="info" type="submit">
             Prijavi se
           </Button>
