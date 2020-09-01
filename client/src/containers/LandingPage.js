@@ -15,7 +15,7 @@ const LandingPage = () => {
           </h1>
           <p className="lead">
             Pronađite svog novog omiljenog frizera u svega nekoliko klikova.
-            Ovdje treba ici neka pozadinska slika sa opacity 0.5 il tako nes.
+            Ovdje treba ici neka pozadinska slika sa opacity 0.5 il tako nesto.
             Linkovi za registraciju jos ne rade to ce biti medju zadnjim
             koracima to je ez
           </p>
