@@ -50,15 +50,15 @@ const NavbarContainer = () => {
   };
 
   return (
-    <Container>
-      <Navbar
-        bg="info"
-        variant="dark"
-        expand="sm"
-        className="shadow-sm"
-        fixed="top"
-        collapseOnSelect="true"
-      >
+    <Navbar
+      bg="info"
+      variant="dark"
+      expand="sm"
+      className="shadow-sm"
+      fixed="top"
+      collapseOnSelect="true"
+    >
+      <Container>
         <LoginModal />
 
         <Navbar.Brand
@@ -70,20 +70,19 @@ const NavbarContainer = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto">
-            <Nav.Link
+            {/* <Nav.Link
               as={Link}
               to="/"
               className="d-flex justify-content-center"
             >
               Naslovna
-            </Nav.Link>
+            </Nav.Link> */}
           </Nav>
           <Nav className="mr-md-5">
             {isLoggedIn ? (
               <Nav.Link
                 className="d-flex justify-content-center"
                 onClick={() => handleLogout()}
-                href="#"
               >
                 Odjava
               </Nav.Link>
@@ -91,15 +90,14 @@ const NavbarContainer = () => {
               <Nav.Link
                 className="d-flex justify-content-center"
                 onClick={() => toggleShowLoginModal()}
-                href="#"
               >
                 Prijava
               </Nav.Link>
             )}
           </Nav>
         </Navbar.Collapse>
-      </Navbar>
-    </Container>
+      </Container>
+    </Navbar>
   );
 };
 

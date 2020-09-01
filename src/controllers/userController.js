@@ -134,12 +134,16 @@ module.exports.getSalons = async (req, res, next) => {
 // Access: Authenticated
 module.exports.checkDate = async (req, res, next) => {
   try {
+    const user = req.user;
     const salonId = req.params.salonId;
     const appointmentDate = req.body.appointmentDate;
 
+    const dayStart = new Date(appointmentDate).setHours(0, 0, 0);
+    const dayEnd = new Date(appointmentDate).setHours(23, 59, 59);
+
     const appointments = await Appointment.find({
       salonId,
-      appointmentDate: appointmentDate,
+      appointmentDate: { $gte: dayStart, $lte: dayEnd },
     })
       .sort("appointmentDate")
       .populate("appointmentType hairdresserId");
@@ -148,7 +152,14 @@ module.exports.checkDate = async (req, res, next) => {
       "appointments"
     );
 
-    res.send({ success: true, salon, appointments });
+    const userAppoints = await Appointment.findOne({
+      salonId,
+      userId: user.id,
+      appointmentDate: { $gte: dayStart, $lte: dayEnd },
+    });
+    const userCheck = userAppoints ? true : false;
+
+    res.send({ success: true, salon, appointments, userCheck });
   } catch (err) {
     res.status(500).send({
       success: false,
@@ -173,23 +184,17 @@ module.exports.createAppointment = async (req, res, next) => {
     const salonId = req.params.salonId;
     const user = req.user;
 
-    /* tu treba provjere dali je slobodno vrijeme u tom danu
-      koji frizer radi i tako to 
-    */
-
     const appointment = new Appointment({
       salonId,
       userId: user._id,
       hairdresserId,
       startTime,
       endTime,
-      appointmentDate,
+      appointmentDate: appointmentDate,
       appointmentType,
     });
 
-    /* zapravo tu bi trebalo obaviti kontrolu sta se salje dalje sa frizerima jer mora
-      se moc odabrat samo one koje su u smijeni
-    */
+    //ovdje bi trebala provjera ako ima tog salona al nema smisla to zasad
     const salon = await HairSalon.findOne({ _id: salonId });
 
     await appointment.save(async (err) => {

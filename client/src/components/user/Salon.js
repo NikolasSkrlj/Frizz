@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
+import { useHistory, useRouteMatch, useParams } from "react-router-dom";
 import { GlobalContext } from "../../contexts/GlobalContext";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -16,7 +17,6 @@ import {
   Button,
   ListGroup,
   Tab,
-  Form,
   Row,
   Col,
   Dropdown,
@@ -24,13 +24,15 @@ import {
   Badge,
   Table,
   Alert,
+  Toast,
 } from "react-bootstrap";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
-import { isEmpty } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
+import { isEmpty, toIsoString } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
 
 const Salon = ({ salonData }) => {
-  const { authToken } = useContext(GlobalContext);
-
+  const { authToken, user } = useContext(GlobalContext);
+  const history = useHistory();
+  const { url, path } = useRouteMatch();
   const {
     id,
     name,
@@ -64,9 +66,13 @@ const Salon = ({ salonData }) => {
   const [hairdressersSelect, setHairdressersSelect] = useState("Neodređen/a"); // label dropdowna
   const [hairdresser, setHairdresser] = useState({}); //odabrani frizer
 
-  //za prikaz errora u slucaju zauzetog termina
+  //kontrola dal je user vec rezervirao termin na taj datum, zastita neka od "napada" lmao
+  const [userDateCheck, setUserDateCheck] = useState(false);
+
+  //za prikaz errora u slucaju zauzetog termina ili uspjeha
   const [message, setMessage] = useState("");
   const [messageToggled, setMessageToggled] = useState(false);
+  const [messageVariant, setMessageVariant] = useState("danger");
 
   const firstRender = useRef(true);
 
@@ -74,12 +80,15 @@ const Salon = ({ salonData }) => {
   registerLocale("hr", hr);
 
   // provjeravamo dali vrijeme termina za taj datum se preklapa s nekim postojecim terminom
-  const checkTime = () => {
-    //console.log("Funkcija checkTime se izvrsava");
+  const checkAppointment = () => {
+    //console.log("Funkcija checkAppointment se izvrsava");
     if (firstRender.current) {
       firstRender.current = false;
       return;
     }
+
+    //tehnicki nije potrebno ali cisto nek je tu jer
+    //setMessageVariant("danger");
 
     //ovo mora biti na vrhu jer ako je na dnu i dodje do errora returna se false pa ne dodje do te naredbe
     filterHairdressers();
@@ -104,6 +113,7 @@ const Salon = ({ salonData }) => {
       appointmentType.duration ? appointmentType.duration : 0
     );
 
+    //odvajamo logiku provjere ovisno je li odabran frizer ili ne
     if (isEmpty(hairdresser)) {
       //samo za potrebe inicijalnog stanja kad imamo dummy vrijednosti
       if (appointmentDateTimeStart > appointmentDateTimeEnd) return;
@@ -183,37 +193,6 @@ const Salon = ({ salonData }) => {
             return false;
           }
         }
-        /* const start = new Date(appointment.appointmentDate).setHours(
-          appointment.startTime.hours,
-          appointment.startTime.minutes,
-          0
-        );
-        const end = new Date(appointment.appointmentDate).setHours(
-          appointment.endTime.hours,
-          appointment.endTime.minutes,
-          0
-        );
-
-        //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
-        if (
-          areIntervalsOverlapping(
-            {
-              start: appointmentDateTimeStart,
-              end: appointmentDateTimeEnd,
-            },
-            {
-              start,
-              end,
-            }
-          ) &&
-          timeChecked
-        ) {
-          setMessage(
-            "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
-          );
-          setMessageToggled(true);
-          return false;
-        } */
       }
     }
     setMessage("");
@@ -238,25 +217,32 @@ const Salon = ({ salonData }) => {
   };
 
   const handleDateChange = async (date) => {
-    setAppointmentDate(new Date(date.setHours(18, 0, 0)));
-    //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume, 18 je zbog toga jer ISO vrijeme stavlja par sati nazad pa bude drugi datum
-    // vrijeme cemo spremati u druge varijable
+    try {
+      setAppointmentDate(new Date(date.setHours(18, 0, 0)));
+      //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume, 18 je zbog toga jer ISO vrijeme stavlja par sati nazad pa bude drugi datum
+      // vrijeme cemo spremati u druge varijable
+      //vraca salon i termine koji ima tog datuma
 
-    //vraca salon i termine koji ima tog datuma
-    const res = await axios.post(
-      `/user/${id}/check_date`,
-      {
-        appointmentDate: date.toISOString(),
-      },
-      {
-        headers: {
-          Authorization: authToken,
+      const res = await axios.post(
+        `/user/${id}/check_date`,
+        {
+          appointmentDate: date.toISOString(),
         },
+        {
+          headers: {
+            Authorization: authToken,
+          },
+        }
+      );
+      // console.log(res.data.appointments);
+      setTakenTimes(res.data.appointments);
+      setUserDateCheck(res.data.userCheck);
+      setDateChecked(true);
+    } catch (err) {
+      if (err.response) {
+        console.log(err.response);
       }
-    );
-    // console.log(res.data.appointments);
-    setTakenTimes(res.data.appointments);
-    setDateChecked(true);
+    }
   };
 
   const handleTimeChange = (time) => {
@@ -266,7 +252,7 @@ const Salon = ({ salonData }) => {
     setHairdressersSelect("Neodređen/a");
     setTimeChecked(true);
 
-    //  checkTime(appointmentDate, appointmentTime, appointmentType, takenTimes);
+    //  checkAppointment(appointmentDate, appointmentTime, appointmentType, takenTimes);
   };
 
   const handleTypeSelect = (appType) => {
@@ -285,25 +271,86 @@ const Salon = ({ salonData }) => {
     // e.target.getAttribute("apptypid")); // ovako se dohvaca custom props koje zadajemo DOM nodeovima
   };
 
+  const handleSubmit = async () => {
+    const appointmentDateTime = new Date(appointmentDate);
+    appointmentDateTime.setHours(
+      appointmentTime.getHours(),
+      appointmentTime.getMinutes()
+    );
+    const end = addMinutes(
+      appointmentDateTime,
+      appointmentType.duration ? appointmentType.duration : 0
+    );
+
+    try {
+      const res = await axios.post(
+        `/user/${id}/create_appointment`,
+        {
+          //sve podatke vadimo iz statea
+          appointmentDate: appointmentDateTime,
+
+          hairdresserId: isEmpty(hairdresser) ? null : hairdresser.id,
+
+          startTime: {
+            hours: appointmentDateTime.getHours(),
+            minutes: appointmentDateTime.getMinutes(),
+          },
+          endTime: {
+            hours: end.getHours(),
+            minutes: end.getMinutes(),
+          },
+          appointmentType: appointmentType.id,
+        },
+        {
+          headers: {
+            Authorization: authToken,
+          },
+        }
+      );
+      if (res.data.success) {
+        setMessageVariant("success");
+        setAppointmentValid(false);
+        setMessage("Rezervacija uspješno spremljena!");
+        setMessageToggled(true);
+        //treba se sad redirectat negdje ili nesto
+      }
+    } catch (err) {
+      if (err.response) {
+        console.warn("Potvrda nije uspjela", err.response);
+        setMessageVariant("danger");
+        setMessage(
+          "Došlo je do pogreške pri spremanju rezervacije, pokušajte ponovno!"
+        );
+        setMessageToggled(true);
+      }
+    }
+  };
+
   //Ovim useEffectovima kontroliramo dinamicku pojavu errora kod odabira svakog od stavki, vise use caseva
   // ovime kontroliramo da se prije postavi time u state a tek onda provjerava dostupnost, inace se ne izvsri kako treba
   useEffect(() => {
     //console.log("pali se useeffect funkcija");
 
     // ovisno o uspjesnosti provjere, omogucava se button za potvrdu termina
-    const valid = checkTime();
+    const valid = checkAppointment();
     setAppointmentValid(valid);
   }, [appointmentTime, appointmentDate, appointmentType, hairdresser]);
 
-  /*  useEffect(() => {
-    //jer se inicijalno radi s dummy vrijednostima pa da ne buga
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
+  useEffect(() => {
+    if (userDateCheck) {
+      setMessageVariant("danger");
+      setMessageToggled(true);
+      setMessage(
+        "Već postoji rezervacija na odabrani datum registrirana na Vaše ime!"
+      );
+      setAppointmentValid(false);
+    } else {
+      setMessageVariant("danger");
+      setMessageToggled(false);
+      setMessage("");
     }
-    filterHairdressers();
-  }, [appointmentTime, timeChecked]);
- */
+  }, [userDateCheck, appointmentDate]);
+
   // pomocne komponente za stiliziranje date/time inputa -> iz dokumentacije
   const DateInput = ({ onClick }) => {
     return (
@@ -502,7 +549,7 @@ const Salon = ({ salonData }) => {
                           as="button"
                           key={app.id}
                           className="d-flex"
-                          onClick={() => handleTypeSelect(app)} //prosljedjujemo event object kako bi dosli do id atributa
+                          onClick={() => handleTypeSelect(app)}
                         >
                           <div>{app.name}</div>
                           <div className="ml-auto">
@@ -552,13 +599,6 @@ const Salon = ({ salonData }) => {
                     title={hairdressersSelect}
                     variant="outline-info"
                   >
-                    {/* <Dropdown.Item
-                      as="button"
-                      className="d-flex"
-                      onClick={() => handleHairdresserSelect({})}
-                    >
-                      <div>Neodređen/a</div>
-                    </Dropdown.Item> */}
                     {workingHairdressers.map((hairdresser) => {
                       return (
                         <Dropdown.Item
@@ -583,11 +623,15 @@ const Salon = ({ salonData }) => {
                   <hr />
                 </Col>
               </Row>
-              {messageToggled && <Alert variant="danger">{message}</Alert>}
+              {messageToggled && (
+                <Alert variant={messageVariant}>{message}</Alert>
+              )}
+
               <Button
                 variant="success"
                 disabled={!appointmentValid}
                 className="w-100"
+                onClick={handleSubmit}
               >
                 Potvrdi rezervaciju
               </Button>
