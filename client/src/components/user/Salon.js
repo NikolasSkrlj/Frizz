@@ -1,4 +1,10 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useContext,
+  useEffect,
+  useRef,
+  useDebugValue,
+} from "react";
 import { useHistory, useRouteMatch, useParams } from "react-router-dom";
 import { GlobalContext } from "../../contexts/GlobalContext";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -24,7 +30,7 @@ import {
   Badge,
   Table,
   Alert,
-  Toast,
+  Spinner,
 } from "react-bootstrap";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import { isEmpty, toIsoString } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
@@ -54,6 +60,7 @@ const Salon = ({ salonData }) => {
   const [dateChecked, setDateChecked] = useState(false); //sluzi za validaciju ispravnog redoslijeda
   const [timeChecked, setTimeChecked] = useState(false); //sluzi za validaciju ispravnog redoslijeda
   const [takenTimes, setTakenTimes] = useState([]); // rezervirani termini na datum koji je odabran
+  const [appointmentsLoading, setAppointmentsLoading] = useState(false); // rezervirani termini na datum koji je odabran
 
   //za odabir termina
   const [appointmentTypeSelect, setAppointmentTypeSelect] = useState("Odaberi"); // label dropdowna
@@ -218,11 +225,12 @@ const Salon = ({ salonData }) => {
 
   const handleDateChange = async (date) => {
     try {
+      setDateChecked(true);
       setAppointmentDate(new Date(date.setHours(18, 0, 0)));
       //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume, 18 je zbog toga jer ISO vrijeme stavlja par sati nazad pa bude drugi datum
       // vrijeme cemo spremati u druge varijable
       //vraca salon i termine koji ima tog datuma
-
+      setAppointmentsLoading(true);
       const res = await axios.post(
         `/user/${id}/check_date`,
         {
@@ -236,8 +244,8 @@ const Salon = ({ salonData }) => {
       );
       // console.log(res.data.appointments);
       setTakenTimes(res.data.appointments);
+
       setUserDateCheck(res.data.userCheck);
-      setDateChecked(true);
     } catch (err) {
       if (err.response) {
         console.log(err.response);
@@ -335,6 +343,10 @@ const Salon = ({ salonData }) => {
     const valid = checkAppointment();
     setAppointmentValid(valid);
   }, [appointmentTime, appointmentDate, appointmentType, hairdresser]);
+
+  useEffect(() => {
+    setAppointmentsLoading(false);
+  }, [takenTimes]);
 
   useEffect(() => {
     if (userDateCheck) {
@@ -467,73 +479,83 @@ const Salon = ({ salonData }) => {
                 </Col>
 
                 {/* Ovdje ide prikaz tablice zauzetih termina */}
-                {dateChecked && (
-                  <Col sm={8}>
-                    <h5 className="mb-3">
-                      Zauzeti termini na dan{" "}
-                      {new Date(appointmentDate).toLocaleDateString()}
-                    </h5>
-                    {takenTimes.length ? (
-                      <Table striped size="sm" variant="light">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Početak</th>
-                            <th>Završetak</th>
-                            <th>Frizer/ka</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {takenTimes.map((app, idx) => {
-                            return (
-                              <tr key={app.id}>
-                                <td>{idx + 1}.</td>
+                {dateChecked &&
+                  (appointmentsLoading ? (
+                    <Col sm={8}>
+                      <div className="text-center text-muted justify-content-center">
+                        <h6 className="pb-2">
+                          ...Učitavanje zauzetih termina...
+                        </h6>
+                        <Spinner animation="border" variant="info" />
+                      </div>
+                    </Col>
+                  ) : (
+                    <Col sm={8}>
+                      <h5 className="mb-3">
+                        Zauzeti termini na dan{" "}
+                        {new Date(appointmentDate).toLocaleDateString()}
+                      </h5>
+                      {takenTimes.length ? (
+                        <Table striped size="sm" variant="light">
+                          <thead>
+                            <tr>
+                              <th>#</th>
+                              <th>Početak</th>
+                              <th>Završetak</th>
+                              <th>Frizer/ka</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {takenTimes.map((app, idx) => {
+                              return (
+                                <tr key={app.id}>
+                                  <td>{idx + 1}.</td>
 
-                                <td>{`${app.startTime.hours.toLocaleString(
-                                  undefined,
-                                  {
-                                    minimumIntegerDigits: 2,
-                                    useGrouping: false,
-                                  }
-                                )}:${app.startTime.minutes.toLocaleString(
-                                  undefined,
-                                  {
-                                    minimumIntegerDigits: 2,
-                                    useGrouping: false,
-                                  }
-                                )}`}</td>
-                                <td>{`${app.endTime.hours.toLocaleString(
-                                  undefined,
-                                  {
-                                    minimumIntegerDigits: 2,
-                                    useGrouping: false,
-                                  }
-                                )}:${app.endTime.minutes.toLocaleString(
-                                  undefined,
-                                  {
-                                    minimumIntegerDigits: 2,
-                                    useGrouping: false,
-                                  }
-                                )}`}</td>
-                                <td>
-                                  {app.hairdresserId ? (
-                                    <div>{app.hairdresserId.name}</div>
-                                  ) : (
-                                    "Neodređen/a"
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </Table>
-                    ) : (
-                      <h6 className="text-muted">
-                        Za taj datum nema rezerviranih termina.
-                      </h6>
-                    )}
-                  </Col>
-                )}
+                                  <td>{`${app.startTime.hours.toLocaleString(
+                                    undefined,
+                                    {
+                                      minimumIntegerDigits: 2,
+                                      useGrouping: false,
+                                    }
+                                  )}:${app.startTime.minutes.toLocaleString(
+                                    undefined,
+                                    {
+                                      minimumIntegerDigits: 2,
+                                      useGrouping: false,
+                                    }
+                                  )}`}</td>
+                                  <td>{`${app.endTime.hours.toLocaleString(
+                                    undefined,
+                                    {
+                                      minimumIntegerDigits: 2,
+                                      useGrouping: false,
+                                    }
+                                  )}:${app.endTime.minutes.toLocaleString(
+                                    undefined,
+                                    {
+                                      minimumIntegerDigits: 2,
+                                      useGrouping: false,
+                                    }
+                                  )}`}</td>
+                                  <td>
+                                    {app.hairdresserId ? (
+                                      <div>{app.hairdresserId.name}</div>
+                                    ) : (
+                                      "Neodređen/a"
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </Table>
+                      ) : (
+                        <h6 className="text-muted">
+                          Za taj datum nema rezerviranih termina.
+                        </h6>
+                      )}
+                    </Col>
+                  ))}
 
                 <Col sm={12} className="mb-3">
                   <hr />

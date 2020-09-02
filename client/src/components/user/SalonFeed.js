@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../../contexts/GlobalContext";
 import axios from "axios";
-import { Card, Spinner, Button } from "react-bootstrap";
+import { Card, Spinner, Button, Alert } from "react-bootstrap";
 import Salon from "./Salon";
 import { FiSliders } from "react-icons/fi";
 
@@ -11,19 +11,36 @@ const SalonFeed = () => {
   //const [filters, setFilters] = useState({}); // ovdje ce se nalaziti filteri(objekt sa match, sort, project i tim propertyma)
   const [salons, setSalons] = useState([]);
 
-  useEffect(() => {
-    const getData = async () => {
-      const res = await axios.get("/user/salons", {
-        // ovo mozemo jer smo stavili proxy u package.json
-        headers: {
-          Authorization: authToken,
-        },
-      });
+  //za error handling i loading indikator
+  const [fetchSuccess, setFetchSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // da se ne pojavi error odmah mali bug
 
-      setSalons(res.data.salons);
+  useEffect(() => {
+    setIsLoading(true);
+    const getData = async () => {
+      try {
+        const res = await axios.get("/user/salons", {
+          // ovo mozemo jer smo stavili proxy u package.json
+          headers: {
+            Authorization: authToken,
+          },
+        });
+
+        setSalons(res.data.salons);
+        setIsLoading(false);
+      } catch (err) {
+        if (err.response) {
+          setFetchSuccess(false);
+          setIsLoading(false);
+        }
+      }
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    setFetchSuccess(true);
+  }, [salons]);
 
   const handleFilterClick = () => {
     setFiltersToggle(!filtersToggle);
@@ -40,15 +57,20 @@ const SalonFeed = () => {
 
         {filtersToggle ? <Card.Body>Ovdje ce biti filteri</Card.Body> : <div />}
       </Card>
-      {salons.length ? (
-        salons.map((salon) => {
-          return <Salon salonData={salon} key={salon.id} />;
-        })
-      ) : (
+      {isLoading ? (
         <div className="text-center text-muted justify-content-center">
           <h6 className="pb-2">...Učitavanje salona...</h6>
           <Spinner animation="border" variant="info" />
         </div>
+      ) : fetchSuccess ? (
+        salons.map((salon) => {
+          return <Salon salonData={salon} key={salon.id} />;
+        })
+      ) : (
+        <Alert variant="danger">
+          <Alert.Heading>Došlo je do pogreške!</Alert.Heading>
+          <p>Molimo osvježite stranicu!</p>
+        </Alert>
       )}
     </Card>
   );
