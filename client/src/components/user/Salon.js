@@ -98,8 +98,18 @@ const Salon = ({ salonData }) => {
       return;
     }
 
-    //tehnicki nije potrebno ali cisto nek je tu jer
-    //setMessageVariant("danger");
+    setMessageVariant("danger");
+
+    //provjera da je odabran radni dan
+    const dayInWeek =
+      appointmentDate.getDay() === 0 ? 7 : appointmentDate.getDay(); // ovo ovako jer getDate daje 0 index za nedjelju a meni u bazi je 7
+    const day = workingHours.find((wh) => wh.index === dayInWeek);
+
+    if (!day.startWorktime) {
+      setMessage("Odabran je neradni dan salona, molimo odaberite ponovno!");
+      setMessageToggled(true);
+      return false;
+    }
 
     //ovo mora biti na vrhu jer ako je na dnu i dodje do errora returna se false pa ne dodje do te naredbe
     filterHairdressers();
@@ -113,7 +123,17 @@ const Salon = ({ salonData }) => {
       setMessage("");
       setMessageToggled(false);
     }
+    //provjera ako je vrijeme termina u okviru radnog vremena
+    const timestamp =
+      appointmentTime.getHours() + appointmentTime.getMinutes() / 60;
 
+    if (!(timestamp >= day.startWorktime && timestamp < day.endWorktime)) {
+      setMessage("Odaberite vrijeme termina u radnom vremenu salonu!");
+      setMessageToggled(true);
+      return false;
+    }
+
+    //pocetak i kraj odabranog termina u minutama
     const appointmentDateTimeStart = new Date(appointmentDate);
     appointmentDateTimeStart.setHours(
       appointmentTime.getHours(),
@@ -131,7 +151,7 @@ const Salon = ({ salonData }) => {
 
       //prolazak kroz termine za odabrani datum i provjera ako se preklapa s nekim i vraca prikladan boolean
       for (const appointment of takenTimes) {
-        if (!appointment.hairdresserId.id) {
+        if (!appointment.hairdresserId) {
           const start = new Date(appointment.appointmentDate).setHours(
             appointment.startTime.hours,
             appointment.startTime.minutes,
@@ -218,9 +238,19 @@ const Salon = ({ salonData }) => {
 
   // filtriramo odabir frizera tako da s obzirom na odabereno vrijeme termina omogucimo odabir samo onih frizera koji rade u toj smjeni
   const filterHairdressers = () => {
-    const dayInWeek = appointmentDate.getDay();
+    // ovo ovako jer getDate daje 0 index za nedjelju a meni u bazi je 7
+    const dayInWeek =
+      appointmentDate.getDay() === 0 ? 7 : appointmentDate.getDay();
     const timestamp =
       appointmentTime.getHours() + appointmentTime.getMinutes() / 60;
+    /*  const day = workingHours.find((wh) => wh.index === dayInWeek);
+
+    if (!day.startWorktime) {
+      setMessage("Odabran je neradni dan salona, molimo odaberite ponovno!");
+      setMessageToggled(true);
+      setAppointmentValid(false);
+      return;
+    } */
 
     const filtered = allHairdressers.filter((hairdresser) => {
       const day = hairdresser.workDays.find((wd) => wd.index === dayInWeek); // pronalazak dana u tjednu i radno vrijeme frizera u tom danu
@@ -343,8 +373,6 @@ const Salon = ({ salonData }) => {
   //Ovim useEffectovima kontroliramo dinamicku pojavu errora kod odabira svakog od stavki, vise use caseva
   // ovime kontroliramo da se prije postavi time u state a tek onda provjerava dostupnost, inace se ne izvsri kako treba
   useEffect(() => {
-    //console.log("pali se useeffect funkcija");
-
     // ovisno o uspjesnosti provjere, omogucava se button za potvrdu termina
     const valid = checkAppointment();
     setAppointmentValid(valid);
@@ -362,12 +390,14 @@ const Salon = ({ salonData }) => {
         "Već postoji rezervacija na odabrani datum registrirana na Vaše ime!"
       );
       setAppointmentValid(false);
-    } else {
-      setMessageVariant("danger");
-      setMessageToggled(false);
-      setMessage("");
     }
-  }, [userDateCheck, appointmentDate]);
+  }, [
+    userDateCheck,
+    appointmentDate,
+    appointmentTime,
+    appointmentType,
+    hairdresser,
+  ]);
 
   // pomocne komponente za stiliziranje date/time inputa -> iz dokumentacije
   const DateInput = ({ onClick }) => {
