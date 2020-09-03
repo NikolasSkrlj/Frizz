@@ -10,6 +10,7 @@ import { GlobalContext } from "../../contexts/GlobalContext";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import hr from "date-fns/locale/hr";
+import StarRatings from "react-star-ratings";
 import axios from "axios";
 import {
   isWithinInterval,
@@ -36,6 +37,7 @@ import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import { isEmpty, toIsoString } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
 
 const Salon = ({ salonData }) => {
+  console.log("renders");
   const { authToken, user } = useContext(GlobalContext);
   const history = useHistory();
   const { url, path } = useRouteMatch();
@@ -49,6 +51,8 @@ const Salon = ({ salonData }) => {
     appointmentTypes,
     hairdressers,
     phone,
+    reviews,
+    globalRating,
   } = salonData;
 
   //ovo bi trebalo grupirat u razumljiviji state al zasad ne diramo
@@ -397,10 +401,57 @@ const Salon = ({ salonData }) => {
     );
   };
 
+  // pomocna funkcija za mapiranje radnog vremena frizera jer drukcije je tesko zbog strukture podataka
+  const hairdressersWorkHours = () => {
+    const mapped = [];
+    const days = [
+      "ponedjeljak",
+      "utorak",
+      "srijeda",
+      "četvrtak",
+      "petak",
+      "subota",
+      "nedjelja",
+    ];
+
+    for (let i = 0; i < 7; i++) {
+      const row = [];
+      row.push(<td>{days[i]}</td>);
+      for (let j = 0; j < hairdressers.length; j++) {
+        row.push(
+          <td>
+            {hairdressers[j].workDays[i].startTime
+              ? hairdressers[j].workDays[i].startTime +
+                "-" +
+                hairdressers[j].workDays[i].endTime
+              : "ne radi"}
+          </td>
+        );
+      }
+      mapped.push(<tr>{row}</tr>);
+    }
+
+    return mapped;
+  };
   return (
     <Card className="mb-3">
       <Tab.Container id="left-tabs-example" defaultActiveKey="about">
-        <Card.Header className="bg-info text-white lead">{name}</Card.Header>
+        <Card.Header className="bg-info text-white">
+          <div className="lead">{name}</div>
+          <div>
+            <StarRatings
+              starDimension="18px"
+              starSpacing="3px"
+              rating={globalRating}
+              starRatedColor="yellow"
+              numberOfStars={5}
+              name="Ocjena"
+            />
+            <span className="align-middle ml-1">
+              {reviews.length ? `(${reviews.length} ocjena)` : "(nema ocjena)"}
+            </span>
+          </div>
+        </Card.Header>
         <Card.Header>
           <Nav variant="tabs">
             <Nav.Item>
@@ -449,14 +500,55 @@ const Salon = ({ salonData }) => {
                   {phone}
                 </ListGroup.Item>
               </ListGroup>
-              <Button variant="info" href="#reserve">
-                Go somewhere
-              </Button>
             </Card.Body>
           </Tab.Pane>
           <Tab.Pane eventKey="wh">
-            <Card.Body id="wh">
-              Ovdje ce biti tablica sa radnim vremenom
+            <Card.Body id="wh" className="text-center">
+              <Row>
+                <Col sm={4}>
+                  <h4>Salon</h4>
+                  <Table striped size="sm" variant="light">
+                    <thead>
+                      <tr>
+                        <th>Dan</th>
+                        <th>Radno vrijeme</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {workingHours.map((day) => {
+                        return (
+                          <tr key={day.id}>
+                            <td>{day.dayName}</td>
+                            <td>
+                              {day.startWorktime
+                                ? `${day.startWorktime}-${day.endWorktime}`
+                                : "ne radi se"}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+                </Col>
+
+                <Col sm={8}>
+                  <h4>Frizeri</h4>
+                  <Table striped size="sm" variant="light">
+                    <thead>
+                      <tr>
+                        <th>Dan</th>
+                        <th colSpan={hairdressers.length}>Radno vrijeme</th>
+                      </tr>
+                      <tr>
+                        <th></th>
+                        {hairdressers.length &&
+                          hairdressers.map((item) => <th>{item.name}</th>)}
+                      </tr>
+                    </thead>
+                    <tbody>{hairdressersWorkHours()}</tbody>
+                  </Table>
+                </Col>
+              </Row>
             </Card.Body>{" "}
           </Tab.Pane>
           <Tab.Pane eventKey="gallery">
