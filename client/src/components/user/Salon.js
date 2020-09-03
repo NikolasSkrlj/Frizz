@@ -38,7 +38,7 @@ import { isEmpty, toIsoString } from "../../utils/helperFunctions"; // za provje
 
 const Salon = ({ salonData }) => {
   //const { authToken, user } = useContext(GlobalContext);
-  const authToken = localStorage.getItem("token");
+  const authToken = sessionStorage.getItem("token");
   const history = useHistory();
   const { url, path } = useRouteMatch();
   const {
@@ -131,36 +131,38 @@ const Salon = ({ salonData }) => {
 
       //prolazak kroz termine za odabrani datum i provjera ako se preklapa s nekim i vraca prikladan boolean
       for (const appointment of takenTimes) {
-        const start = new Date(appointment.appointmentDate).setHours(
-          appointment.startTime.hours,
-          appointment.startTime.minutes,
-          0
-        );
-        const end = new Date(appointment.appointmentDate).setHours(
-          appointment.endTime.hours,
-          appointment.endTime.minutes,
-          0
-        );
-
-        //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
-        if (
-          areIntervalsOverlapping(
-            {
-              start: appointmentDateTimeStart,
-              end: appointmentDateTimeEnd,
-            },
-            {
-              start,
-              end,
-            }
-          ) &&
-          timeChecked
-        ) {
-          setMessage(
-            "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+        if (!appointment.hairdresserId.id) {
+          const start = new Date(appointment.appointmentDate).setHours(
+            appointment.startTime.hours,
+            appointment.startTime.minutes,
+            0
           );
-          setMessageToggled(true);
-          return false;
+          const end = new Date(appointment.appointmentDate).setHours(
+            appointment.endTime.hours,
+            appointment.endTime.minutes,
+            0
+          );
+
+          //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
+          if (
+            areIntervalsOverlapping(
+              {
+                start: appointmentDateTimeStart,
+                end: appointmentDateTimeEnd,
+              },
+              {
+                start,
+                end,
+              }
+            ) &&
+            timeChecked
+          ) {
+            setMessage(
+              "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+            );
+            setMessageToggled(true);
+            return false;
+          }
         }
       }
       //ako postoji hairdresser provjeravamo ako je za odabran termin on slobodan ili ne, tj ako se preklapaju termini
@@ -260,7 +262,7 @@ const Salon = ({ salonData }) => {
   const handleTimeChange = (time) => {
     setAppointmentTime(time);
     //  console.log(`Vrijeme odabrano: ${time.getHours()}:${time.getMinutes()}`);
-    setHairdresser(hairdresser);
+    setHairdresser({});
     setHairdressersSelect("Neodređen/a");
     setTimeChecked(true);
 
