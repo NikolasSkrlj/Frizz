@@ -34,6 +34,11 @@ const NavbarContainer = () => {
           },
         }
       );
+      //ovo da moze kod refresha ostat podaci vidljivi
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("loggedIn");
+      sessionStorage.removeItem("userType");
+
       if (userType === "user") {
         setUser({});
       } else {

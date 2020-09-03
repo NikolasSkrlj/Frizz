@@ -33,13 +33,16 @@ const LoginModal = () => {
         email,
         password,
       });
-
+      sessionStorage.setItem("token", res.data.token);
+      sessionStorage.setItem("loggedIn", true);
+      sessionStorage.setItem("userType", userTypeRadio);
       setAuthToken(res.data.token);
       if (userTypeRadio === "user") {
         setUser(res.data.user);
       } else {
         setSalon(res.data.salon);
       }
+
       toggleIsLoggedIn();
       toggleShowLoginModal();
       setUserType(userTypeRadio);

@@ -37,8 +37,8 @@ import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import { isEmpty, toIsoString } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
 
 const Salon = ({ salonData }) => {
-  console.log("renders");
-  const { authToken, user } = useContext(GlobalContext);
+  //const { authToken, user } = useContext(GlobalContext);
+  const authToken = localStorage.getItem("token");
   const history = useHistory();
   const { url, path } = useRouteMatch();
   const {
@@ -447,9 +447,9 @@ const Salon = ({ salonData }) => {
               numberOfStars={5}
               name="Ocjena"
             />
-            <span className="align-middle ml-1">
+            <small className="align-middle ml-1">
               {reviews.length ? `(${reviews.length} ocjena)` : "(nema ocjena)"}
-            </span>
+            </small>
           </div>
         </Card.Header>
         <Card.Header>
