@@ -16,7 +16,7 @@ import * as yup from "yup";
 
 //yup je vanjski library za validaciju kojeg koristi formik i lagano je jer ima schemu ovako
 const schema = yup.object({
-  name: yup
+  fullName: yup
     .string()
     .min(2, "Prekratko ime!")
     .max(25, "Predugo ime!")
