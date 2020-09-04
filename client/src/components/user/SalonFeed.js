@@ -45,7 +45,7 @@ const SalonFeed = () => {
   const handleFilterClick = () => {
     setFiltersToggle(!filtersToggle);
   };
-  //treba dodati error messsage u slucaju pogreske
+
   return (
     <Card body>
       <Card className="mb-4">

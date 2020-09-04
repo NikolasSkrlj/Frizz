@@ -92,12 +92,30 @@ const NavbarContainer = () => {
                 Odjava
               </Nav.Link>
             ) : (
-              <Nav.Link
-                className="d-flex justify-content-center"
-                onClick={() => toggleShowLoginModal()}
-              >
-                Prijava
-              </Nav.Link>
+              <>
+                {/* <Nav.Link
+                  className="d-flex justify-content-center"
+                  onClick={() => toggleShowLoginModal()}
+                >
+                  Prijava
+                </Nav.Link> */}
+                <Button
+                  variant="outline-light"
+                  as={Link}
+                  onClick={() => toggleShowLoginModal()}
+                  className="mr-1 my-1 justify-content-sm-center"
+                >
+                  Prijava
+                </Button>
+                <Button
+                  variant="light"
+                  as="a"
+                  href="#reg"
+                  className="ml-1 my-1 justify-content-sm-center text-muted"
+                >
+                  Registracija
+                </Button>
+              </>
             )}
           </Nav>
         </Navbar.Collapse>
