@@ -21,7 +21,7 @@ import booking from "../booking.png";
 const LandingPage = () => {
   return (
     <>
-      <Jumbotron bg="light" className="mb-0 pb-6 ">
+      <Jumbotron className="mb-0 pb-6 ">
         <Container>
           <Row>
             <Col sm={6}>
@@ -39,7 +39,7 @@ const LandingPage = () => {
         </Container>
       </Jumbotron>
       <Container className="mt-0">
-        <Card className="text-center pt-3" bg="light">
+        <Card className="text-center pt-3 bg-white" bg="light">
           <Card.Body>
             <Card.Title className="display-4">Zašto Frizz.hr?</Card.Title>
             <Card.Text className="py-4 text-muted lead">
