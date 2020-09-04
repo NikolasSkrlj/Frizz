@@ -85,12 +85,20 @@ const NavbarContainer = () => {
           </Nav>
           <Nav className="mr-md-5">
             {isLoggedIn ? (
-              <Nav.Link
+              /*  <Nav.Link
                 className="d-flex justify-content-center"
                 onClick={() => handleLogout()}
               >
                 Odjava
-              </Nav.Link>
+              </Nav.Link> */
+              <Button
+                variant="outline-light"
+                as={Link}
+                onClick={() => handleLogout()}
+                className="justify-content-sm-center"
+              >
+                Odjava
+              </Button>
             ) : (
               <>
                 {/* <Nav.Link

@@ -626,7 +626,7 @@ const Salon = ({ salonData }) => {
                               <th>#</th>
                               <th>Početak</th>
                               <th>Završetak</th>
-                              <th>Frizer/ka</th>
+                              <th>Frizer</th>
                             </tr>
                           </thead>
                           <tbody>

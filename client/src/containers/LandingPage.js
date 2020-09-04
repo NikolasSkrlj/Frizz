@@ -7,8 +7,13 @@ import {
   CardDeck,
   Row,
   Col,
+  Nav,
+  Tab,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import UserRegForm from "../components/UserRegForm";
+import SalonRegForm from "../components/SalonRegForm";
+
 import search from "../search.png";
 import review from "../review.png";
 import booking from "../booking.png";
@@ -42,7 +47,7 @@ const LandingPage = () => {
               pristup frizerskim salonima diljem zemlje
             </Card.Text>
 
-            <CardDeck>
+            <CardDeck className="mb-3">
               <Card>
                 <Card.Header>
                   <Card.Img variant="top" src={search} className=" w-50 p-3 " />
@@ -87,28 +92,47 @@ const LandingPage = () => {
                   <Card.Text className="text-muted">
                     Pomognite ostalim korisnicima da odaberu najbolje salone
                     ostavljajući pozitivne ili negativne recenzije, uz mogućnost
-                    specificiranja frizera/ke.
+                    specificiranja frizera.
                   </Card.Text>
                 </Card.Body>
               </Card>
             </CardDeck>
             <div id="reg" name="#reg">
-              <p>
-                It is a long established fact that a reader will be distracted
-                by the readable content of a page when looking at its layout.
-                The point of using Lorem Ipsum is that it has a more-or-less
-                normal distribution of letters, as opposed to using 'Content
-                here, content here', making it look like readable English. Many
-                desktop publishing packages and web page editors now use Lorem
-                Ipsum as their default model text, and a search for 'lorem
-                ipsum' will uncover many web sites still in their infancy.
-                Various versions have evolved over the years, sometimes by
-                accident, sometimes on purpose (injected humour and the like).
-              </p>
+              <Card>
+                <Tab.Container id="left-tabs-example" defaultActiveKey="user">
+                  <Card.Header>
+                    <h2 class="text-center py-4 text-italic">Registriraj se</h2>
+                    <Nav variant="tabs" className="justify-content-center">
+                      <Nav.Item>
+                        <Nav.Link className="text-info " eventKey="user">
+                          Kao korisnik
+                        </Nav.Link>
+                      </Nav.Item>
+                      <Nav.Item>
+                        <Nav.Link className="text-info" eventKey="salon">
+                          Kao vlasnik salona
+                        </Nav.Link>
+                      </Nav.Item>
+                    </Nav>
+                  </Card.Header>
+                  <Tab.Content>
+                    <Tab.Pane eventKey="user">
+                      <Card.Body>
+                        <UserRegForm />
+                      </Card.Body>
+                    </Tab.Pane>
+                    <Tab.Pane eventKey="salon">
+                      <Card.Body>
+                        <SalonRegForm />
+                      </Card.Body>
+                    </Tab.Pane>
+                  </Tab.Content>
+                </Tab.Container>
+              </Card>
             </div>
           </Card.Body>
           <div>
-            {/* zgob icona treba dati im credit, to ce bit u footeru.
+            {/* zbog icona treba dati im credit, to ce bit u footeru.
              */}
             Icons made by{" "}
             <a href="https://www.flaticon.com/authors/freepik" title="Freepik">
