@@ -11,12 +11,12 @@ const User = require("../models/User");
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, age, gender, email, phone, password } = req.body;
-
+    console.log(req.body);
     const found = await User.findOne({ email: email });
     if (found) {
       return res.status(400).send({
         success: false,
-        message: "Korisnik s tim emailom vec postoji!",
+        message: "Korisnik s tim e-mailom vec postoji!",
       });
     }
 
@@ -36,12 +36,13 @@ module.exports.createUser = async (req, res, next) => {
       success: true,
       user,
       token,
-      message: "Korisnik uspjesno unesen!",
+      message: "Korisnički račun uspješno napravljen!",
     });
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: "Dogodila se pogreška",
+      message:
+        "Došlo je do pogreške pri kreiranju korisničkog računa, pokušajte ponovno!",
       error: err.toString(),
     });
   }

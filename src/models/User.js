@@ -20,11 +20,11 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String, //treba validacija
-      validate(value) {
+      /* validate(value) {
         if (!validator.isMobilePhone(value, ["hr-HR"])) {
           throw new Error("Unesite valjani telefonski broj");
         }
-      },
+      }, */
     },
     gender: {
       type: String,

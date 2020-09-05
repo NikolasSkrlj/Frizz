@@ -101,7 +101,7 @@ const LandingPage = () => {
               <Card>
                 <Tab.Container id="left-tabs-example" defaultActiveKey="user">
                   <Card.Header>
-                    <h2 class="text-center py-4 text-italic">Registriraj se</h2>
+                    <h2 class="text-center py-4 ">Registriraj se</h2>
                     <Nav variant="tabs" className="justify-content-center">
                       <Nav.Item>
                         <Nav.Link className="text-info " eventKey="user">

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Navbar, Nav, Button, Container } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
@@ -21,6 +21,7 @@ const NavbarContainer = () => {
     setSalon,
   } = useContext(GlobalContext);
 
+  const [toggled, setToggled] = useState(false);
   const history = useHistory();
 
   const handleLogout = async () => {
@@ -54,6 +55,10 @@ const NavbarContainer = () => {
     }
   };
 
+  /*
+    kad je u mobilnom prikazu navbar se nece collapsat na pritisak linka jer se koriste buttoni a ne Nav.link 
+    a njih ne koristim jer se nemogu normalno stilizirat kao buttoni
+  */
   return (
     <Navbar
       bg="info"
@@ -61,7 +66,6 @@ const NavbarContainer = () => {
       expand="sm"
       className="shadow-sm"
       fixed="top"
-      collapseOnSelect="true"
     >
       <Container>
         <LoginModal />
@@ -74,26 +78,13 @@ const NavbarContainer = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto">
-            {/* <Nav.Link
-              as={Link}
-              to="/"
-              className="d-flex justify-content-center"
-            >
-              Naslovna
-            </Nav.Link> */}
-          </Nav>
+          <Nav className="mr-auto"></Nav>
           <Nav className="mr-md-5">
             {isLoggedIn ? (
-              /*  <Nav.Link
-                className="d-flex justify-content-center"
-                onClick={() => handleLogout()}
-              >
-                Odjava
-              </Nav.Link> */
               <Button
+                data-toggle="collapse"
+                data-target="#basic-navbar-nav"
                 variant="outline-light"
-                as={Link}
                 onClick={() => handleLogout()}
                 className="justify-content-sm-center"
               >
@@ -101,25 +92,21 @@ const NavbarContainer = () => {
               </Button>
             ) : (
               <>
-                {/* <Nav.Link
-                  className="d-flex justify-content-center"
-                  onClick={() => toggleShowLoginModal()}
-                >
-                  Prijava
-                </Nav.Link> */}
                 <Button
                   variant="outline-light"
-                  as={Link}
-                  onClick={() => toggleShowLoginModal()}
-                  className="mr-1 my-1 justify-content-sm-center"
+                  onClick={() => {
+                    toggleShowLoginModal();
+                  }}
+                  className="mx-1 my-1 justify-content-sm-center "
+                  eventKey="1"
                 >
                   Prijava
                 </Button>
                 <Button
                   variant="light"
-                  as="a"
+                  eventKey="1"
                   href="#reg"
-                  className="ml-1 my-1 justify-content-sm-center text-muted"
+                  className="mx-1 my-1 justify-content-sm-center text-muted "
                 >
                   Registracija
                 </Button>
