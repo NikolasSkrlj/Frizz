@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Nav, Button, Navbar, Container, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect, useContext } from "react";
 import { FaNewspaper, FaRegUser, FaCalendarDay } from "react-icons/fa";
 import { FiScissors } from "react-icons/fi";
-import { FiSliders } from "react-icons/fi";
+
+import { GlobalContext } from "../contexts/GlobalContext";
 
 import {
   Link,
@@ -18,11 +18,14 @@ import "../styles/Dashboard.css";
 const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
   const base = "vertical-nav bg-white";
   const classNameHtml = !isToggled ? base + " active" : base; // kad ima klasu active onda je sidebar sakriven ??
+  const { userType } = useContext(GlobalContext);
+  const user = JSON.parse(sessionStorage.getItem("user"));
+  const salon = JSON.parse(sessionStorage.getItem("salon"));
 
-  const history = useHistory();
+  // const history = useHistory();
   const { path, url } = useRouteMatch();
   // The `path` lets us build <Route> paths that are
-  // relative to the parent route, while the `url` lets
+  // relative to the parent route, while the `url` letss
   // us build relative links.
 
   //kada na mobilnoj verziji kliknemo nesto automatski se zatvori sidebar
@@ -44,9 +47,12 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
             className="mr-3 rounded-circle img-thumbnail shadow-sm"
           />
           <div className="media-body">
-            <h4 className="m-0">Nikolas Škrlj </h4>
-            <p className="font-weight-light text-muted mb-0">korisnik</p>{" "}
-            {/* ovdje ce se dinamicki prikazivat podaci o prijavljenom korisniku */}
+            <h4 className="m-0">
+              {userType === "user" ? user && user.name : salon && salon.name}
+            </h4>
+            <p className="font-weight-light text-muted mb-0">
+              {userType === "user" ? "korisnik" : "admin salona"}
+            </p>{" "}
           </div>
         </div>
       </div>
@@ -54,49 +60,86 @@ const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
       <p className="text-gray font-weight-bold text-uppercase px-3 small pb-4 mb-0">
         Menu
       </p>
+      {user && userType === "user" ? (
+        <ul className="nav flex-column bg-white mb-0">
+          {/* <li className="nav-item">
+         <Link
+           onClick={handleLinkClick}
+           className="nav-link text-dark text-bold bg-light"
+           to={`${url}`}
+         >
+           <FaNewspaper className="mr-3" />
+           Naslovnica
+         </Link>
+       </li> */}
+          <li className="nav-item">
+            <Link
+              className="nav-link text-dark  bg-light"
+              to={`${url}/saloni`}
+              onClick={handleLinkClick}
+            >
+              <FiScissors className="mr-3" />
+              Saloni
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              onClick={handleLinkClick}
+              className="nav-link text-dark text-bold bg-light"
+              to={`${url}/appointments`}
+            >
+              <FaCalendarDay className="mr-3" />
+              Termini
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link
+              className="nav-link text-dark text-bold bg-light"
+              onClick={handleLinkClick}
+              to={`${url}/${user._id}/profile`}
+            >
+              <FaRegUser className="mr-3" />
+              Profil
+            </Link>
+          </li>
+        </ul>
+      ) : (
+        salon && (
+          <ul className="nav flex-column bg-white mb-0">
+            {/* <li className="nav-item">
+        <Link
+          onClick={handleLinkClick}
+          className="nav-link text-dark text-bold bg-light"
+          to={`${url}`}
+        >
+          <FaNewspaper className="mr-3" />
+          Naslovnica
+        </Link>
+      </li> */}
 
-      <ul className="nav flex-column bg-white mb-0">
-        {/* <li className="nav-item">
-          <Link
-            onClick={handleLinkClick}
-            className="nav-link text-dark text-bold bg-light"
-            to={`${url}`}
-          >
-            <FaNewspaper className="mr-3" />
-            Naslovnica
-          </Link>
-        </li> */}
-        <li className="nav-item">
-          <Link
-            className="nav-link text-dark  bg-light"
-            to={`${url}/saloni`}
-            onClick={handleLinkClick}
-          >
-            <FiScissors className="mr-3" />
-            Saloni
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            onClick={handleLinkClick}
-            className="nav-link text-dark text-bold bg-light"
-            to={`${url}/appointments`}
-          >
-            <FaCalendarDay className="mr-3" />
-            Termini
-          </Link>
-        </li>
-        <li className="nav-item">
-          <Link
-            className="nav-link text-dark text-bold bg-light"
-            onClick={handleLinkClick}
-            to={`${url}/profile`}
-          >
-            <FaRegUser className="mr-3" />
-            Profil
-          </Link>
-        </li>
-      </ul>
+            <li className="nav-item">
+              <Link
+                onClick={handleLinkClick}
+                className="nav-link text-dark text-bold bg-light"
+                to={`${url}/appointments`}
+              >
+                <FaCalendarDay className="mr-3" />
+                Termini
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link text-dark text-bold bg-light"
+                onClick={handleLinkClick}
+                to={`${url}/${salon._id}/profile`}
+              >
+                <FaRegUser className="mr-3" />
+                Profil
+              </Link>
+            </li>
+          </ul>
+        )
+      )}
     </div>
   );
 };

@@ -36,11 +36,19 @@ const LoginModal = () => {
       sessionStorage.setItem("token", res.data.token);
       sessionStorage.setItem("loggedIn", true);
       sessionStorage.setItem("userType", userTypeRadio);
+
       setAuthToken(res.data.token);
+
       if (userTypeRadio === "user") {
+        //ovdje samo brisemo nepotrebno jer za prikazivanje podataka o korisniku u sidebaru nisu potrebni ovi
+        const userInstance = res.data.user;
+        delete userInstance.reviews;
+        delete userInstance.appointments;
         setUser(res.data.user);
+        sessionStorage.setItem("user", JSON.stringify(userInstance));
       } else {
         setSalon(res.data.salon);
+        sessionStorage.setItem("salon", JSON.stringify(res.data.salon));
       }
 
       toggleIsLoggedIn();

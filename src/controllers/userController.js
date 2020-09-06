@@ -108,6 +108,29 @@ module.exports.getProfile = async (req, res, next) => {
   }
 };
 
+// Desc: Getting profile info for the logged in user
+// Route: GET /:id/profile
+// Access: Authenticated
+module.exports.getProfileById = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id).populate(
+      "reviews appointments"
+    );
+
+    if (!user) {
+      res.status(400).send({ success: false, message: "Korisnik ne postoji" });
+    }
+
+    res.send({ success: true, user });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
 // Desc: Getting salons
 // Route: POST /user/profile
 // Access: Authenticated

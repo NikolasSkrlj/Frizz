@@ -20,7 +20,9 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String, //treba validacija
-      /* validate(value) {
+      /* ne radi kako treba  
+      validate(value) {
+        
         if (!validator.isMobilePhone(value, ["hr-HR"])) {
           throw new Error("Unesite valjani telefonski broj");
         }
@@ -71,6 +73,12 @@ const userSchema = new mongoose.Schema(
       {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "Review",
+      },
+    ],
+    appointments: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Appointment",
       },
     ],
   },

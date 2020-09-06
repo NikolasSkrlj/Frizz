@@ -61,6 +61,12 @@ const hairdresserSchema = new mongoose.Schema(
         ref: "Review",
       },
     ],
+    appointments: [
+      {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "Appointment",
+      },
+    ],
   },
   {
     toObject: {

@@ -13,6 +13,7 @@ import {
 } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import SalonFeed from "../components/user/SalonFeed";
+import UserProfile from "./UserProfile";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 
@@ -45,6 +46,7 @@ const UserDashboard = () => {
 
             <Switch>
               <Route path={`${path}/saloni`} component={SalonFeed} />
+              <Route path={`${path}/:id/profile`} component={UserProfile} />
               <Route path={path} component={DummyContent} />
             </Switch>
           </div>

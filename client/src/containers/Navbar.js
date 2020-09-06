@@ -41,8 +41,10 @@ const NavbarContainer = () => {
       sessionStorage.removeItem("userType");
 
       if (userType === "user") {
+        sessionStorage.removeItem("user");
         setUser({});
       } else {
+        sessionStorage.removeItem("salon");
         setSalon({});
       }
       setAuthToken("");
