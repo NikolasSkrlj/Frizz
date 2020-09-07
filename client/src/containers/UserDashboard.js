@@ -21,7 +21,7 @@ const UserDashboard = () => {
   const history = useHistory();
   const [sidebarToggled, setSidebarToggled] = useState(true);
   const { path, url } = useRouteMatch();
-
+  const { user, salon } = useContext(GlobalContext);
   const base = "page-content pt-3 ";
   const classNameHtml = !sidebarToggled ? base + " active" : base; // kad sidebar i content ima klasu active onda je sidebar sakriven i content full screen sa gumbom
 
@@ -31,7 +31,11 @@ const UserDashboard = () => {
   return (
     <>
       <Container fluid>
-        <Sidebar isToggled={sidebarToggled} closeSidebarOnClick={handleClick} />
+        <Sidebar
+          isToggled={sidebarToggled}
+          closeSidebarOnClick={handleClick}
+          user={user || salon}
+        />
         <Container fluid className="pt-5 ">
           <div className={classNameHtml} id="content">
             {/*  <!-- Toggle button --> */}

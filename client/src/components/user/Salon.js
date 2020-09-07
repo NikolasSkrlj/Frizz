@@ -263,8 +263,8 @@ const Salon = ({ salonData }) => {
     try {
       setDateChecked(true);
       setAppointmentDate(new Date(date.setHours(18, 0, 0)));
-      //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume, 18 je zbog toga jer ISO vrijeme stavlja par sati nazad pa bude drugi datum
-      // vrijeme cemo spremati u druge varijable
+      //stavljamo fiksno vrijeme zbog nacina na koji mongoose pretrazuje datume
+      // vrijeme cemo spremati u druge varijable jer nam treba logika validacije za odabir vremena i datuma odvojeno
       //vraca salon i termine koji ima tog datuma
       setAppointmentsLoading(true);
       const res = await axios.post(

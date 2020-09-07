@@ -81,7 +81,7 @@ const NavbarContainer = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="mr-auto"></Nav>
-          <Nav className="mr-md-5">
+          <Nav>
             {isLoggedIn ? (
               <Button
                 data-toggle="collapse"

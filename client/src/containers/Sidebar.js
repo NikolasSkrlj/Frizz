@@ -15,12 +15,14 @@ import {
 } from "react-router-dom";
 import "../styles/Dashboard.css";
 
-const Sidebar = ({ isToggled, closeSidebarOnClick }) => {
+const Sidebar = ({ isToggled, closeSidebarOnClick, user, salon }) => {
   const base = "vertical-nav bg-white";
   const classNameHtml = !isToggled ? base + " active" : base; // kad ima klasu active onda je sidebar sakriven ??
   const { userType } = useContext(GlobalContext);
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const salon = JSON.parse(sessionStorage.getItem("salon"));
+  /* const [user, setUser] = useState(JSON.parse(sessionStorage.getItem("user")));
+  const [salon, setSalon] = useState(
+    JSON.parse(sessionStorage.getItem("salon"))
+  ); */
 
   // const history = useHistory();
   const { path, url } = useRouteMatch();
