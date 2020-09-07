@@ -15,14 +15,26 @@ import {
 } from "react-router-dom";
 import "../styles/Dashboard.css";
 
-const Sidebar = ({ isToggled, closeSidebarOnClick, user, salon }) => {
+const Sidebar = ({
+  isToggled,
+  closeSidebarOnClick,
+  loggedUser,
+  loggedSalon,
+}) => {
   const base = "vertical-nav bg-white";
   const classNameHtml = !isToggled ? base + " active" : base; // kad ima klasu active onda je sidebar sakriven ??
   const { userType } = useContext(GlobalContext);
-  /* const [user, setUser] = useState(JSON.parse(sessionStorage.getItem("user")));
-  const [salon, setSalon] = useState(
+
+  //ovo nam koristi kad se refresha stranica da se ne izgube podaci, po defaultu se koristi proslijedjen user is props
+  const [storedUser, setStoredUser] = useState(
+    JSON.parse(sessionStorage.getItem("user"))
+  );
+  const [storedSalon, setStoredSalon] = useState(
     JSON.parse(sessionStorage.getItem("salon"))
-  ); */
+  );
+
+  const user = loggedUser || storedUser;
+  const salon = loggedSalon || storedSalon;
 
   // const history = useHistory();
   const { path, url } = useRouteMatch();
@@ -43,8 +55,18 @@ const Sidebar = ({ isToggled, closeSidebarOnClick, user, salon }) => {
       <div className="py-4 px-3 mb-4 bg-light">
         <div className="media d-flex align-items-center">
           <img
-            src="https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
-            alt="..."
+            src={
+              user
+                ? user.profilePic
+                  ? `/user/${user._id}/profile_pic`
+                  : user.gender === "M"
+                  ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+                  : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+                : salon.profilePic
+                ? `/salon/${salon._id}/profile_pic`
+                : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+            }
+            alt="profile picture"
             width="65"
             className="mr-3 rounded-circle img-thumbnail shadow-sm"
           />

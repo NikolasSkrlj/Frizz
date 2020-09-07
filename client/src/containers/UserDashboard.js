@@ -34,7 +34,7 @@ const UserDashboard = () => {
         <Sidebar
           isToggled={sidebarToggled}
           closeSidebarOnClick={handleClick}
-          user={user || salon}
+          loggedUser={user}
         />
         <Container fluid className="pt-5 ">
           <div className={classNameHtml} id="content">

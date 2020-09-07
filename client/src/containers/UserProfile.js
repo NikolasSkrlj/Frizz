@@ -11,6 +11,7 @@ import {
   Row,
   Col,
   ListGroup,
+  Image,
 } from "react-bootstrap";
 import { FaUserEdit } from "react-icons/fa";
 import { Formik } from "formik";
@@ -152,113 +153,127 @@ const UserProfile = () => {
             <Spinner animation="border" variant="info" />
           </div>
         ) : fetchSuccess ? (
-          <Formik
-            validationSchema={schema}
-            onSubmit={(values) => {
-              //console.log(values);
-              handleSubmit(values);
-            }}
-            validateOnChange={false}
-            initialValues={{
-              fullName: user.name,
-              email: user.email,
-              password: "placeholder",
-              gender: user.gender,
-              age: user.age,
-              phone: user.phone,
-            }}
-          >
-            {({
-              handleSubmit,
-              handleChange,
-              handleBlur,
-              values,
-              touched,
-              isValid,
-              errors,
-              setErrors,
-            }) => (
-              <Row>
-                <fieldset disabled={!isEditable}>
-                  <Form
-                    noValidate
-                    onSubmit={handleSubmit}
-                    className="mx-auto text-left"
-                  >
-                    <Col md={{ span: 12 }}>
-                      <Form.Row>
-                        <Form.Group as={Col} md="12" controlId="ime">
-                          <Row>
-                            <Col sm={6}>
-                              {" "}
-                              <Form.Label>
-                                <b>Ime i prezime</b>
-                              </Form.Label>
-                            </Col>
-                            <Col sm={6}>
-                              {" "}
-                              <Form.Control
-                                type="text"
-                                name="fullName"
-                                placeholder="Vaše ime i prezime"
-                                value={values.fullName}
-                                onChange={handleChange}
-                                isInvalid={!!errors.fullName}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                {errors.name}
-                              </Form.Control.Feedback>
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        <hr />
-                        <Form.Group as={Col} md="12" controlId="email">
-                          <Row>
-                            <Col sm={6}>
-                              <Form.Label>
-                                <b>E-mail</b>
-                              </Form.Label>
-                            </Col>
-                            <Col sm={6}>
-                              <Form.Control
-                                type="text"
-                                placeholder="Vaš e-mail"
-                                aria-describedby="inputGroupPrepend"
-                                name="email"
-                                value={values.email}
-                                onChange={handleChange}
-                                isInvalid={!!errors.email}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                {errors.email}
-                              </Form.Control.Feedback>
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        <Form.Group as={Col} md="12" controlId="lozinka">
-                          <Row>
-                            <Col sm={6}>
-                              <Form.Label>
-                                <b>Lozinka</b>
-                              </Form.Label>
-                            </Col>
+          <>
+            <Formik
+              validationSchema={schema}
+              onSubmit={(values) => {
+                //console.log(values);
+                handleSubmit(values);
+              }}
+              validateOnChange={false}
+              initialValues={{
+                fullName: user.name,
+                email: user.email,
+                password: "placeholder",
+                gender: user.gender,
+                age: user.age,
+                phone: user.phone,
+              }}
+            >
+              {({
+                handleSubmit,
+                handleChange,
+                handleBlur,
+                values,
+                touched,
+                isValid,
+                errors,
+                setErrors,
+              }) => (
+                <Row>
+                  <div className="my-3 mx-auto text-center">
+                    <Image
+                      className="w-75"
+                      src={`/user/${user._id}/profile_pic`}
+                      roundedCircle
+                    />
 
-                            <Col sm={6}>
-                              <Form.Control
-                                type="password"
-                                placeholder="Vaša lozinka"
-                                name="password"
-                                value={values.password}
-                                onChange={handleChange}
-                                isInvalid={!!errors.password}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                {errors.password}
-                              </Form.Control.Feedback>
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        {/* <Form.Group as={Col} md="12" controlId="ponovljena">
+                    <h5 className="mt-2">{user.name}</h5>
+                    <div className="lead">korisnik</div>
+                  </div>
+
+                  <fieldset disabled={!isEditable}>
+                    <Form
+                      noValidate
+                      onSubmit={handleSubmit}
+                      className="mx-auto text-left"
+                    >
+                      <Col md={{ span: 12 }}>
+                        <hr />
+                        <br></br>
+                        <Form.Row>
+                          <Form.Group as={Col} md="12" controlId="ime">
+                            <Row>
+                              <Col sm={6}>
+                                {" "}
+                                <Form.Label>
+                                  <b>Ime i prezime</b>
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                {" "}
+                                <Form.Control
+                                  type="text"
+                                  name="fullName"
+                                  placeholder="Vaše ime i prezime"
+                                  value={values.fullName}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.fullName}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.name}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+                          <hr />
+                          <Form.Group as={Col} md="12" controlId="email">
+                            <Row>
+                              <Col sm={6}>
+                                <Form.Label>
+                                  <b>E-mail</b>
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                <Form.Control
+                                  type="text"
+                                  placeholder="Vaš e-mail"
+                                  aria-describedby="inputGroupPrepend"
+                                  name="email"
+                                  value={values.email}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.email}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.email}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+                          <Form.Group as={Col} md="12" controlId="lozinka">
+                            <Row>
+                              <Col sm={6}>
+                                <Form.Label>
+                                  <b>Lozinka</b>
+                                </Form.Label>
+                              </Col>
+
+                              <Col sm={6}>
+                                <Form.Control
+                                  type="password"
+                                  placeholder="Vaša lozinka"
+                                  name="password"
+                                  value={values.password}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.password}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.password}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+                          {/* <Form.Group as={Col} md="12" controlId="ponovljena">
                           <Form.Label>Ponovljena lozinka</Form.Label>
 
                           <Form.Control
@@ -273,115 +288,215 @@ const UserProfile = () => {
                             {errors.repeatedPass}
                           </Form.Control.Feedback>
                         </Form.Group> */}
-                        <Form.Group as={Col} md="12" controlId="tel">
-                          <Row>
-                            <Col sm={6}>
-                              <Form.Label>
-                                <b>Telefon</b>
-                              </Form.Label>
-                            </Col>
-                            <Col sm={6}>
-                              <Form.Control
-                                type="text"
-                                name="phone"
-                                placeholder="Telefonski broj"
-                                value={values.phone}
-                                onChange={handleChange}
-                                isInvalid={!!errors.phone}
-                              />
-                              <Form.Control.Feedback type="invalid">
-                                {errors.phone}
-                              </Form.Control.Feedback>
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        <Form.Group as={Col} md="12" controlId="dob">
-                          <Row>
-                            <Col sm={6}>
-                              <Form.Label>
-                                <b>Dob</b>
-                              </Form.Label>
-                            </Col>
-                            <Col sm={6}>
-                              <Form.Control
-                                type="number"
-                                name="age"
-                                placeholder="Vaša dob"
-                                value={values.age}
-                                onChange={handleChange}
-                                isInvalid={!!errors.age}
-                              />
+                          <Form.Group as={Col} md="12" controlId="tel">
+                            <Row>
+                              <Col sm={6}>
+                                <Form.Label>
+                                  <b>Telefon</b>
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                <Form.Control
+                                  type="text"
+                                  name="phone"
+                                  placeholder="Telefonski broj"
+                                  value={values.phone}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.phone}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.phone}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+                          <Form.Group as={Col} md="12" controlId="dob">
+                            <Row>
+                              <Col sm={6}>
+                                <Form.Label>
+                                  <b>Dob</b>
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                <Form.Control
+                                  type="number"
+                                  name="age"
+                                  placeholder="Vaša dob"
+                                  value={values.age}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.age}
+                                />
 
-                              <Form.Control.Feedback type="invalid">
-                                {errors.age}
-                              </Form.Control.Feedback>
-                            </Col>
-                          </Row>
-                        </Form.Group>
-                        <Form.Group controlId="spol" as={Col} md="12">
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.age}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+                          <Form.Group controlId="spol" as={Col} md="12">
+                            <Row>
+                              <Col sm={6}>
+                                <Form.Label>
+                                  <b>Spol</b>
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                <Form.Control
+                                  as="select"
+                                  name="gender"
+                                  value={values.gender}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.gender}
+                                >
+                                  <option value="Odaberi">Odaberi</option>
+                                  <option value="M">M</option>
+                                  <option value="Ž">Ž</option>
+                                </Form.Control>
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.gender}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+                        </Form.Row>
+                        <Alert
+                          variant={submitSuccess ? "success" : "danger"}
+                          show={messageToggled}
+                        >
+                          {message}
+                        </Alert>
+                        {isEditable && (
                           <Row>
-                            <Col sm={6}>
-                              <Form.Label>
-                                <b>Spol</b>
-                              </Form.Label>
-                            </Col>
-                            <Col sm={6}>
-                              <Form.Control
-                                as="select"
-                                name="gender"
-                                value={values.gender}
-                                onChange={handleChange}
-                                isInvalid={!!errors.gender}
+                            <Col>
+                              <Button
+                                type="reset"
+                                variant="danger"
+                                className="mr-1 w-100"
+                                onClick={() => {
+                                  setErrors({});
+                                  setIsEditable(false);
+                                }}
                               >
-                                <option value="Odaberi">Odaberi</option>
-                                <option value="M">M</option>
-                                <option value="Ž">Ž</option>
-                              </Form.Control>
-                              <Form.Control.Feedback type="invalid">
-                                {errors.gender}
-                              </Form.Control.Feedback>
+                                Odustani
+                              </Button>
+                            </Col>
+                            <Col>
+                              <Button
+                                type="submit"
+                                variant="success"
+                                className="ml-1 w-100"
+                              >
+                                Spremi
+                              </Button>
                             </Col>
                           </Row>
-                        </Form.Group>
-                      </Form.Row>
-                      <Alert
-                        variant={submitSuccess ? "success" : "danger"}
-                        show={messageToggled}
-                      >
-                        {message}
-                      </Alert>
-                      {isEditable && (
-                        <Row>
-                          <Col>
-                            <Button
-                              type="reset"
-                              variant="danger"
-                              className="mr-1 w-100"
-                              onClick={() => {
-                                setErrors({});
-                                setIsEditable(false);
-                              }}
-                            >
-                              Odustani
-                            </Button>
-                          </Col>
-                          <Col>
-                            <Button
-                              type="submit"
-                              variant="success"
-                              className="ml-1 w-100"
-                            >
-                              Spremi
-                            </Button>
-                          </Col>
-                        </Row>
-                      )}
-                    </Col>
-                  </Form>
-                </fieldset>
-              </Row>
-            )}
-          </Formik>
+                        )}
+                      </Col>
+                    </Form>
+                  </fieldset>
+                </Row>
+              )}
+            </Formik>
+            <hr />
+            {/* Za promjenu lozinke */}
+            <h3 className="my-4">Promjeni lozinku</h3>
+
+            <Formik
+              validationSchema={schema}
+              onSubmit={(values) => {
+                //console.log(values);
+                //handleSubmit(values);
+              }}
+              validateOnChange={false}
+              initialValues={{
+                password: "placeholder",
+              }}
+            >
+              {({
+                handleSubmit,
+                handleChange,
+                handleBlur,
+                values,
+                touched,
+                isValid,
+                errors,
+                setErrors,
+              }) => (
+                <Row>
+                  <fieldset disabled>
+                    <Form
+                      noValidate
+                      onSubmit={handleSubmit}
+                      className="text-left"
+                    >
+                      <Col md={{ span: 12 }}>
+                        <h2>U izradi</h2>
+                        <Form.Row>
+                          <Form.Group as={Col} md="12" controlId="staralozinka">
+                            <Form.Label>
+                              <b>Stara lozinka</b>
+                            </Form.Label>
+
+                            <Form.Control
+                              type="password"
+                              placeholder="Vaša lozinka"
+                              name="oldPassword"
+                              value={values.oldPassword}
+                              onChange={handleChange}
+                              isInvalid={!!errors.oldPassword}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                              {errors.oldPassword}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                          <Form.Group as={Col} md="12" controlId="novalozinka">
+                            <Form.Label>
+                              <b>Nova lozinka</b>
+                            </Form.Label>
+
+                            <Form.Control
+                              type="password"
+                              placeholder="Vaša lozinka"
+                              name="newPassword"
+                              value={values.newPassword}
+                              onChange={handleChange}
+                              isInvalid={!!errors.newPassword}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                              {errors.newPassword}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                          <Form.Group as={Col} md="12" controlId="novalozinka">
+                            <Form.Label>
+                              <b>Ponovljena nova lozinka</b>
+                            </Form.Label>
+
+                            <Form.Control
+                              type="password"
+                              placeholder="Vaša lozinka"
+                              name="repeatedNewPassword"
+                              value={values.repeatedNewPassword}
+                              onChange={handleChange}
+                              isInvalid={!!errors.repeatedNewPassword}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                              {errors.repeatedNewPassword}
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                        </Form.Row>
+                        <Alert
+                          variant={submitSuccess ? "success" : "danger"}
+                          show={messageToggled}
+                        >
+                          {message}
+                        </Alert>
+                      </Col>
+                    </Form>
+                  </fieldset>
+                </Row>
+              )}
+            </Formik>
+          </>
         ) : (
           <Alert variant="danger">
             <Alert.Heading>Došlo je do pogreške!</Alert.Heading>

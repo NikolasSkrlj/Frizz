@@ -4,6 +4,7 @@ const Review = require("../models/Review");
 const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
+const sharp = require("sharp");
 
 // Desc: Creating a user account
 // Route: POST /user/create
@@ -164,6 +165,53 @@ module.exports.updateProfile = async (req, res, next) => {
     await user.save();
 
     res.send({ success: true, user, message: "Profil uspješno ažuriran!" });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+// Desc: Uploading profile pic for user
+// Route: POST /user/:id/update
+// Access: Authenticated
+module.exports.uploadProfilePic = async (req, res, next) => {
+  try {
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer();
+    const user = await User.findOne({ _id: req.params.id });
+
+    user.profilePic = buffer; //req.file.buffer mozemo pristupiti samo ako u upload objekt ne zadamo dest: property
+    await user.save();
+    res.send({ success: true, message: "Profilna slika uspješno prenesena!" });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: GET profile pic for a user
+// Route: GET /user/:id/profile-pic
+// Access: Authenticated
+module.exports.getProfilePic = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+
+    if (!user || !user.profilePic) {
+      return res.status(400).send({
+        success: false,
+        message: "Slikovna datoteka ne postoji!",
+      });
+    }
+
+    res.set("Content-Type", "image/jpg"); //moramo rucno postaviti ali radi i bez
+    res.send(user.profilePic);
   } catch (err) {
     res.status(500).send({
       success: false,
