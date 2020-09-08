@@ -16,6 +16,7 @@ const {
   updateProfile,
   uploadProfilePic,
   getProfilePic,
+  changePassword,
 } = require("../controllers/userController");
 
 //config file za upload
@@ -51,6 +52,7 @@ router
   .route("/:id/upload_pic")
   .post(auth, upload.single("profilePic"), uploadProfilePic);
 router.route("/:id/profile_pic").get(getProfilePic);
+router.route("/:id/change_password").put(auth, changePassword);
 router.route("/salons").get(auth, getSalons);
 router.route("/submit_review/:id").post(auth, submitReview); // to treba promjenit obrnuti redoslijed
 router.route("/:salonId/check_date").post(auth, checkDate);

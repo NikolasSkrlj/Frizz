@@ -1,10 +1,14 @@
+//Models
 const HairSalon = require("../models/HairSalon");
 const Hairdresser = require("../models/Hairdresser");
 const Review = require("../models/Review");
 const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
+
 const sharp = require("sharp");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 // Desc: Creating a user account
 // Route: POST /user/create
@@ -12,7 +16,7 @@ const sharp = require("sharp");
 module.exports.createUser = async (req, res, next) => {
   try {
     const { name, age, gender, email, phone, password } = req.body;
-    console.log(req.body);
+    //console.log(req.body);
     const found = await User.findOne({ email: email });
     if (found) {
       return res.status(400).send({
@@ -173,6 +177,52 @@ module.exports.updateProfile = async (req, res, next) => {
     });
   }
 };
+
+// Desc: Changing password for a user
+// Route: PUT /user/:id/change_password
+// Access: Authenticated
+module.exports.changePassword = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Korisnik ne postoji!" });
+    }
+
+    const match = await bcrypt.compare(oldPassword, user.password);
+    if (!match) {
+      return res.status(400).send({
+        success: false,
+        message: "Promijena lozinke nije dozvoljena!",
+      });
+    }
+
+    if (oldPassword === newPassword) {
+      return res.status(400).send({
+        success: false,
+        message: "Nova lozinka ne može biti stara lozinka!",
+      });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.send({
+      success: true,
+      user,
+      message: "Lozinka uspješno promijenjena!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
 // Desc: Uploading profile pic for user
 // Route: POST /user/:id/update
 // Access: Authenticated
@@ -186,7 +236,11 @@ module.exports.uploadProfilePic = async (req, res, next) => {
 
     user.profilePic = buffer; //req.file.buffer mozemo pristupiti samo ako u upload objekt ne zadamo dest: property
     await user.save();
-    res.send({ success: true, message: "Profilna slika uspješno prenesena!" });
+    res.send({
+      success: true,
+      message:
+        "Profilna slika uspješno prenesena! (promjena će biti vidljiva pri sljedećoj prijavi ili ako osvježite stranicu)",
+    });
   } catch (err) {
     res.status(500).send({
       success: false,

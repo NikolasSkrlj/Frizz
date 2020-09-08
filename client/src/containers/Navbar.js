@@ -88,7 +88,9 @@ const NavbarContainer = () => {
                 data-target="#basic-navbar-nav"
                 variant="outline-light"
                 onClick={() => handleLogout()}
-                className="justify-content-sm-center"
+                className={`justify-content-sm-center ${
+                  window.innerWidth <= 765 && "mt-3 mb-1"
+                }`}
               >
                 Odjava
               </Button>

@@ -57,7 +57,7 @@ const LoginModal = () => {
       history.push(`/${userTypeRadio}`);
     } catch (err) {
       if (err.response) {
-        console.log("dap nesto se sjebalo", err);
+        console.log("Došlo je do pogreške kod prijave!", err);
         setSuccessCheck(!successCheck);
       }
     }

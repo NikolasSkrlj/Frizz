@@ -10,12 +10,15 @@ import {
   Form,
   Row,
   Col,
-  ListGroup,
+  Accordion,
   Image,
 } from "react-bootstrap";
 import { FaUserEdit } from "react-icons/fa";
 import { Formik } from "formik";
 import * as yup from "yup";
+import "./../styles/UserProfile.css";
+import ChangePassword from "./../components/user/ChangePassword";
+import UploadProfilePic from "./../components/user/UploadProfilePic";
 
 //yup je vanjski library za validaciju kojeg koristi formik i lagano je jer ima schemu ovako
 const schema = yup.object({
@@ -23,21 +26,21 @@ const schema = yup.object({
     .string()
     .min(2, "Prekratko ime!")
     .max(25, "Predugo ime!")
-    .required("Ime je obavezno"),
+    .required("Obavezno polje!"),
   age: yup
     .number()
     .min(18, "Morate imati minimalno 18 godina")
 
-    .required("Dob je obavezna"),
-  email: yup.string().email("Neispravan e-mail").required("E-mail je obavezan"),
+    .required("Obavezno polje!"),
+  email: yup.string().email("Neispravan e-mail").required("Obavezno polje!"),
   phone: yup
     .string()
     .min(9, "Unesite valjan tel. broj")
     .max(10, "Unesite valjan tel. broj")
-    .required("Tel. broj je obavezan"),
+    .required("Obavezno polje!"),
   gender: yup
     .string()
-    .required("Spol je obavezan")
+    .required("Obavezno polje!")
     .test("test-name", "Odaberite jedan od spolova", (value) => {
       return value !== "Odaberi";
     }),
@@ -50,7 +53,7 @@ const UserProfile = () => {
   const [message, setMessage] = useState("");
   const [messageToggled, setMessageToggled] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [isSubmited, setIsSubmited] = useState(false);
+
   const [isEditable, setIsEditable] = useState(false);
 
   //za error handling i loading indikator
@@ -181,22 +184,30 @@ const UserProfile = () => {
                 setErrors,
               }) => (
                 <Row>
-                  <div className="my-3 mx-auto text-center">
-                    <Image
-                      className="w-75"
-                      src={`/user/${user._id}/profile_pic`}
-                      roundedCircle
-                    />
+                  <Col sm={12}>
+                    <div className="my-3 mx-auto text-center">
+                      <Image
+                        className="profile-pic"
+                        src={
+                          user.profilePic
+                            ? `/user/${user._id}/profile_pic`
+                            : user.gender === "M"
+                            ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+                            : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+                        }
+                        roundedCircle
+                      />
 
-                    <h5 className="mt-2">{user.name}</h5>
-                    <div className="lead">korisnik</div>
-                  </div>
+                      <h5 className="mt-2">{user.name}</h5>
+                      <div className="lead">korisnik</div>
+                    </div>
+                  </Col>
 
-                  <fieldset disabled={!isEditable}>
+                  <fieldset disabled={!isEditable} className="w-100">
                     <Form
                       noValidate
                       onSubmit={handleSubmit}
-                      className="mx-auto text-left"
+                      className="text-left w-100"
                     >
                       <Col md={{ span: 12 }}>
                         <hr />
@@ -250,44 +261,7 @@ const UserProfile = () => {
                               </Col>
                             </Row>
                           </Form.Group>
-                          <Form.Group as={Col} md="12" controlId="lozinka">
-                            <Row>
-                              <Col sm={6}>
-                                <Form.Label>
-                                  <b>Lozinka</b>
-                                </Form.Label>
-                              </Col>
 
-                              <Col sm={6}>
-                                <Form.Control
-                                  type="password"
-                                  placeholder="Vaša lozinka"
-                                  name="password"
-                                  value={values.password}
-                                  onChange={handleChange}
-                                  isInvalid={!!errors.password}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.password}
-                                </Form.Control.Feedback>
-                              </Col>
-                            </Row>
-                          </Form.Group>
-                          {/* <Form.Group as={Col} md="12" controlId="ponovljena">
-                          <Form.Label>Ponovljena lozinka</Form.Label>
-
-                          <Form.Control
-                            type="password"
-                            placeholder="Vaša lozinka"
-                            name="repeatedPass"
-                            value={values.repeatedPass}
-                            onChange={handleChange}
-                            isInvalid={!!errors.repeatedPass}
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.repeatedPass}
-                          </Form.Control.Feedback>
-                        </Form.Group> */}
                           <Form.Group as={Col} md="12" controlId="tel">
                             <Row>
                               <Col sm={6}>
@@ -399,103 +373,46 @@ const UserProfile = () => {
             </Formik>
             <hr />
             {/* Za promjenu lozinke */}
-            <h3 className="my-4">Promjeni lozinku</h3>
+            <h3 className="my-4">Opcije</h3>
+            <Row className="my-5">
+              <Col sm={6}>
+                <b>Promjena lozinke</b>
+              </Col>
+              <Col sm={6}>
+                <ChangePassword />
+              </Col>
+            </Row>
 
-            <Formik
-              validationSchema={schema}
-              onSubmit={(values) => {
-                //console.log(values);
-                //handleSubmit(values);
-              }}
-              validateOnChange={false}
-              initialValues={{
-                password: "placeholder",
-              }}
-            >
-              {({
-                handleSubmit,
-                handleChange,
-                handleBlur,
-                values,
-                touched,
-                isValid,
-                errors,
-                setErrors,
-              }) => (
-                <Row>
-                  <fieldset disabled>
-                    <Form
-                      noValidate
-                      onSubmit={handleSubmit}
-                      className="text-left"
-                    >
-                      <Col md={{ span: 12 }}>
-                        <h2>U izradi</h2>
-                        <Form.Row>
-                          <Form.Group as={Col} md="12" controlId="staralozinka">
-                            <Form.Label>
-                              <b>Stara lozinka</b>
-                            </Form.Label>
-
-                            <Form.Control
-                              type="password"
-                              placeholder="Vaša lozinka"
-                              name="oldPassword"
-                              value={values.oldPassword}
-                              onChange={handleChange}
-                              isInvalid={!!errors.oldPassword}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.oldPassword}
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                          <Form.Group as={Col} md="12" controlId="novalozinka">
-                            <Form.Label>
-                              <b>Nova lozinka</b>
-                            </Form.Label>
-
-                            <Form.Control
-                              type="password"
-                              placeholder="Vaša lozinka"
-                              name="newPassword"
-                              value={values.newPassword}
-                              onChange={handleChange}
-                              isInvalid={!!errors.newPassword}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.newPassword}
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                          <Form.Group as={Col} md="12" controlId="novalozinka">
-                            <Form.Label>
-                              <b>Ponovljena nova lozinka</b>
-                            </Form.Label>
-
-                            <Form.Control
-                              type="password"
-                              placeholder="Vaša lozinka"
-                              name="repeatedNewPassword"
-                              value={values.repeatedNewPassword}
-                              onChange={handleChange}
-                              isInvalid={!!errors.repeatedNewPassword}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.repeatedNewPassword}
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                        </Form.Row>
-                        <Alert
-                          variant={submitSuccess ? "success" : "danger"}
-                          show={messageToggled}
-                        >
-                          {message}
-                        </Alert>
-                      </Col>
-                    </Form>
-                  </fieldset>
-                </Row>
-              )}
-            </Formik>
+            <Row className="my-5">
+              <Col sm={6}>
+                <b>Promjena profilne slike</b>
+              </Col>
+              <Col sm={6}>
+                <UploadProfilePic />
+              </Col>
+            </Row>
+            {/*  <Accordion>
+              <Card>
+                <Accordion.Toggle as={Card.Header} eventKey="0">
+                  Promjena lozinke
+                </Accordion.Toggle>
+                <Accordion.Collapse eventKey="0">
+                  <Card.Body>
+                    <ChangePassword />
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+              <Card>
+                <Accordion.Toggle as={Card.Header} eventKey="1">
+                  Promjena profilne slike
+                </Accordion.Toggle>
+                <Accordion.Collapse eventKey="1">
+                  <Card.Body>
+                    <UploadProfilePic />
+                  </Card.Body>
+                </Accordion.Collapse>
+              </Card>
+            </Accordion> */}
           </>
         ) : (
           <Alert variant="danger">

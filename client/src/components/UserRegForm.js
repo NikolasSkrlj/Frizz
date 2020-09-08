@@ -21,30 +21,30 @@ const schema = yup.object({
     .string()
     .min(2, "Prekratko ime!")
     .max(25, "Predugo ime!")
-    .required("Ime je obavezno"),
+    .required("Obavezno polje!"),
   age: yup
     .number()
     .min(18, "Morate imati minimalno 18 godina")
 
-    .required("Dob je obavezna"),
-  email: yup.string().email("Neispravan e-mail").required("E-mail je obavezan"),
+    .required("Obavezno polje!"),
+  email: yup.string().email("Neispravan e-mail").required("Obavezno polje!"),
   password: yup
     .string()
     .min(7, "Mora sadržavati 7 ili više znakova")
-    .required("Lozinka je obavezna"),
+    .required("Obavezno polje!"),
   repeatedPass: yup
     .string()
     .min(7, "Mora sadržavati 7 ili više znakova")
     .oneOf([yup.ref("password"), null], "Lozinke se ne podudaraju")
-    .required("Ponovljena lozinka je obavezna"),
+    .required("Obavezno polje!"),
   phone: yup
     .string()
     .min(9, "Unesite valjan tel. broj")
     .max(10, "Unesite valjan tel. broj")
-    .required("Tel. broj je obavezan"),
+    .required("Obavezno polje!"),
   gender: yup
     .string()
-    .required("Spol je obavezan")
+    .required("Obavezno polje!")
     .test("test-name", "Odaberite jedan od spolova", (value) => {
       return value !== "Odaberi";
     }),

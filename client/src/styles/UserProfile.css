@@ -1,0 +1,9 @@
+.profile-pic {
+  width: 225px;
+}
+
+@media (max-width: 992px) {
+  .profile-pic {
+    width: 150px;
+  }
+}
