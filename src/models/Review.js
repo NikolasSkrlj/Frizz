@@ -11,6 +11,7 @@ const reviewSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId, //psotojat ce ako je user reg
       required: true,
+      ref: "User",
     },
     rating: {
       type: Number,
@@ -66,6 +67,7 @@ reviewSchema.methods.updateRatings = async function () {
     return review !== null;
   }).length;
 
+  //+ pretvara u brojcani tip variable
   salon.globalRating = +(salonRatingSum.rating / salonReviewsLength).toFixed(2);
 
   await salon.save(() => {

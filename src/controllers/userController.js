@@ -461,3 +461,47 @@ module.exports.submitReview = async (req, res, next) => {
     });*/
   }
 };
+
+// Desc: Get all reviews for a salon
+// Route: GET /user/:salonId/reviews
+// Access: Authenticated
+module.exports.getReviews = async (req, res, next) => {
+  try {
+    const salonId = req.params.salonId;
+
+    const reviewsCnt = await Review.countDocuments({
+      salonId,
+      hairdresserId: null,
+    });
+
+    //pet reviewa po stranici cemo prikazivati
+    const sort = {};
+    const limit = 3;
+
+    if (req.query.sortBy) {
+      const values = req.query.sortBy.split("_");
+      const term = values[0];
+      sort[term] = values[1] === "asc" ? 1 : -1;
+    }
+
+    //console.log(sort);
+    const skip = req.query.page ? req.query.page * limit : null;
+    const reviews = await Review.find({ salonId, hairdresserId: null }, null, {
+      sort,
+      limit,
+      skip,
+    }).populate("userId");
+
+    res.send({
+      success: true,
+      reviews,
+      totalReviewsCnt: reviewsCnt,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};

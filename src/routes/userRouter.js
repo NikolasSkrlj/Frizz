@@ -4,26 +4,30 @@ const auth = require("../middleware/auth");
 const multer = require("multer");
 //import hair salon controller
 const {
+  //Za usera
   createUser,
   loginUser,
   logoutUser,
   getProfile,
   getProfileById,
-  getSalons,
-  submitReview,
-  checkDate,
-  createAppointment,
   updateProfile,
   uploadProfilePic,
   getProfilePic,
   changePassword,
+  //Za salone
+  getSalons,
+  submitReview,
+  getReviews,
+  checkDate,
+  createAppointment,
 } = require("../controllers/userController");
 
 //config file za upload
 const upload = multer({
   limits: {
-    fileSize: 5000000, // 1 MB
+    fileSize: 5000000, // 5 MB
   },
+
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|png|jpeg)/)) {
       // regex, \ je escape char za tocku, (| je ili ili)
@@ -57,4 +61,5 @@ router.route("/salons").get(auth, getSalons);
 router.route("/submit_review/:id").post(auth, submitReview); // to treba promjenit obrnuti redoslijed
 router.route("/:salonId/check_date").post(auth, checkDate);
 router.route("/:salonId/create_appointment").post(auth, createAppointment);
+router.route("/:salonId/reviews").get(auth, getReviews);
 module.exports = router;

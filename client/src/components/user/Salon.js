@@ -35,6 +35,7 @@ import {
 } from "react-bootstrap";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import { isEmpty, toIsoString } from "../../utils/helperFunctions"; // za provjeru ako je objekt prazan
+import SalonReviews from "./SalonReviews";
 
 const Salon = ({ salonData }) => {
   //const { authToken, user } = useContext(GlobalContext);
@@ -471,14 +472,16 @@ const Salon = ({ salonData }) => {
         <Card.Header className="bg-info text-white">
           <div className="lead">{name}</div>
           <div>
-            <StarRatings
-              starDimension="18px"
-              starSpacing="3px"
-              rating={globalRating}
-              starRatedColor="yellow"
-              numberOfStars={5}
-              name="Ocjena"
-            />
+            <span>
+              <StarRatings
+                starDimension="18px"
+                starSpacing="3px"
+                rating={globalRating}
+                starRatedColor="yellow"
+                numberOfStars={5}
+                name="Ocjena"
+              />
+            </span>
             <small className="align-middle ml-1">
               {reviews.length ? `(${reviews.length} ocjena)` : "(nema ocjena)"}
             </small>
@@ -497,13 +500,13 @@ const Salon = ({ salonData }) => {
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link className="text-info" eventKey="gallery">
-                Galerija
+              <Nav.Link className="text-info" eventKey="reserve">
+                Rezerviraj termin
               </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link className="text-info" eventKey="reserve">
-                Rezerviraj termin
+              <Nav.Link className="text-info" eventKey="reviews">
+                Recenzije
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -583,8 +586,10 @@ const Salon = ({ salonData }) => {
               </Row>
             </Card.Body>{" "}
           </Tab.Pane>
-          <Tab.Pane eventKey="gallery">
-            <Card.Body>Ovdje ce biti mini galerija sa slikama</Card.Body>
+          <Tab.Pane eventKey="reviews">
+            <Card.Body>
+              <SalonReviews salon={salonData} />
+            </Card.Body>
           </Tab.Pane>
           <Tab.Pane eventKey="reserve">
             <Card.Body>
