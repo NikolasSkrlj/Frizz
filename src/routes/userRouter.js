@@ -58,7 +58,7 @@ router
 router.route("/:id/profile_pic").get(getProfilePic);
 router.route("/:id/change_password").put(auth, changePassword);
 router.route("/salons").get(auth, getSalons);
-router.route("/submit_review/:id").post(auth, submitReview); // to treba promjenit obrnuti redoslijed
+router.route("/:salonId/submit_review").post(auth, submitReview);
 router.route("/:salonId/check_date").post(auth, checkDate);
 router.route("/:salonId/create_appointment").post(auth, createAppointment);
 router.route("/:salonId/reviews").get(auth, getReviews);

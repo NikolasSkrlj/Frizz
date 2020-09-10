@@ -73,6 +73,7 @@ const LoginModal = () => {
   return (
     <Modal
       show={showLoginModal}
+      centered
       onHide={toggleShowLoginModal}
       onClick={() => {
         //koristimo event bubbling, kontrola je li prikazan error o uspjesnosti, nakon pogreske klikom na formu nestat ce error

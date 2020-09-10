@@ -488,7 +488,7 @@ const Salon = ({ salonData }) => {
           </div>
         </Card.Header>
         <Card.Header>
-          <Nav variant="tabs">
+          <Nav variant="tabs" fill>
             <Nav.Item>
               <Nav.Link className="text-info " eventKey="about">
                 O salonu

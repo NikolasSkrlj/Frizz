@@ -33,6 +33,7 @@ const Sidebar = ({
     JSON.parse(sessionStorage.getItem("salon"))
   );
 
+  //ili user koji je spremljen u global contextu ili u sessionstorageu
   const user = loggedUser || storedUser;
   const salon = loggedSalon || storedSalon;
 

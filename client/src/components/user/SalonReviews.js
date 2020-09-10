@@ -19,6 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Formik } from "formik";
 import * as yup from "yup";
 import hr from "date-fns/locale/hr";
+import SubmitReviewForm from "./SubmitReviewForm";
 
 const SalonReviews = ({ salon }) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
@@ -32,7 +33,16 @@ const SalonReviews = ({ salon }) => {
   const [totalReviewsCnt, setTotalReviewsCnt] = useState(0);
   const [page, setPage] = useState(0);
 
+  /*
+    limit na backendu po stranici je default 5(sada 3) i moze se stavit tu varijablu limit pa bi korisnik mogao odredjivati broj po
+    stranici al to sad nije bitno
+  */
+
+  const limit = 3;
   const [reviews, setReviews] = useState([]);
+
+  //ovo sluzi za rerender useru kad objavi recenziju
+  const [isUpdated, setIsUpdated] = useState(false);
 
   const [message, setMessage] = useState("");
   const [messageToggled, setMessageToggled] = useState(false);
@@ -68,7 +78,7 @@ const SalonReviews = ({ salon }) => {
       setPage(page - 1);
     } else {
       // 5 je limit po stranici zadan na backendu, sjeti se promijenit
-      if ((page + 1) * 3 > totalReviewsCnt) {
+      if ((page + 1) * limit >= totalReviewsCnt) {
         return;
       }
       setPage(page + 1);
@@ -102,7 +112,7 @@ const SalonReviews = ({ salon }) => {
         setIsLoading(false);
       }
     }
-  }, [sortOptions, page]);
+  }, [sortOptions, page, isUpdated]);
 
   return (
     <>
@@ -113,6 +123,7 @@ const SalonReviews = ({ salon }) => {
             title={sortButtonLabel}
             variant="outline-secondary"
             className="ml-auto"
+            size="sm"
           >
             <Dropdown.Item onClick={() => handleClick("Najnovije")}>
               Najnoviji
@@ -137,50 +148,60 @@ const SalonReviews = ({ salon }) => {
         </div>
       ) : fetchSuccess ? (
         <div>
-          {reviews.map((review) => {
-            return (
-              <Media key={review._id} className="my-2">
-                <img
-                  width={50}
-                  height={50}
-                  className="mr-3 rounded-circle"
-                  src={
-                    review.userId.profilePic
-                      ? `/user/${review.userId._id}/profile_pic`
-                      : review.userId.gender === "M"
-                      ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
-                      : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
-                  }
-                  alt="Generic placeholder"
-                />
-                <Media.Body>
-                  <h5 className="d-inline-block">{review.userId.name}</h5>
-                  <span className="text-muted mx-1">
-                    <small>
-                      {formatDistanceToNow(new Date(review.updatedAt), {
-                        addSuffix: true,
-                        locale: hr,
-                      })}
-                    </small>
-                  </span>
-                  <div className="align-middle">
-                    <h6>
-                      <StarRatings
-                        starDimension="18px"
-                        starSpacing="3px"
-                        rating={review.rating}
-                        starRatedColor="yellow"
-                        numberOfStars={5}
-                        name="Ocjena"
-                        className="d-inline-block align-middle"
-                      />
-                    </h6>
-                  </div>
-                  <p>{review.comment || ""}</p>
-                </Media.Body>
-              </Media>
-            );
-          })}
+          <SubmitReviewForm
+            salon={salon}
+            update={setIsUpdated}
+            setPage={setPage}
+          />
+          {reviews ? (
+            reviews.map((review) => {
+              return (
+                <Media key={review._id} className="my-2">
+                  <img
+                    width={50}
+                    height={50}
+                    className="mr-3 rounded-circle"
+                    src={
+                      review.userId.profilePic
+                        ? `/user/${review.userId._id}/profile_pic`
+                        : review.userId.gender === "M"
+                        ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+                        : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
+                    }
+                    alt="Generic placeholder"
+                  />
+                  <Media.Body>
+                    <h5 className="d-inline-block">{review.userId.name}</h5>
+                    <span className="text-muted mx-1">
+                      <small>
+                        {formatDistanceToNow(new Date(review.updatedAt), {
+                          addSuffix: true,
+                          locale: hr,
+                        })}
+                      </small>
+                    </span>
+                    <div className="align-middle">
+                      <h6>
+                        <StarRatings
+                          starDimension="18px"
+                          starSpacing="3px"
+                          rating={review.rating}
+                          starRatedColor="yellow"
+                          numberOfStars={5}
+                          name="Ocjena"
+                          className="d-inline-block align-middle"
+                        />
+                      </h6>
+                    </div>
+                    <p>{review.comment || ""}</p>
+                  </Media.Body>
+                </Media>
+              );
+            })
+          ) : (
+            <h6 className="text-muted">Nema recenzija.</h6>
+          )}
+          {/* Prikaz navigacije za stranice */}
           <div className="d-flex">
             <ButtonGroup className="mx-auto">
               <Button
@@ -192,17 +213,25 @@ const SalonReviews = ({ salon }) => {
                 <FaAngleLeft />
               </Button>
 
+              {/* 
+                Znaci dijeli se broj ukupnih recenzija na broj njih po stranici i to je broj cijelih stranica a ako ostane ostatak mora biti jos
+                jedna, to rjesava math.ceil ostatka jer ako nema ostatka ceil ce dati nula i nema dodatne stranice
+              */}
               <Button
                 variant="info"
-                disabled
+                style={{ pointerEvents: "none" }}
                 size={window.innerWidth <= 765 ? "sm" : ""}
               >
-                Stranica {page + 1} od {Math.floor(totalReviewsCnt / 3 + 1)}
+                Stranica {page + 1} od{" "}
+                {Math.floor(
+                  totalReviewsCnt / limit +
+                    Math.ceil((totalReviewsCnt % limit) / limit)
+                )}
               </Button>
               <Button
                 variant="outline-info"
                 onClick={() => handlePageChange("next")}
-                disabled={(page + 1) * 3 > totalReviewsCnt}
+                disabled={(page + 1) * limit >= totalReviewsCnt}
                 size={window.innerWidth <= 765 ? "sm" : ""}
               >
                 <FaAngleRight />

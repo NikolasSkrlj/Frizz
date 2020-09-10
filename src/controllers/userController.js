@@ -392,11 +392,11 @@ module.exports.submitReview = async (req, res, next) => {
     const { rating, hairdresserId, comment } = req.body;
 
     const user = req.user;
-    const salon = await HairSalon.findOne({ _id: req.params.id });
+    const salon = await HairSalon.findOne({ _id: req.params.salonId });
 
     if (salon) {
       const review = new Review({
-        salonId: req.params.id,
+        salonId: req.params.salonId,
         userId: user._id,
         rating,
         hairdresserId,
@@ -426,7 +426,7 @@ module.exports.submitReview = async (req, res, next) => {
               if (!hairdresser) {
                 return res.status(404).send({
                   success: false,
-                  message: "Frizer/ka s navedenim id-om ne postoji!",
+                  message: "Frizer kojeg ste odabrali ne postoji!",
                 });
               }
               hairdresser.reviews.push(review);
@@ -443,7 +443,7 @@ module.exports.submitReview = async (req, res, next) => {
       res.send({
         success: true,
         review,
-        message: "Recenzija uspjesno unesena!",
+        message: "Recenzija uspješno unesena!",
       });
     } else {
       res.status(404).send({
