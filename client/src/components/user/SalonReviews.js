@@ -21,7 +21,7 @@ import * as yup from "yup";
 import hr from "date-fns/locale/hr";
 import SubmitReviewForm from "./SubmitReviewForm";
 
-const SalonReviews = ({ salon }) => {
+const SalonReviews = ({ salon, setSalon }) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
 
   //default ce biti po datumu prema najnovijim
@@ -32,6 +32,9 @@ const SalonReviews = ({ salon }) => {
   const [sortButtonLabel, setSortButtonLabel] = useState("Sortiraj po");
   const [totalReviewsCnt, setTotalReviewsCnt] = useState(0);
   const [page, setPage] = useState(0);
+
+  const [filterButtonLabel, setFilterButtonLabel] = useState("Filtriraj");
+  const [filter, setFilter] = useState("salonAndHairdressers");
 
   /*
     limit na backendu po stranici je default 5(sada 3) i moze se stavit tu varijablu limit pa bi korisnik mogao odredjivati broj po
@@ -51,7 +54,23 @@ const SalonReviews = ({ salon }) => {
 
   const params = useParams();
 
-  const handleClick = (term) => {
+  const handleFilterClick = (term) => {
+    setFilterButtonLabel(term);
+    switch (term) {
+      case "Salon i frizeri":
+        setFilter("salonAndHairdressers");
+        break;
+      case "Salon":
+        setFilter("salon");
+        break;
+      case "Frizeri":
+        setFilter("hairdressers");
+        break;
+      default:
+        return;
+    }
+  };
+  const handleSortClick = (term) => {
     setSortButtonLabel(term);
     switch (term) {
       case "Najnovije":
@@ -91,9 +110,9 @@ const SalonReviews = ({ salon }) => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/user/${salon._id}/reviews?sortBy=${sortOptions.option}_${
-            sortOptions.isAsc ? "asc" : "desc"
-          }&page=${page}`,
+          `/user/${salon._id}/reviews?filter=${filter}&sortBy=${
+            sortOptions.option
+          }_${sortOptions.isAsc ? "asc" : "desc"}&page=${page}`,
           {
             headers: {
               Authorization: "Bearer " + authToken,
@@ -112,32 +131,55 @@ const SalonReviews = ({ salon }) => {
         setIsLoading(false);
       }
     }
-  }, [sortOptions, page, isUpdated]);
+  }, [sortOptions, page, isUpdated, filter]);
 
   return (
     <>
       <div>
         <div className="d-flex">
-          <DropdownButton
-            id="dropdown-basic-button"
-            title={sortButtonLabel}
-            variant="outline-secondary"
-            className="ml-auto"
-            size="sm"
-          >
-            <Dropdown.Item onClick={() => handleClick("Najnovije")}>
-              Najnoviji
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleClick("Najstarije")}>
-              Najstariji
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleClick("S većom ocjenom")}>
-              S većom ocjenom
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleClick("S nižom ocjenom")}>
-              S nižom ocjenom
-            </Dropdown.Item>
-          </DropdownButton>
+          <div className="ml-auto">
+            <DropdownButton
+              as={ButtonGroup}
+              id="dropdown-basic-button"
+              title={filterButtonLabel}
+              variant="outline-info"
+              className="ml-auto"
+              size="sm"
+            >
+              <Dropdown.Item
+                onClick={() => handleFilterClick("Salon i frizeri")}
+              >
+                Recenzije za salon i frizere
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleFilterClick("Salon")}>
+                Recenzije za salon
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleFilterClick("Frizeri")}>
+                Recenzije za frizere
+              </Dropdown.Item>
+            </DropdownButton>
+            <DropdownButton
+              as={ButtonGroup}
+              id="dropdown-basic-button"
+              title={sortButtonLabel}
+              variant="outline-secondary"
+              className="ml-auto"
+              size="sm"
+            >
+              <Dropdown.Item onClick={() => handleSortClick("Najnovije")}>
+                Najnoviji
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleSortClick("Najstarije")}>
+                Najstariji
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleSortClick("S većom ocjenom")}>
+                S većom ocjenom
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleSortClick("S nižom ocjenom")}>
+                S nižom ocjenom
+              </Dropdown.Item>
+            </DropdownButton>
+          </div>
         </div>
         <hr />
       </div>
@@ -150,8 +192,9 @@ const SalonReviews = ({ salon }) => {
         <div>
           <SubmitReviewForm
             salon={salon}
-            update={setIsUpdated}
+            updateReviews={setIsUpdated}
             setPage={setPage}
+            setSalon={setSalon}
           />
           {reviews ? (
             reviews.map((review) => {
@@ -193,7 +236,14 @@ const SalonReviews = ({ salon }) => {
                         />
                       </h6>
                     </div>
-                    <p>{review.comment || ""}</p>
+                    <p>
+                      <span className="text-muted">
+                        {review.hairdresserId
+                          ? `[frizer - ${review.hairdresserId.name}] `
+                          : "[salon] "}
+                      </span>
+                      {review.comment || ""}
+                    </p>
                   </Media.Body>
                 </Media>
               );

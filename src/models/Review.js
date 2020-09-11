@@ -22,6 +22,7 @@ const reviewSchema = new mongoose.Schema(
     hairdresserId: {
       type: mongoose.Schema.Types.ObjectId, //ako se ocjenjuje samo salon bit ce null inace
       default: null,
+      ref: "Hairdresser",
     },
     comment: {
       // ovdje mozda postaviti neki time formater, treba vidjet u kojem rasponu mogu bit trajanja(30 min visekratnik mozda)

@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useEffect,
-  useRef,
-  useDebugValue,
-} from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { useHistory, useRouteMatch, useParams } from "react-router-dom";
 import { GlobalContext } from "../../contexts/GlobalContext";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -42,6 +36,7 @@ const Salon = ({ salonData }) => {
   const authToken = sessionStorage.getItem("token");
   const history = useHistory();
   const { url, path } = useRouteMatch();
+  const [salon, setSalon] = useState(salonData);
   const {
     id,
     name,
@@ -54,8 +49,10 @@ const Salon = ({ salonData }) => {
     phone,
     reviews,
     globalRating,
-  } = salonData;
+  } = salon;
 
+  // console.log(reviews.length, salon.reviews.length);
+  //console.log(salon);
   //ovo bi trebalo grupirat u razumljiviji state al zasad ne diramo
   //za datepicker
   const [appointmentDate, setAppointmentDate] = useState(new Date()); // datum termina
@@ -85,6 +82,8 @@ const Salon = ({ salonData }) => {
   const [message, setMessage] = useState("");
   const [messageToggled, setMessageToggled] = useState(false);
   const [messageVariant, setMessageVariant] = useState("danger");
+
+  const [isSalonUpdated, setIsSalonUpdated] = useState(false);
 
   const firstRender = useRef(true);
 
@@ -483,7 +482,9 @@ const Salon = ({ salonData }) => {
               />
             </span>
             <small className="align-middle ml-1">
-              {reviews.length ? `(${reviews.length} ocjena)` : "(nema ocjena)"}
+              {salon.reviews.length
+                ? `(${salon.reviews.length} ocjena)`
+                : "(nema ocjena)"}
             </small>
           </div>
         </Card.Header>
@@ -588,7 +589,7 @@ const Salon = ({ salonData }) => {
           </Tab.Pane>
           <Tab.Pane eventKey="reviews">
             <Card.Body>
-              <SalonReviews salon={salonData} />
+              <SalonReviews salon={salonData} setSalon={setSalon} />
             </Card.Body>
           </Tab.Pane>
           <Tab.Pane eventKey="reserve">

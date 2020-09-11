@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../../contexts/GlobalContext";
+
 import axios from "axios";
 import { Card, Spinner, Button, Alert } from "react-bootstrap";
 import Salon from "./Salon";
@@ -63,9 +64,13 @@ const SalonFeed = () => {
           <Spinner animation="border" variant="info" />
         </div>
       ) : fetchSuccess ? (
-        salons.map((salon) => {
-          return <Salon salonData={salon} key={salon.id} />;
-        })
+        salons.length ? (
+          salons.map((salon) => {
+            return <Salon salonData={salon} key={salon.id} />;
+          })
+        ) : (
+          <h6 className="text-muted">Nema salona</h6>
+        )
       ) : (
         <Alert variant="danger">
           <Alert.Heading>Došlo je do pogreške!</Alert.Heading>

@@ -16,7 +16,13 @@ import {
 } from "react-bootstrap";
 import StarRatings from "react-star-ratings";
 
-const HairdresserReviewSubmit = ({ hairdressers, handleClose, salon }) => {
+const HairdresserReviewSubmit = ({
+  hairdressers,
+  handleClose,
+  salon,
+  setSalon,
+  updateReviews,
+}) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [show, setShow] = useState(false);
 
@@ -60,6 +66,13 @@ const HairdresserReviewSubmit = ({ hairdressers, handleClose, salon }) => {
         setSubmitSuccess(true);
         setMessage(res.data.message);
         setMessageToggled(true);
+        setSalon((prevState) => {
+          return {
+            ...prevState,
+            reviews: res.data.reviews,
+            // globalRating: res.data.newRating, updatanje ratinga ne radi jer se vrsi asinkrono tkda se prije posalji response nego se azurira
+          };
+        });
       }
     } catch (err) {
       //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
@@ -134,7 +147,14 @@ const HairdresserReviewSubmit = ({ hairdressers, handleClose, salon }) => {
           {message}
         </Alert>
         {submitSuccess && message ? (
-          <Button variant="secondary" onClick={handleClose} block>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              handleClose();
+              updateReviews();
+            }}
+            block
+          >
             Zatvori
           </Button>
         ) : (

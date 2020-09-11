@@ -4,13 +4,14 @@ import React, { createContext, useState } from "react";
 export const SalonContext = createContext();
 
 const SalonContextProvider = (props) => {
-  const [salon, setSalon] = useState({});
+  const [salon, setSalon] = useState(props.salonData);
+  const [isUpdated, setIsUpdated] = useState(false);
 
   const updateSalon = (salon) => {
     setSalon(salon);
   };
   return (
-    <SalonContext.Provider value={{ salon, updateSalon }}>
+    <SalonContext.Provider value={{ salon, updateSalon, setIsUpdated }}>
       {props.children}
     </SalonContext.Provider>
   );

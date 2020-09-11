@@ -18,16 +18,17 @@ import {
 import StarRatings from "react-star-ratings";
 import HairdresserReviewSubmit from "./HairdresserReviewSubmit";
 
-const SubmitReviewForm = ({ salon, update, setPage }) => {
+const SubmitReviewForm = ({ salon, updateReviews, setPage, setSalon }) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
     setShow(false);
     setReview({ comment: "", rating: 0 });
+
     //ako je uspjesno unesena recenzija, pri zatvaranju modala se rerenderaju recenzije i prikaze se najnovija unesena recenzija prva
     if (submitSuccess) {
-      update((prevState) => !prevState);
+      updateReviews((prevState) => !prevState);
       setPage(0);
     }
   };
@@ -67,6 +68,14 @@ const SubmitReviewForm = ({ salon, update, setPage }) => {
         setSubmitSuccess(true);
         setMessage(res.data.message);
         setMessageToggled(true);
+        /* setSalon((prevState) => {
+          return {
+            ...prevState,
+            reviews: res.data.reviews,
+            // globalRating: res.data.newRating, updatanje ratinga ne radi jer se vrsi asinkrono tkda se prije posalji response nego se azurira
+          };
+        }); */
+        //console.log(res.data.reviews);
       }
     } catch (err) {
       //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
@@ -198,7 +207,9 @@ const SubmitReviewForm = ({ salon, update, setPage }) => {
                   <HairdresserReviewSubmit
                     hairdressers={salon.hairdressers}
                     handleClose={handleClose}
+                    updateReviews={updateReviews}
                     salon={salon}
+                    setSalon={setSalon}
                   />
                 </Card.Body>
               </Tab.Pane>

@@ -6,6 +6,7 @@ const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
 
+const mongoose = require("mongoose");
 const sharp = require("sharp");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -440,9 +441,10 @@ module.exports.submitReview = async (req, res, next) => {
         });
       });
 
+      const reviews = [...salon.reviews];
       res.send({
         success: true,
-        review,
+        reviews,
         message: "Recenzija uspješno unesena!",
       });
     } else {
@@ -469,11 +471,6 @@ module.exports.getReviews = async (req, res, next) => {
   try {
     const salonId = req.params.salonId;
 
-    const reviewsCnt = await Review.countDocuments({
-      salonId,
-      hairdresserId: null,
-    });
-
     //pet reviewa po stranici cemo prikazivati
     const sort = {};
     const limit = 3;
@@ -484,13 +481,22 @@ module.exports.getReviews = async (req, res, next) => {
       sort[term] = values[1] === "asc" ? 1 : -1;
     }
 
+    const filter = req.query.filter;
+    const search = { salonId };
+    if (filter === "salon") {
+      search.hairdresserId = null;
+    } else if (filter === "hairdressers") {
+      search.hairdresserId = { $ne: null };
+    }
+    const reviewsCnt = await Review.countDocuments(search);
+
     //console.log(sort);
     const skip = req.query.page ? req.query.page * limit : null;
-    const reviews = await Review.find({ salonId, hairdresserId: null }, null, {
+    const reviews = await Review.find(search, null, {
       sort,
       limit,
       skip,
-    }).populate("userId");
+    }).populate("userId hairdresserId");
 
     res.send({
       success: true,
