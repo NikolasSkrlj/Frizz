@@ -17,6 +17,8 @@ const {
   //Za salone
   getSalons,
   submitReview,
+  editReview,
+  deleteReview,
   getReviews,
   checkDate,
   createAppointment,
@@ -50,7 +52,7 @@ router.route("/create").post(createUser);
 router.route("/login").post(loginUser);
 router.route("/logout").post(auth, logoutUser);
 //router.route("/profile").get(auth, getProfile);
-router.route("/:id/profile").get(auth, getProfileById);
+router.route("/:id/get_profile").get(auth, getProfileById);
 router.route("/:id/update").put(auth, updateProfile);
 router
   .route("/:id/upload_pic")
@@ -59,6 +61,8 @@ router.route("/:id/profile_pic").get(getProfilePic);
 router.route("/:id/change_password").put(auth, changePassword);
 router.route("/salons").get(auth, getSalons);
 router.route("/:salonId/submit_review").post(auth, submitReview);
+router.route("/edit_review").put(auth, editReview);
+router.route("/delete_review").delete(auth, deleteReview);
 router.route("/:salonId/check_date").post(auth, checkDate);
 router.route("/:salonId/create_appointment").post(auth, createAppointment);
 router.route("/:salonId/reviews").get(auth, getReviews);

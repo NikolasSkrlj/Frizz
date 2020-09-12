@@ -9,20 +9,24 @@ import {
   Alert,
   Media,
   DropdownButton,
+  Row,
+  Col,
   Container,
   Dropdown,
   ButtonGroup,
 } from "react-bootstrap";
 import StarRatings from "react-star-ratings";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight, FaTrash, FaRegEdit } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { Formik } from "formik";
 import * as yup from "yup";
 import hr from "date-fns/locale/hr";
 import SubmitReviewForm from "./SubmitReviewForm";
+import EditReviewModal from "./EditReviewModal";
 
 const SalonReviews = ({ salon, setSalon }) => {
-  const { authToken, user, setUser } = useContext(GlobalContext);
+  const { authToken } = useContext(GlobalContext);
+  const [user, setUser] = useState({});
 
   //default ce biti po datumu prema najnovijim
   const [sortOptions, setSortOptions] = useState({
@@ -54,6 +58,10 @@ const SalonReviews = ({ salon, setSalon }) => {
 
   const params = useParams();
 
+  useEffect(() => {
+    setUser(JSON.parse(sessionStorage.getItem("user")));
+  }, []);
+
   const handleFilterClick = (term) => {
     setFilterButtonLabel(term);
     switch (term) {
@@ -69,6 +77,7 @@ const SalonReviews = ({ salon, setSalon }) => {
       default:
         return;
     }
+    setPage(0);
   };
   const handleSortClick = (term) => {
     setSortButtonLabel(term);
@@ -88,6 +97,7 @@ const SalonReviews = ({ salon, setSalon }) => {
       default:
         return;
     }
+    setPage(0);
   };
   const handlePageChange = (direction) => {
     if (direction === "prev") {
@@ -214,36 +224,51 @@ const SalonReviews = ({ salon, setSalon }) => {
                     alt="Generic placeholder"
                   />
                   <Media.Body>
-                    <h5 className="d-inline-block">{review.userId.name}</h5>
-                    <span className="text-muted mx-1">
-                      <small>
-                        {formatDistanceToNow(new Date(review.updatedAt), {
-                          addSuffix: true,
-                          locale: hr,
-                        })}
-                      </small>
-                    </span>
-                    <div className="align-middle">
-                      <h6>
-                        <StarRatings
-                          starDimension="18px"
-                          starSpacing="3px"
-                          rating={review.rating}
-                          starRatedColor="yellow"
-                          numberOfStars={5}
-                          name="Ocjena"
-                          className="d-inline-block align-middle"
-                        />
-                      </h6>
-                    </div>
-                    <p>
-                      <span className="text-muted">
-                        {review.hairdresserId
-                          ? `[frizer - ${review.hairdresserId.name}] `
-                          : "[salon] "}
-                      </span>
-                      {review.comment || ""}
-                    </p>
+                    <Row>
+                      <Col sm={user._id === review.userId._id ? 10 : 12}>
+                        <h5 className="d-inline-block">{review.userId.name}</h5>
+                        <span className="text-muted mx-1">
+                          <small>
+                            {formatDistanceToNow(new Date(review.updatedAt), {
+                              addSuffix: true,
+                              locale: hr,
+                            })}
+                          </small>
+                        </span>
+                        <div className="align-middle">
+                          <h6>
+                            <StarRatings
+                              starDimension="18px"
+                              starSpacing="3px"
+                              rating={review.rating}
+                              starRatedColor="yellow"
+                              numberOfStars={5}
+                              name="Ocjena"
+                              className="d-inline-block align-middle"
+                            />
+                          </h6>
+                        </div>
+
+                        <p>
+                          <span className="text-muted">
+                            {review.hairdresserId
+                              ? `[frizer - ${review.hairdresserId.name}] `
+                              : "[salon] "}
+                          </span>
+                          {review.comment || ""}
+                        </p>
+                      </Col>
+                      {user._id === review.userId._id && (
+                        <Col sm={2}>
+                          <EditReviewModal
+                            salon={salon}
+                            setPage={setPage}
+                            review={review}
+                            updateReviews={setIsUpdated}
+                          />
+                        </Col>
+                      )}
+                    </Row>
                   </Media.Body>
                 </Media>
               );
@@ -257,7 +282,7 @@ const SalonReviews = ({ salon, setSalon }) => {
               <Button
                 variant="outline-info"
                 onClick={() => handlePageChange("prev")}
-                disabled={page === 0}
+                disabled={page <= 0}
                 size={window.innerWidth <= 765 ? "sm" : ""}
               >
                 <FaAngleLeft />

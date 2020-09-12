@@ -385,8 +385,82 @@ module.exports.createAppointment = async (req, res, next) => {
   }
 };
 
-// Desc: Submit review for a specific hair salon
-// Route: POST /user/submit_review
+// Desc: Edit submitted review
+// Route: PUT /user/edit_review/
+// Access: Authenticated
+module.exports.editReview = async (req, res, next) => {
+  try {
+    const { rating, hairdresserId, comment, reviewId } = req.body;
+
+    const review = await Review.findOne({ _id: reviewId });
+
+    if (!review) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Recenzija više ne postoji!" });
+    }
+
+    review.rating = rating;
+    review.comment = comment.trim();
+
+    if (hairdresserId) {
+      review.hairdresserId = hairdresserId;
+    }
+    await review.save(() => {
+      console.log("callback: Recenzija updateana!");
+    });
+    await review.updateRatings();
+
+    res.send({
+      success: true,
+      message: "Recenzija uspješno uređena!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Delete a review
+// Route: DEL /user/delete_review
+// Access: Authenticated
+module.exports.deleteReview = async (req, res, next) => {
+  try {
+    const { reviewId } = req.body;
+
+    const review = await Review.findOne({ _id: reviewId });
+
+    if (!review) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Recenzija više ne postoji!" });
+    }
+
+    review.remove(async (err, review) => {
+      console.log("callback: review deleted!");
+      await review.updateRatings();
+    });
+
+    console.log("postoji li jos hmm", review);
+    //await review.updateRatings();
+
+    res.send({
+      success: true,
+      message: "Recenzija uspješno uređena!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+// Desc: Edit a review
+// Route: PUT /user/submit_review
 // Access: Authenticated
 module.exports.submitReview = async (req, res, next) => {
   try {
@@ -454,13 +528,11 @@ module.exports.submitReview = async (req, res, next) => {
       });
     }
   } catch (err) {
-    next(err);
-
-    /* res.status(500).send({
+    res.status(500).send({
       success: false,
       message: "Dogodila se pogreška",
       error: err.toString(),
-    });*/
+    });
   }
 };
 

@@ -22,6 +22,12 @@ const SubmitReviewForm = ({ salon, updateReviews, setPage, setSalon }) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [show, setShow] = useState(false);
 
+  const [message, setMessage] = useState("");
+  const [messageToggled, setMessageToggled] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const [review, setReview] = useState({ rating: 0, comment: "" });
+
   const handleClose = () => {
     setShow(false);
     setReview({ comment: "", rating: 0 });
@@ -33,12 +39,6 @@ const SubmitReviewForm = ({ salon, updateReviews, setPage, setSalon }) => {
     }
   };
   const handleShow = () => setShow(true);
-
-  const [message, setMessage] = useState("");
-  const [messageToggled, setMessageToggled] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const [review, setReview] = useState({ rating: 0, comment: "" });
 
   const handleClick = async () => {
     //ovo ne treba jer je button disabled al cisto nek je tu

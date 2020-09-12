@@ -65,7 +65,7 @@ const UserProfile = () => {
     setIsLoading(true);
     const getData = async () => {
       try {
-        const res = await axios.get(`/user/${params.id}/profile`, {
+        const res = await axios.get(`/user/${params.id}/get_profile`, {
           // ovo mozemo jer smo stavili proxy u package.json
           headers: {
             Authorization: authToken,
