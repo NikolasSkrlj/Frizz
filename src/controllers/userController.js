@@ -113,6 +113,29 @@ module.exports.getProfile = async (req, res, next) => {
     });
   }
 };
+// Desc: Getting salon info by his id
+// Route: GET /user/salon/:salonId
+// Access: Authenticated
+module.exports.getSalonById = async (req, res, next) => {
+  try {
+    const salon = await HairSalon.findOne({ _id: req.params.salonId }).populate(
+      {
+        path: "hairdressers reviews appointmentTypes appointments",
+        populate: {
+          path: "reviews appointmentType",
+        },
+      }
+    ); // kad se ne koristi u kombinaciji sa Model.findNesto koristi se execPopulate a ne populate
+
+    res.send({ success: true, salon });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
 
 // Desc: Getting profile info for the logged in user
 // Route: GET /:id/profile
@@ -245,7 +268,8 @@ module.exports.uploadProfilePic = async (req, res, next) => {
   } catch (err) {
     res.status(500).send({
       success: false,
-      message: "Dogodila se pogreška",
+      message:
+        "Dogodila se pogreška! Provjerite da je datoteka ispravnog formata i dozvoljene veličine(5 Mb)",
       error: err.toString(),
     });
   }
@@ -406,7 +430,13 @@ module.exports.editReview = async (req, res, next) => {
     if (hairdresserId) {
       review.hairdresserId = hairdresserId;
     }
-    await review.save(() => {
+    await review.save((err, review) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: "Došlo je do pogreške pri ažuriranju recenzije!",
+        });
+      }
       console.log("callback: Recenzija updateana!");
     });
     await review.updateRatings();
@@ -440,12 +470,15 @@ module.exports.deleteReview = async (req, res, next) => {
     }
 
     review.remove(async (err, review) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: "Došlo je do pogreške pri brisanju recenzije!",
+        });
+      }
       console.log("callback: review deleted!");
       await review.updateRatings();
     });
-
-    console.log("postoji li jos hmm", review);
-    //await review.updateRatings();
 
     res.send({
       success: true,

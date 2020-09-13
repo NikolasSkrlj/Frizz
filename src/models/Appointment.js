@@ -23,6 +23,10 @@ const appointmentSchema = new mongoose.Schema(
     appointmentDate: {
       type: Date,
     },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
     startTime: {
       // ovo je prototip, mozda da bude type Date objekt vidjet cu jos sta se koristi
       hours: {

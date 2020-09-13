@@ -18,7 +18,7 @@ import {
 import StarRatings from "react-star-ratings";
 import HairdresserReviewSubmit from "./HairdresserReviewSubmit";
 
-const SubmitReviewForm = ({ salon, updateReviews, setPage, setSalon }) => {
+const SubmitReviewForm = ({ salon, updateReviews, setPage, updateSalon }) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [show, setShow] = useState(false);
 
@@ -36,6 +36,7 @@ const SubmitReviewForm = ({ salon, updateReviews, setPage, setSalon }) => {
     if (submitSuccess) {
       updateReviews((prevState) => !prevState);
       setPage(0);
+      updateSalon((prevState) => !prevState);
     }
   };
   const handleShow = () => setShow(true);
@@ -209,7 +210,7 @@ const SubmitReviewForm = ({ salon, updateReviews, setPage, setSalon }) => {
                     handleClose={handleClose}
                     updateReviews={updateReviews}
                     salon={salon}
-                    setSalon={setSalon}
+                    updateSalon={updateSalon}
                   />
                 </Card.Body>
               </Tab.Pane>

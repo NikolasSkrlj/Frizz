@@ -20,8 +20,8 @@ const HairdresserReviewSubmit = ({
   hairdressers,
   handleClose,
   salon,
-  setSalon,
   updateReviews,
+  updateSalon,
 }) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [show, setShow] = useState(false);
@@ -66,13 +66,6 @@ const HairdresserReviewSubmit = ({
         setSubmitSuccess(true);
         setMessage(res.data.message);
         setMessageToggled(true);
-        setSalon((prevState) => {
-          return {
-            ...prevState,
-            reviews: res.data.reviews,
-            // globalRating: res.data.newRating, updatanje ratinga ne radi jer se vrsi asinkrono tkda se prije posalji response nego se azurira
-          };
-        });
       }
     } catch (err) {
       //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
@@ -95,6 +88,7 @@ const HairdresserReviewSubmit = ({
               variant="outline-secondary"
               className="mb-2"
               block
+              disabled={hairdressers.length <= 0}
             >
               {hairdressers.map((hd) => {
                 return (
@@ -124,7 +118,13 @@ const HairdresserReviewSubmit = ({
             />
           </Col>
         </Row>
-
+        {hairdressers.length <= 0 ? (
+          <div className="text-muted text-center m-2">
+            Trenutno nema upisanih frizera
+          </div>
+        ) : (
+          <></>
+        )}
         <Form className="d-block">
           <Form.Group controlId="komentar">
             <Form.Control
@@ -152,6 +152,7 @@ const HairdresserReviewSubmit = ({
             onClick={() => {
               handleClose();
               updateReviews();
+              updateSalon((prevState) => !prevState);
             }}
             block
           >

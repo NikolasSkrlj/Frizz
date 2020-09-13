@@ -24,7 +24,8 @@ import hr from "date-fns/locale/hr";
 import SubmitReviewForm from "./SubmitReviewForm";
 import EditReviewModal from "./EditReviewModal";
 
-const SalonReviews = ({ salon, setSalon }) => {
+// update salon sluzi za ponovni render kad se doda recenzija
+const SalonReviews = ({ salon, updateSalon }) => {
   const { authToken } = useContext(GlobalContext);
   const [user, setUser] = useState({});
 
@@ -204,9 +205,9 @@ const SalonReviews = ({ salon, setSalon }) => {
             salon={salon}
             updateReviews={setIsUpdated}
             setPage={setPage}
-            setSalon={setSalon}
+            updateSalon={updateSalon}
           />
-          {reviews ? (
+          {reviews.length ? (
             reviews.map((review) => {
               return (
                 <Media key={review._id} className="my-2">
@@ -265,6 +266,7 @@ const SalonReviews = ({ salon, setSalon }) => {
                             setPage={setPage}
                             review={review}
                             updateReviews={setIsUpdated}
+                            updateSalon={updateSalon}
                           />
                         </Col>
                       )}
@@ -274,45 +276,49 @@ const SalonReviews = ({ salon, setSalon }) => {
               );
             })
           ) : (
-            <h6 className="text-muted">Nema recenzija.</h6>
+            <h6 className="text-muted text-center">Trenutno nema recenzija.</h6>
           )}
           {/* Prikaz navigacije za stranice */}
-          <div className="d-flex">
-            <ButtonGroup className="mx-auto">
-              <Button
-                variant="outline-info"
-                onClick={() => handlePageChange("prev")}
-                disabled={page <= 0}
-                size={window.innerWidth <= 765 ? "sm" : ""}
-              >
-                <FaAngleLeft />
-              </Button>
+          {reviews.length ? (
+            <div className="d-flex">
+              <ButtonGroup className="mx-auto">
+                <Button
+                  variant="outline-info"
+                  onClick={() => handlePageChange("prev")}
+                  disabled={page <= 0}
+                  size={window.innerWidth <= 765 ? "sm" : ""}
+                >
+                  <FaAngleLeft />
+                </Button>
 
-              {/* 
-                Znaci dijeli se broj ukupnih recenzija na broj njih po stranici i to je broj cijelih stranica a ako ostane ostatak mora biti jos
-                jedna, to rjesava math.ceil ostatka jer ako nema ostatka ceil ce dati nula i nema dodatne stranice
-              */}
-              <Button
-                variant="info"
-                style={{ pointerEvents: "none" }}
-                size={window.innerWidth <= 765 ? "sm" : ""}
-              >
-                Stranica {page + 1} od{" "}
-                {Math.floor(
-                  totalReviewsCnt / limit +
-                    Math.ceil((totalReviewsCnt % limit) / limit)
-                )}
-              </Button>
-              <Button
-                variant="outline-info"
-                onClick={() => handlePageChange("next")}
-                disabled={(page + 1) * limit >= totalReviewsCnt}
-                size={window.innerWidth <= 765 ? "sm" : ""}
-              >
-                <FaAngleRight />
-              </Button>
-            </ButtonGroup>
-          </div>
+                {/* 
+     Znaci dijeli se broj ukupnih recenzija na broj njih po stranici i to je broj cijelih stranica a ako ostane ostatak mora biti jos
+     jedna, to rjesava math.ceil ostatka jer ako nema ostatka ceil ce dati nula i nema dodatne stranice
+   */}
+                <Button
+                  variant="info"
+                  style={{ pointerEvents: "none" }}
+                  size={window.innerWidth <= 765 ? "sm" : ""}
+                >
+                  Stranica {page + 1} od{" "}
+                  {Math.floor(
+                    totalReviewsCnt / limit +
+                      Math.ceil((totalReviewsCnt % limit) / limit)
+                  )}
+                </Button>
+                <Button
+                  variant="outline-info"
+                  onClick={() => handlePageChange("next")}
+                  disabled={(page + 1) * limit >= totalReviewsCnt}
+                  size={window.innerWidth <= 765 ? "sm" : ""}
+                >
+                  <FaAngleRight />
+                </Button>
+              </ButtonGroup>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       ) : (
         <Alert variant="danger">{message}</Alert>

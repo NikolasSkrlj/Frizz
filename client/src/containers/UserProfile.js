@@ -41,7 +41,7 @@ const schema = yup.object({
   gender: yup
     .string()
     .required("Obavezno polje!")
-    .test("test-name", "Odaberite jedan od spolova", (value) => {
+    .test("test-name", "Odaberite spol", (value) => {
       return value !== "Odaberi";
     }),
 });
@@ -73,6 +73,7 @@ const UserProfile = () => {
         });
 
         setUser(res.data.user);
+        sessionStorage.setItem("user", JSON.stringify(res.data.user));
         setFetchSuccess(true);
         setIsLoading(false);
       } catch (err) {

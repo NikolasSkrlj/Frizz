@@ -5,11 +5,6 @@ import { GlobalContext } from "../../contexts/GlobalContext";
 import axios from "axios";
 import { Spinner, Button, Alert, Form, Row, Col } from "react-bootstrap";
 
-/* import { Formik } from "formik";
-import * as yup from "yup";
-
- */
-
 const UploadProfilePic = () => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [profilePic, setProfilePic] = useState();
@@ -60,11 +55,11 @@ const UploadProfilePic = () => {
       }
     } catch (err) {
       //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
+      console.log(err.error, err.response);
       if (err.response) {
         setSubmitSuccess(false);
         setMessage(
-          err.response.data.message ||
-            "Došlo je do pogreške, pokušajte ponovno!"
+          "Došlo je do pogreške! Provjerite da je datoteka ispravnog formata(.jpg, .jpeg, .png) i dozvoljene veličine(5 Mb)"
         );
         setMessageToggled(true);
       }
@@ -78,7 +73,10 @@ const UploadProfilePic = () => {
           <div className="my-2">
             <Form.File
               id="custom-file"
-              label={(profilePic && profilePic.name) || "Ime datoteke"}
+              label={
+                (profilePic && profilePic.name) ||
+                "Ime datoteke (max veličina - 5 MB)"
+              }
               name="profilePic"
               custom
               data-browse="Odaberi"

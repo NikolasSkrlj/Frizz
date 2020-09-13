@@ -16,6 +16,7 @@ const {
   changePassword,
   //Za salone
   getSalons,
+  getSalonById,
   submitReview,
   editReview,
   deleteReview,
@@ -60,6 +61,7 @@ router
 router.route("/:id/profile_pic").get(getProfilePic);
 router.route("/:id/change_password").put(auth, changePassword);
 router.route("/salons").get(auth, getSalons);
+router.route("/salon/:salonId").get(auth, getSalonById);
 router.route("/:salonId/submit_review").post(auth, submitReview);
 router.route("/edit_review").put(auth, editReview);
 router.route("/delete_review").delete(auth, deleteReview);

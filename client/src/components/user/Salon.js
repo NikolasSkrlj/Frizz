@@ -51,8 +51,6 @@ const Salon = ({ salonData }) => {
     globalRating,
   } = salon;
 
-  // console.log(reviews.length, salon.reviews.length);
-  //console.log(salon);
   //ovo bi trebalo grupirat u razumljiviji state al zasad ne diramo
   //za datepicker
   const [appointmentDate, setAppointmentDate] = useState(new Date()); // datum termina
@@ -90,6 +88,31 @@ const Salon = ({ salonData }) => {
   // za kalendar da je na hrvatskom
   registerLocale("hr", hr);
 
+  useEffect(() => {
+    //setIsLoading(true);
+    const getData = async () => {
+      try {
+        const res = await axios.get(`/user/salon/${id}`, {
+          // ovo mozemo jer smo stavili proxy u package.json
+          headers: {
+            Authorization: authToken,
+          },
+        });
+
+        setSalon(res.data.salon);
+
+        //setFetchSuccess(true);
+        //setIsLoading(false);
+      } catch (err) {
+        if (err.response) {
+          //setFetchSuccess(false);
+          //setIsLoading(false);
+        }
+      }
+    };
+    getData();
+  }, [isSalonUpdated]);
+
   // provjeravamo dali vrijeme termina za taj datum se preklapa s nekim postojecim terminom
   const checkAppointment = () => {
     //console.log("Funkcija checkAppointment se izvrsava");
@@ -99,7 +122,8 @@ const Salon = ({ salonData }) => {
     }
 
     setMessageVariant("danger");
-
+    setMessage("");
+    setMessageToggled(false);
     //provjera da je odabran radni dan
     const dayInWeek =
       appointmentDate.getDay() === 0 ? 7 : appointmentDate.getDay(); // ovo ovako jer getDate daje 0 index za nedjelju a meni u bazi je 7
@@ -376,7 +400,13 @@ const Salon = ({ salonData }) => {
     // ovisno o uspjesnosti provjere, omogucava se button za potvrdu termina
     const valid = checkAppointment();
     setAppointmentValid(valid);
-  }, [appointmentTime, appointmentDate, appointmentType, hairdresser]);
+  }, [
+    appointmentTime,
+    appointmentDate,
+    appointmentType,
+    hairdresser,
+    userDateCheck,
+  ]);
 
   useEffect(() => {
     setAppointmentsLoading(false);
@@ -525,15 +555,15 @@ const Salon = ({ salonData }) => {
                 <ListGroup.Item>
                   <h4>Adresa</h4>
                   {Object.values(address).join(", ")}{" "}
-                  <a href="#">vidi na karti</a>
+                  {/* <a href="#">vidi na karti</a> */}
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h4>E-mail</h4>
-                  {email}
+                  <a href={`mailto:${email}`}>{email}</a>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h4>Telefon</h4>
-                  {phone}
+                  <a href={`tel:${phone}`}>{phone}</a>
                 </ListGroup.Item>
               </ListGroup>
             </Card.Body>
@@ -558,7 +588,7 @@ const Salon = ({ salonData }) => {
                             <td>
                               {day.startWorktime
                                 ? `${day.startWorktime}-${day.endWorktime}`
-                                : "ne radi se"}
+                                : "ne radi"}
                             </td>
                           </tr>
                         );
@@ -569,27 +599,31 @@ const Salon = ({ salonData }) => {
 
                 <Col sm={8}>
                   <h4>Frizeri</h4>
-                  <Table striped size="sm" variant="light">
-                    <thead>
-                      <tr>
-                        <th>Dan</th>
-                        <th colSpan={hairdressers.length}>Radno vrijeme</th>
-                      </tr>
-                      <tr>
-                        <th></th>
-                        {hairdressers.length &&
-                          hairdressers.map((item) => <th>{item.name}</th>)}
-                      </tr>
-                    </thead>
-                    <tbody>{hairdressersWorkHours()}</tbody>
-                  </Table>
+                  {hairdressers.length ? (
+                    <Table striped size="sm" variant="light">
+                      <thead>
+                        <tr>
+                          <th>Dan</th>
+                          <th colSpan={hairdressers.length}>Radno vrijeme</th>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          {hairdressers.length &&
+                            hairdressers.map((item) => <th>{item.name}</th>)}
+                        </tr>
+                      </thead>
+                      <tbody>{hairdressersWorkHours()}</tbody>
+                    </Table>
+                  ) : (
+                    <div className="text-muted"> Trenutno nema frizera. </div>
+                  )}
                 </Col>
               </Row>
             </Card.Body>{" "}
           </Tab.Pane>
           <Tab.Pane eventKey="reviews">
             <Card.Body>
-              <SalonReviews salon={salonData} setSalon={setSalon} />
+              <SalonReviews salon={salonData} updateSalon={setIsSalonUpdated} />
             </Card.Body>
           </Tab.Pane>
           <Tab.Pane eventKey="reserve">
@@ -694,6 +728,7 @@ const Salon = ({ salonData }) => {
                     id="dropdown-item-button"
                     title={appointmentTypeSelect}
                     variant="outline-info"
+                    disabled={appointmentTypes.length <= 0}
                   >
                     {appointmentTypes.map((app) => {
                       return (
@@ -712,6 +747,11 @@ const Salon = ({ salonData }) => {
                       );
                     })}
                   </DropdownButton>
+                  {appointmentTypes.length <= 0 && (
+                    <div className="text-muted">
+                      Trenutno nema upisanih vrsta termina.
+                    </div>
+                  )}
                   {appointmentTypeSelect !== "Odaberi" && (
                     <div className="my-3">
                       <h6 className="text-muted d-inline">Trajanje: </h6>
@@ -750,6 +790,7 @@ const Salon = ({ salonData }) => {
                     id="dropdown-item-button"
                     title={hairdressersSelect}
                     variant="outline-info"
+                    disabled={hairdressers.length <= 0}
                   >
                     {workingHairdressers.map((hairdresser) => {
                       return (
@@ -772,6 +813,12 @@ const Salon = ({ salonData }) => {
                       <div>Neodređen/a - zadano</div>
                     </Dropdown.Item>
                   </DropdownButton>
+                  {appointmentTypes.length <= 0 && (
+                    <div className="text-muted">
+                      Trenutno nema upisanih frizera.
+                    </div>
+                  )}
+
                   <hr />
                 </Col>
               </Row>

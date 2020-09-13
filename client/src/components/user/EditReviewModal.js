@@ -20,7 +20,13 @@ import {
 import StarRatings from "react-star-ratings";
 import { FaTrash, FaRegEdit } from "react-icons/fa";
 
-const EditReviewModal = ({ salon, updateReviews, setPage, review }) => {
+const EditReviewModal = ({
+  salon,
+  updateReviews,
+  setPage,
+  review,
+  updateSalon,
+}) => {
   const { authToken, user, setUser } = useContext(GlobalContext);
   const [show, setShow] = useState(false);
 
@@ -62,6 +68,7 @@ const EditReviewModal = ({ salon, updateReviews, setPage, review }) => {
     if (submitSuccess) {
       updateReviews((prevState) => !prevState);
       setPage(0);
+      updateSalon((prevState) => !prevState);
     }
   };
   const handleShow = (action) => {
