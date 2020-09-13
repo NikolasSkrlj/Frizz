@@ -305,14 +305,40 @@ module.exports.getProfilePic = async (req, res, next) => {
 // Access: Authenticated
 module.exports.getSalons = async (req, res, next) => {
   try {
-    const salons = await HairSalon.find({}).populate({
+    const sort = {};
+    const limit = 5;
+
+    if (req.query.sortBy) {
+      const values = req.query.sortBy.split("_");
+      const term = values[0];
+      sort[term] = values[1] === "asc" ? 1 : -1;
+    }
+
+    const filter = req.query.filter;
+    const search = {};
+    /*
+    if (filter === "salon") {
+      search.hairdresserId = null;
+    } else if (filter === "hairdressers") {
+      search.hairdresserId = { $ne: null };
+    } */
+
+    const hairsalonsCnt = await HairSalon.countDocuments(search);
+
+    const skip = req.query.page ? req.query.page * limit : null;
+
+    const salons = await HairSalon.find(search, null, {
+      sort,
+      limit,
+      skip,
+    }).populate({
       path: "hairdressers reviews appointmentTypes appointments",
       populate: {
         path: "reviews appointmentType",
       },
     }); // tu moraju ic sve opcije i parametri za filtriranje
 
-    res.send({ success: true, salons });
+    res.send({ success: true, salons, totalSalonsCnt: hairsalonsCnt });
   } catch (err) {
     res.status(500).send({
       success: false,

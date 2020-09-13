@@ -95,8 +95,9 @@ const HairSalonSchema = new mongoose.Schema(
       },
     },
     externalLinks: {
-      type: [String],
-      default: [],
+      facebook: String,
+      instagram: String,
+      youtube: String,
     },
     gallery: [Buffer],
     workingHours: {

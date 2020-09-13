@@ -16,7 +16,7 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import StarRatings from "react-star-ratings";
-import { FaAngleLeft, FaAngleRight, FaTrash, FaRegEdit } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { formatDistanceToNow } from "date-fns";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -56,8 +56,6 @@ const SalonReviews = ({ salon, updateSalon }) => {
   const [messageToggled, setMessageToggled] = useState(false);
   const [fetchSuccess, setFetchSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // da se ne pojavi error odmah mali bug
-
-  const params = useParams();
 
   useEffect(() => {
     setUser(JSON.parse(sessionStorage.getItem("user")));
