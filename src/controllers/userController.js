@@ -322,26 +322,33 @@ module.exports.getSalons = async (req, res, next) => {
     objekt tj adresa bi trebala imat samo county property a cak i ako se navedu svi property redoslijed treba biti tocan ko u bazi
     
     */
-    const search = {};
+    const match = {};
 
     const filterValues = req.query.filters.split("|");
     const ratingFilter = filterValues[0].split("_");
     const countyFilter = filterValues[1].split("_");
 
     //filter za rating, default je 0+
-    search.globalRating = { $gte: ratingFilter[1] };
+    match.globalRating = { $gte: ratingFilter[1] };
 
     //filter za zupanije, default je bilo koja
     if (countyFilter[1] !== "any") {
-      search["address.county"] = countyFilter[1];
+      match["address.county"] = countyFilter[1];
     }
-    //console.log(search);
 
-    const hairsalonsCnt = await HairSalon.countDocuments(search);
+    // za search term, sta trazimo gledamo ako se podudara sa tagovima salona tagove cemo dinamicki dodavat pri izradi salona i dodavanju frizera itd
+    // ili staticki ako hoce
+    if (req.query.q) {
+      const search = req.query.q.split(" ");
+      match.tags = { $in: search };
+    }
+
+    //console.log(match);
+    const hairsalonsCnt = await HairSalon.countDocuments(match);
 
     const skip = req.query.page ? req.query.page * limit : null;
 
-    const salons = await HairSalon.find(search, null, {
+    const salons = await HairSalon.find(match, null, {
       sort,
       limit,
       skip,

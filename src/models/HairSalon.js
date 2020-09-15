@@ -105,6 +105,7 @@ const HairSalonSchema = new mongoose.Schema(
       youtube: String,
     },
     gallery: [Buffer],
+    tags: [String],
     workingHours: {
       type: [workingHoursSchema],
     },

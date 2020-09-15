@@ -281,7 +281,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
             <div className="d-flex">
               <ButtonGroup className="mx-auto">
                 <Button
-                  variant="outline-info"
+                  variant="outline-secondary"
                   onClick={() => handlePageChange("prev")}
                   disabled={page <= 0}
                   size={window.innerWidth <= 765 ? "sm" : ""}
@@ -294,7 +294,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
      jedna, to rjesava math.ceil ostatka jer ako nema ostatka ceil ce dati nula i nema dodatne stranice
    */}
                 <Button
-                  variant="info"
+                  variant="secondary"
                   style={{ pointerEvents: "none" }}
                   size={window.innerWidth <= 765 ? "sm" : ""}
                 >
@@ -305,7 +305,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
                   )}
                 </Button>
                 <Button
-                  variant="outline-info"
+                  variant="outline-secondary"
                   onClick={() => handlePageChange("next")}
                   disabled={(page + 1) * limit >= totalReviewsCnt}
                   size={window.innerWidth <= 765 ? "sm" : ""}

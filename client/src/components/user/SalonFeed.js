@@ -88,23 +88,12 @@ const SalonFeed = () => {
     }
   };
 
-  /*  const handleFilterClick = (term) => {
-    setFilterButtonLabel(term);
-    switch (term) {
-      case "Salon i frizeri":
-        setFilter("salonAndHairdressers");
-        break;
-      case "Salon":
-        setFilter("salon");
-        break;
-      case "Frizeri":
-        setFilter("hairdressers");
-        break;
-      default:
-        return;
-    }
-    setPage(0);
-  }; */
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const term = e.target.term.value;
+
+    setSearchTerm(term);
+  };
 
   const handleFilterToggleClick = () => {
     setFiltersToggle(!filtersToggle);
@@ -115,7 +104,7 @@ const SalonFeed = () => {
     const getData = async () => {
       try {
         const res = await axios.get(
-          `/user/salons?filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
+          `/user/salons?q=${searchTerm}&filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
             sortOptions.option
           }_${sortOptions.isAsc ? "asc" : "desc"}&page=${page}`,
           {
@@ -137,7 +126,7 @@ const SalonFeed = () => {
       }
     };
     getData();
-  }, [page, sortOptions, ratingFilter, countyFilter]);
+  }, [page, sortOptions, ratingFilter, countyFilter, searchTerm]);
 
   useEffect(() => {
     setFetchSuccess(true);
@@ -146,31 +135,35 @@ const SalonFeed = () => {
   return (
     <Card body>
       <Card className="mb-4">
-        <Card.Header className=" d-flex">
-          <Form className="mr-auto p-0">
-            <Form.Row className="align-items-center">
-              <Col sm={4} className="my-1">
-                <Form.Label htmlFor="inlineFormInputName" srOnly>
-                  Name
-                </Form.Label>
-                <Form.Control
-                  id="inlineFormInputName"
-                  placeholder="Traži salon, frizera, grad..."
-                />
-              </Col>
-              <Col xs="auto" className="my-1">
-                <Button type="submit">Submit</Button>
-              </Col>
-            </Form.Row>
-          </Form>
+        <Card.Header>
+          <Row className="d-flex mb-xs-2">
+            <Col xs={12} sm={9} className="mr-auto">
+              <Form onSubmit={handleSearchSubmit}>
+                <Form.Row className="align-items-center">
+                  <Col sm={6} className="my-1">
+                    <Form.Control
+                      id="inlineFormInputName"
+                      name="term"
+                      placeholder="Ime salona, frizera, grada.."
+                    />
+                  </Col>
+                  <Col xs={12} sm="auto" className="my-1">
+                    <Button block type="submit" variant="info">
+                      Traži
+                    </Button>
+                  </Col>
+                </Form.Row>
+              </Form>
+            </Col>
 
-          <Button
-            variant="outline-info"
-            className="ml-auto"
-            onClick={handleFilterToggleClick}
-          >
-            Filter <FiSliders className="ml-2" />
-          </Button>
+            <Button
+              variant="outline-info"
+              className="ml-auto"
+              onClick={handleFilterToggleClick}
+            >
+              Filter <FiSliders className="ml-2" />
+            </Button>
+          </Row>
         </Card.Header>
 
         {filtersToggle ? (
@@ -229,6 +222,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setRatingFilter("0");
                           setRatingFilterButtonLabel("Sve");
+                          setPage(0);
                         }}
                       >
                         Sve
@@ -237,6 +231,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setRatingFilter("1");
                           setRatingFilterButtonLabel("1+");
+                          setPage(0);
                         }}
                       >
                         1+
@@ -245,6 +240,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setRatingFilter("2");
                           setRatingFilterButtonLabel("2+");
+                          setPage(0);
                         }}
                       >
                         2+
@@ -253,6 +249,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setRatingFilter("3");
                           setRatingFilterButtonLabel("3+");
+                          setPage(0);
                         }}
                       >
                         3+
@@ -261,6 +258,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setRatingFilter("4");
                           setRatingFilterButtonLabel("4+");
+                          setPage(0);
                         }}
                       >
                         4+
@@ -286,6 +284,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("any");
                           setCountyFilterButtonLabel("Sve");
+                          setPage(0);
                         }}
                       >
                         Sve
@@ -294,6 +293,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("ZAGREBAČKA");
                           setCountyFilterButtonLabel("ZAGREBAČKA");
+                          setPage(0);
                         }}
                       >
                         ZAGREBAČKA
@@ -302,6 +302,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("KRAPINSKO-ZAGORSKA");
                           setCountyFilterButtonLabel("KRAPINSKO-ZAGORSKA");
+                          setPage(0);
                         }}
                       >
                         KRAPINSKO-ZAGORSKA
@@ -310,6 +311,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("SISAČKO-MOSLAVAČKA");
                           setCountyFilterButtonLabel("SISAČKO-MOSLAVAČKA");
+                          setPage(0);
                         }}
                       >
                         SISAČKO-MOSLAVAČKA
@@ -318,6 +320,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("KARLOVAČKA");
                           setCountyFilterButtonLabel("KARLOVAČKA");
+                          setPage(0);
                         }}
                       >
                         KARLOVAČKA
@@ -326,6 +329,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("VARAŽDINSKA");
                           setCountyFilterButtonLabel("VARAŽDINSKA");
+                          setPage(0);
                         }}
                       >
                         VARAŽDINSKA
@@ -334,6 +338,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("KOPRIVNIČKO-KRIŽEVAČKA");
                           setCountyFilterButtonLabel("KOPRIVNIČKO-KRIŽEVAČKA");
+                          setPage(0);
                         }}
                       >
                         KOPRIVNIČKO-KRIŽEVAČKA
@@ -342,6 +347,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("BJELOVARSKO-BILOGORSKA");
                           setCountyFilterButtonLabel("BJELOVARSKO-BILOGORSKA");
+                          setPage(0);
                         }}
                       >
                         BJELOVARSKO-BILOGORSKA
@@ -350,6 +356,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("PRIMORSKO-GORANSKA");
                           setCountyFilterButtonLabel("PRIMORSKO-GORANSKA");
+                          setPage(0);
                         }}
                       >
                         PRIMORSKO-GORANSKA
@@ -358,6 +365,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("LIČKO-SENJSKA");
                           setCountyFilterButtonLabel("LIČKO-SENJSKA");
+                          setPage(0);
                         }}
                       >
                         LIČKO-SENJSKA
@@ -366,6 +374,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("VIROVITIČKO-PODRAVSKA");
                           setCountyFilterButtonLabel("VIROVITIČKO-PODRAVSKA");
+                          setPage(0);
                         }}
                       >
                         VIROVITIČKO-PODRAVSKA
@@ -374,6 +383,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("POŽEŠKO-SLAVONSKA");
                           setCountyFilterButtonLabel("POŽEŠKO-SLAVONSKA");
+                          setPage(0);
                         }}
                       >
                         POŽEŠKO-SLAVONSKA
@@ -382,6 +392,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("BRODSKO-POSAVSKA");
                           setCountyFilterButtonLabel("BRODSKO-POSAVSKA");
+                          setPage(0);
                         }}
                       >
                         BRODSKO-POSAVSKA
@@ -390,6 +401,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("ZADARSKA");
                           setCountyFilterButtonLabel("ZADARSKA");
+                          setPage(0);
                         }}
                       >
                         ZADARSKA
@@ -398,6 +410,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("OSJEČKO-BARANJSKA");
                           setCountyFilterButtonLabel("OSJEČKO-BARANJSKA");
+                          setPage(0);
                         }}
                       >
                         OSJEČKO-BARANJSKA
@@ -406,6 +419,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("ŠIBENSKO-KNINSKA");
                           setCountyFilterButtonLabel("ŠIBENSKO-KNINSKA");
+                          setPage(0);
                         }}
                       >
                         ŠIBENSKO-KNINSKA
@@ -414,6 +428,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("VUKOVARSKO-SRIJEMSKA");
                           setCountyFilterButtonLabel("VUKOVARSKO-SRIJEMSKA");
+                          setPage(0);
                         }}
                       >
                         VUKOVARSKO-SRIJEMSKA
@@ -422,6 +437,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("SPLITSKO-DALMATINSKA");
                           setCountyFilterButtonLabel("SPLITSKO-DALMATINSKA");
+                          setPage(0);
                         }}
                       >
                         SPLITSKO-DALMATINSKA
@@ -430,6 +446,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("ISTARSKA");
                           setCountyFilterButtonLabel("ISTARSKA");
+                          setPage(0);
                         }}
                       >
                         ISTARSKA
@@ -438,6 +455,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("DUBROVAČKO-NERETVANSKA");
                           setCountyFilterButtonLabel("DUBROVAČKO-NERETVANSKA");
+                          setPage(0);
                         }}
                       >
                         DUBROVAČKO-NERETVANSKA
@@ -446,6 +464,7 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("MEĐIMURSKA");
                           setCountyFilterButtonLabel("MEĐIMURSKA");
+                          setPage(0);
                         }}
                       >
                         MEĐIMURSKA
@@ -454,15 +473,13 @@ const SalonFeed = () => {
                         onClick={() => {
                           setCountyFilter("GRAD ZAGREB");
                           setCountyFilterButtonLabel("GRAD ZAGREB");
+                          setPage(0);
                         }}
                       >
                         GRAD ZAGREB
                       </Dropdown.Item>
                     </DropdownButton>
                   </ListGroup.Item>
-                  {/* <ListGroup.Item>Dapibus ac facilisis in</ListGroup.Item>
-                  <ListGroup.Item>Morbi leo risus</ListGroup.Item>
-                  <ListGroup.Item>Porta ac consectetur ac</ListGroup.Item> */}
                 </ListGroup>
               </Col>
             </Row>
@@ -525,7 +542,9 @@ const SalonFeed = () => {
             )}
           </div>
         ) : (
-          <h6 className="text-muted text-center">Trenutno nema salona.</h6>
+          <h6 className="text-muted text-center">
+            {searchTerm ? "Nema rezultata." : "Trenutno nema salona."}
+          </h6>
         )
       ) : (
         <Alert variant="danger">
