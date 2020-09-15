@@ -339,8 +339,8 @@ module.exports.getSalons = async (req, res, next) => {
     // za search term, sta trazimo gledamo ako se podudara sa tagovima salona tagove cemo dinamicki dodavat pri izradi salona i dodavanju frizera itd
     // ili staticki ako hoce
     if (req.query.q) {
-      const search = req.query.q.split(" ");
-      match.tags = { $in: search };
+      const search = req.query.q; //.split(" "); ako splitamo onda ne filtrira dobro
+      match.tags = { $in: [search, "$tags"] };
     }
 
     //console.log(match);
