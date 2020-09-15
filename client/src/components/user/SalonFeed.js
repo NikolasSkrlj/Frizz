@@ -13,15 +13,16 @@ import {
   DropdownButton,
   ButtonGroup,
   ListGroup,
+  Form,
 } from "react-bootstrap";
 import Salon from "./Salon";
 import { FiSliders } from "react-icons/fi";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import "../../styles/Misc.css";
 
 const SalonFeed = () => {
   const { authToken } = useContext(GlobalContext);
-  const [filtersToggle, setFiltersToggle] = useState(false); // ovo ce biti za filtriranje podataka dal se vidi card
-  //const [filters, setFilters] = useState({}); // ovdje ce se nalaziti filteri(objekt sa match, sort, project i tim propertyma)
+  const [filtersToggle, setFiltersToggle] = useState(false);
   const [salons, setSalons] = useState([]);
 
   //filtriranje i sortiranje
@@ -33,9 +34,18 @@ const SalonFeed = () => {
   const [totalSalonsCnt, setTotalSalonsCnt] = useState(0);
   const [page, setPage] = useState(0);
 
-  const [filterButtonLabel, setFilterButtonLabel] = useState("Odaberi");
-  const [filter, setFilter] = useState("");
+  const [ratingFilterButtonLabel, setRatingFilterButtonLabel] = useState(
+    "Odaberi"
+  );
+  const [ratingFilter, setRatingFilter] = useState("0");
 
+  const [countyFilterButtonLabel, setCountyFilterButtonLabel] = useState(
+    "Odaberi"
+  );
+  const [countyFilter, setCountyFilter] = useState("any");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  //limit 5 salona po stranici
   const limit = 5;
 
   //za error handling i loading indikator
@@ -105,9 +115,9 @@ const SalonFeed = () => {
     const getData = async () => {
       try {
         const res = await axios.get(
-          `/user/salons?filter=${filter}&sortBy=${sortOptions.option}_${
-            sortOptions.isAsc ? "asc" : "desc"
-          }&page=${page}`,
+          `/user/salons?filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
+            sortOptions.option
+          }_${sortOptions.isAsc ? "asc" : "desc"}&page=${page}`,
           {
             // ovo mozemo jer smo stavili proxy u package.json
             headers: {
@@ -127,7 +137,7 @@ const SalonFeed = () => {
       }
     };
     getData();
-  }, [page, sortOptions, filter]);
+  }, [page, sortOptions, ratingFilter, countyFilter]);
 
   useEffect(() => {
     setFetchSuccess(true);
@@ -136,8 +146,29 @@ const SalonFeed = () => {
   return (
     <Card body>
       <Card className="mb-4">
-        <Card.Header className=" d-flex justify-content-end">
-          <Button variant="outline-info" onClick={handleFilterToggleClick}>
+        <Card.Header className=" d-flex">
+          <Form className="mr-auto p-0">
+            <Form.Row className="align-items-center">
+              <Col sm={4} className="my-1">
+                <Form.Label htmlFor="inlineFormInputName" srOnly>
+                  Name
+                </Form.Label>
+                <Form.Control
+                  id="inlineFormInputName"
+                  placeholder="Traži salon, frizera, grad..."
+                />
+              </Col>
+              <Col xs="auto" className="my-1">
+                <Button type="submit">Submit</Button>
+              </Col>
+            </Form.Row>
+          </Form>
+
+          <Button
+            variant="outline-info"
+            className="ml-auto"
+            onClick={handleFilterToggleClick}
+          >
             Filter <FiSliders className="ml-2" />
           </Button>
         </Card.Header>
@@ -147,7 +178,7 @@ const SalonFeed = () => {
             <Row>
               <Col>
                 <div>
-                  <span>
+                  <span className="mb-2">
                     <b>Sortiraj po </b>
                   </span>
                   <DropdownButton
@@ -178,29 +209,254 @@ const SalonFeed = () => {
                   </DropdownButton>
                 </div>
               </Col>
-              <Col>
+              <Col className="filters">
                 <b> Filtriraj </b>
                 <ListGroup variant="flush">
                   <ListGroup.Item>
-                    <span>Prema ocjeni </span>
+                    <span className="mr-2">Po ocjeni </span>
                     <DropdownButton
                       id="dropdown-basic-button"
-                      title={"Odaberi"}
+                      title={
+                        ratingFilter === "0"
+                          ? "Odaberi"
+                          : ratingFilterButtonLabel
+                      }
                       variant="outline-secondary"
                       size="sm"
                       className="d-inline-block"
                     >
-                      <Dropdown.Item onClick={() => console.log("1+")}>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setRatingFilter("0");
+                          setRatingFilterButtonLabel("Sve");
+                        }}
+                      >
+                        Sve
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setRatingFilter("1");
+                          setRatingFilterButtonLabel("1+");
+                        }}
+                      >
                         1+
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => console.log("2+")}>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setRatingFilter("2");
+                          setRatingFilterButtonLabel("2+");
+                        }}
+                      >
                         2+
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => console.log("3+")}>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setRatingFilter("3");
+                          setRatingFilterButtonLabel("3+");
+                        }}
+                      >
                         3+
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => console.log("4+")}>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setRatingFilter("4");
+                          setRatingFilterButtonLabel("4+");
+                        }}
+                      >
                         4+
+                      </Dropdown.Item>
+                    </DropdownButton>
+                  </ListGroup.Item>
+                  {/* Dropdown sa listom zupanija */}
+                  <ListGroup.Item>
+                    <span className="mr-2">Po županiji </span>
+
+                    <DropdownButton
+                      id="dropdown-basic-button"
+                      title={
+                        countyFilter === "any"
+                          ? "Odaberi"
+                          : countyFilterButtonLabel
+                      }
+                      variant="outline-secondary"
+                      size="sm"
+                      className="d-inline-block"
+                    >
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("any");
+                          setCountyFilterButtonLabel("Sve");
+                        }}
+                      >
+                        Sve
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("ZAGREBAČKA");
+                          setCountyFilterButtonLabel("ZAGREBAČKA");
+                        }}
+                      >
+                        ZAGREBAČKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("KRAPINSKO-ZAGORSKA");
+                          setCountyFilterButtonLabel("KRAPINSKO-ZAGORSKA");
+                        }}
+                      >
+                        KRAPINSKO-ZAGORSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("SISAČKO-MOSLAVAČKA");
+                          setCountyFilterButtonLabel("SISAČKO-MOSLAVAČKA");
+                        }}
+                      >
+                        SISAČKO-MOSLAVAČKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("KARLOVAČKA");
+                          setCountyFilterButtonLabel("KARLOVAČKA");
+                        }}
+                      >
+                        KARLOVAČKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("VARAŽDINSKA");
+                          setCountyFilterButtonLabel("VARAŽDINSKA");
+                        }}
+                      >
+                        VARAŽDINSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("KOPRIVNIČKO-KRIŽEVAČKA");
+                          setCountyFilterButtonLabel("KOPRIVNIČKO-KRIŽEVAČKA");
+                        }}
+                      >
+                        KOPRIVNIČKO-KRIŽEVAČKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("BJELOVARSKO-BILOGORSKA");
+                          setCountyFilterButtonLabel("BJELOVARSKO-BILOGORSKA");
+                        }}
+                      >
+                        BJELOVARSKO-BILOGORSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("PRIMORSKO-GORANSKA");
+                          setCountyFilterButtonLabel("PRIMORSKO-GORANSKA");
+                        }}
+                      >
+                        PRIMORSKO-GORANSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("LIČKO-SENJSKA");
+                          setCountyFilterButtonLabel("LIČKO-SENJSKA");
+                        }}
+                      >
+                        LIČKO-SENJSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("VIROVITIČKO-PODRAVSKA");
+                          setCountyFilterButtonLabel("VIROVITIČKO-PODRAVSKA");
+                        }}
+                      >
+                        VIROVITIČKO-PODRAVSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("POŽEŠKO-SLAVONSKA");
+                          setCountyFilterButtonLabel("POŽEŠKO-SLAVONSKA");
+                        }}
+                      >
+                        POŽEŠKO-SLAVONSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("BRODSKO-POSAVSKA");
+                          setCountyFilterButtonLabel("BRODSKO-POSAVSKA");
+                        }}
+                      >
+                        BRODSKO-POSAVSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("ZADARSKA");
+                          setCountyFilterButtonLabel("ZADARSKA");
+                        }}
+                      >
+                        ZADARSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("OSJEČKO-BARANJSKA");
+                          setCountyFilterButtonLabel("OSJEČKO-BARANJSKA");
+                        }}
+                      >
+                        OSJEČKO-BARANJSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("ŠIBENSKO-KNINSKA");
+                          setCountyFilterButtonLabel("ŠIBENSKO-KNINSKA");
+                        }}
+                      >
+                        ŠIBENSKO-KNINSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("VUKOVARSKO-SRIJEMSKA");
+                          setCountyFilterButtonLabel("VUKOVARSKO-SRIJEMSKA");
+                        }}
+                      >
+                        VUKOVARSKO-SRIJEMSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("SPLITSKO-DALMATINSKA");
+                          setCountyFilterButtonLabel("SPLITSKO-DALMATINSKA");
+                        }}
+                      >
+                        SPLITSKO-DALMATINSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("ISTARSKA");
+                          setCountyFilterButtonLabel("ISTARSKA");
+                        }}
+                      >
+                        ISTARSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("DUBROVAČKO-NERETVANSKA");
+                          setCountyFilterButtonLabel("DUBROVAČKO-NERETVANSKA");
+                        }}
+                      >
+                        DUBROVAČKO-NERETVANSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("MEĐIMURSKA");
+                          setCountyFilterButtonLabel("MEĐIMURSKA");
+                        }}
+                      >
+                        MEĐIMURSKA
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          setCountyFilter("GRAD ZAGREB");
+                          setCountyFilterButtonLabel("GRAD ZAGREB");
+                        }}
+                      >
+                        GRAD ZAGREB
                       </Dropdown.Item>
                     </DropdownButton>
                   </ListGroup.Item>
@@ -269,7 +525,7 @@ const SalonFeed = () => {
             )}
           </div>
         ) : (
-          <h6 className="text-muted">Nema salona</h6>
+          <h6 className="text-muted text-center">Trenutno nema salona.</h6>
         )
       ) : (
         <Alert variant="danger">

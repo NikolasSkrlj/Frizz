@@ -93,6 +93,11 @@ const HairSalonSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+      county: {
+        // županija
+        type: String,
+        required: true,
+      },
     },
     externalLinks: {
       facebook: String,

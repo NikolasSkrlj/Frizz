@@ -554,7 +554,7 @@ const Salon = ({ salonData }) => {
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <h4>Adresa</h4>
-                  {Object.values(address).join(", ")}{" "}
+                  {`${address.street}, ${address.postalCode} ${address.city}`}
                   {/* <a href="#">vidi na karti</a> */}
                 </ListGroup.Item>
                 <ListGroup.Item>
