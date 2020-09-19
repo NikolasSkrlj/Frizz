@@ -5,6 +5,7 @@ const appointmentSchema = new mongoose.Schema(
     salonId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "HairSalon",
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

@@ -96,7 +96,7 @@ module.exports.logoutUser = async (req, res, next) => {
   }
 };
 
-// Desc: Getting profile info for the logged in user
+/* // Desc: Getting profile info for the logged in user
 // Route: POST /user/profile
 // Access: Authenticated
 module.exports.getProfile = async (req, res, next) => {
@@ -112,7 +112,8 @@ module.exports.getProfile = async (req, res, next) => {
       error: err.toString(),
     });
   }
-};
+}; */
+
 // Desc: Getting salon info by his id
 // Route: GET /user/salon/:salonId
 // Access: Authenticated
@@ -138,13 +139,11 @@ module.exports.getSalonById = async (req, res, next) => {
 };
 
 // Desc: Getting profile info for the logged in user
-// Route: GET /:id/profile
+// Route: GET /user/get_profile
 // Access: Authenticated
-module.exports.getProfileById = async (req, res, next) => {
+module.exports.getProfile = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).populate(
-      "reviews appointments"
-    );
+    const user = req.user;
 
     if (!user) {
       res.status(400).send({ success: false, message: "Korisnik ne postoji" });
@@ -161,7 +160,7 @@ module.exports.getProfileById = async (req, res, next) => {
 };
 
 // Desc: Updating profile data(password not allowed on this route)
-// Route: PUT /user/:id/update
+// Route: PUT /user/update_profile
 // Access: Authenticated
 module.exports.updateProfile = async (req, res, next) => {
   const updates = Object.keys(req.body); // vraca array keyeva
@@ -181,7 +180,7 @@ module.exports.updateProfile = async (req, res, next) => {
   }
 
   try {
-    const user = await User.findOne({ _id: req.params.id });
+    const user = req.user;
     if (!user) {
       return res
         .status(404)
@@ -203,13 +202,14 @@ module.exports.updateProfile = async (req, res, next) => {
 };
 
 // Desc: Changing password for a user
-// Route: PUT /user/:id/change_password
+// Route: PUT /user/change_password
 // Access: Authenticated
 module.exports.changePassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
 
   try {
-    const user = await User.findOne({ _id: req.params.id });
+    const user = req.user;
+
     if (!user) {
       return res
         .status(400)
@@ -248,7 +248,7 @@ module.exports.changePassword = async (req, res, next) => {
   }
 };
 // Desc: Uploading profile pic for user
-// Route: POST /user/:id/update
+// Route: POST /user/upload_pic
 // Access: Authenticated
 module.exports.uploadProfilePic = async (req, res, next) => {
   try {
@@ -256,7 +256,7 @@ module.exports.uploadProfilePic = async (req, res, next) => {
       .resize({ width: 250, height: 250 })
       .png()
       .toBuffer();
-    const user = await User.findOne({ _id: req.params.id });
+    const user = req.user;
 
     user.profilePic = buffer; //req.file.buffer mozemo pristupiti samo ako u upload objekt ne zadamo dest: property
     await user.save();
@@ -277,7 +277,7 @@ module.exports.uploadProfilePic = async (req, res, next) => {
 
 // Desc: GET profile pic for a user
 // Route: GET /user/:id/profile-pic
-// Access: Authenticated
+// Access: Public
 module.exports.getProfilePic = async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
@@ -301,7 +301,7 @@ module.exports.getProfilePic = async (req, res, next) => {
 };
 
 // Desc: Getting salons
-// Route: POST /user/profile
+// Route: GET /user/salons
 // Access: Authenticated
 module.exports.getSalons = async (req, res, next) => {
   try {
@@ -360,6 +360,86 @@ module.exports.getSalons = async (req, res, next) => {
     }); // tu moraju ic sve opcije i parametri za filtriranje
 
     res.send({ success: true, salons, totalSalonsCnt: hairsalonsCnt });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Getting appointments for a user
+// Route: GET /user/get_appointments
+// Access: Authenticated
+module.exports.getAppointments = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    //pet reviewa po stranici cemo prikazivati
+    const sort = {};
+    //const limit = 3; nema limita jer ih nece puno bit
+
+    if (req.query.sortBy) {
+      const values = req.query.sortBy.split("_");
+      const term = values[0];
+      sort[term] = values[1] === "asc" ? 1 : -1;
+    }
+
+    const filter = req.query.filter;
+    const search = { userId: user._id };
+    if (filter === "active") {
+      search.completed = false;
+    } else if (filter === "archived") {
+      search.completed = true;
+    } // inace baca sve skupa
+    //const reviewsCnt = await Review.countDocuments(search);
+
+    //console.log(sort);
+    //const skip = req.query.page ? req.query.page * limit : null;
+    const appointments = await Appointment.find(search, null, {
+      sort,
+    }).populate("salonId hairdresserId appointmentType");
+
+    res.send({
+      success: true,
+      appointments,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+// Desc: Deleting an appointment
+// Route: DEL /user/delete_appointment/:appointmentId
+// Access: Authenticated
+module.exports.deleteAppointment = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const appointmentId = req.body.appointmentId;
+
+    const appointment = await Appointment.findOne({ _id: appointmentId });
+
+    if (!appointment) {
+      return res.status(400).send({
+        success: false,
+        message: "Traženi termin ne postoji",
+      });
+    }
+
+    await appointment.remove((err, app) => {
+      if (err) {
+        throw new Error();
+      }
+      console.log("Termin uspjesno izbrisan");
+    });
+    res.send({
+      success: true,
+      message: "Termin uspješno obrisan",
+    });
   } catch (err) {
     res.status(500).send({
       success: false,

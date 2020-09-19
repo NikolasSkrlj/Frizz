@@ -14,6 +14,7 @@ import {
 import Sidebar from "./Sidebar";
 import SalonFeed from "../components/user/SalonFeed";
 import UserProfile from "./UserProfile";
+import UserAppointments from "./UserAppointments";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 
@@ -30,32 +31,37 @@ const UserDashboard = () => {
   };
   return (
     <>
-      <Container fluid>
-        <Sidebar
-          isToggled={sidebarToggled}
-          closeSidebarOnClick={handleClick}
-          loggedUser={user}
-        />
-        <Container fluid className="pt-5 ">
-          <div className={classNameHtml} id="content">
-            {/*  <!-- Toggle button --> */}
-            <button
-              id="sidebarCollapse"
-              type="button"
-              className="btn btn-light bg-white d-md-none rounded-pill shadow-sm px-4 position-fixed fixed-left toggle-button"
-              onClick={handleClick}
-            >
-              <FaBars />
-            </button>
+      {/* <Container fluid> */}
+      <Sidebar
+        isToggled={sidebarToggled}
+        closeSidebarOnClick={handleClick}
+        loggedUser={user}
+      />
+      <Container
+        fluid
+        className="pt-5 "
+        style={{ paddingRight: "5px", paddingLeft: "10px" }}
+      >
+        <div className={classNameHtml} id="content">
+          {/*  <!-- Toggle button --> */}
+          <button
+            id="sidebarCollapse"
+            type="button"
+            className="btn btn-light bg-white d-md-none rounded-pill shadow-sm px-4 position-fixed fixed-left toggle-button"
+            onClick={handleClick}
+          >
+            <FaBars />
+          </button>
 
-            <Switch>
-              <Route path={`${path}/saloni`} component={SalonFeed} />
-              <Route path={`${path}/:id/profile`} component={UserProfile} />
-              <Route path={path} component={DummyContent} />
-            </Switch>
-          </div>
-        </Container>
+          <Switch>
+            <Route path={`${path}/salons`} component={SalonFeed} />
+            <Route path={`${path}/appointments`} component={UserAppointments} />
+            <Route path={`${path}/profile`} component={UserProfile} />
+            <Route path={path} component={DummyContent} />
+          </Switch>
+        </div>
       </Container>
+      {/* </Container> */}
     </>
   );
 };

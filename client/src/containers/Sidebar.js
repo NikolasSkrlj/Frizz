@@ -128,7 +128,7 @@ const Sidebar = ({
           <li className="nav-item">
             <Link
               className="nav-link text-dark  bg-light"
-              to={`${url}/saloni`}
+              to={`${url}/salons`}
               onClick={handleLinkClick}
             >
               <FiScissors className="mr-3" />
@@ -149,7 +149,7 @@ const Sidebar = ({
             <Link
               className="nav-link text-dark text-bold bg-light"
               onClick={handleLinkClick}
-              to={`${url}/${user._id}/profile`}
+              to={`${url}/profile`}
             >
               <FaRegUser className="mr-3" />
               Profil

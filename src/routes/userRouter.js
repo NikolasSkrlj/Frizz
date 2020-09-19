@@ -9,7 +9,6 @@ const {
   loginUser,
   logoutUser,
   getProfile,
-  getProfileById,
   updateProfile,
   uploadProfilePic,
   getProfilePic,
@@ -23,6 +22,8 @@ const {
   getReviews,
   checkDate,
   createAppointment,
+  getAppointments,
+  deleteAppointment,
 } = require("../controllers/userController");
 
 //config file za upload
@@ -49,23 +50,34 @@ const upload = multer({
 });
 
 //routes for the hair salon handling
+
+//user data handling
 router.route("/create").post(createUser);
 router.route("/login").post(loginUser);
 router.route("/logout").post(auth, logoutUser);
 //router.route("/profile").get(auth, getProfile);
-router.route("/:id/get_profile").get(auth, getProfileById);
-router.route("/:id/update").put(auth, updateProfile);
+router.route("/get_profile").get(auth, getProfile);
+router.route("/update_profile").put(auth, updateProfile);
 router
-  .route("/:id/upload_pic")
+  .route("/upload_pic")
   .post(auth, upload.single("profilePic"), uploadProfilePic);
 router.route("/:id/profile_pic").get(getProfilePic);
-router.route("/:id/change_password").put(auth, changePassword);
+router.route("/change_password").put(auth, changePassword);
+router.route("/get_appointments").get(auth, getAppointments);
+router.route("/delete_appointment").delete(auth, deleteAppointment);
+
+//salon feed
 router.route("/salons").get(auth, getSalons);
 router.route("/salon/:salonId").get(auth, getSalonById);
+
+//reviews
 router.route("/:salonId/submit_review").post(auth, submitReview);
 router.route("/edit_review").put(auth, editReview);
 router.route("/delete_review").delete(auth, deleteReview);
+
+//salon feed
 router.route("/:salonId/check_date").post(auth, checkDate);
 router.route("/:salonId/create_appointment").post(auth, createAppointment);
 router.route("/:salonId/reviews").get(auth, getReviews);
+
 module.exports = router;

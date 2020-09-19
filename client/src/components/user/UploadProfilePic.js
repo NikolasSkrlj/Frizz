@@ -35,7 +35,7 @@ const UploadProfilePic = () => {
     setMessageToggled(false);
     setMessage("");
     try {
-      const res = await axios.post(`/user/${params.id}/upload_pic`, formData, {
+      const res = await axios.post(`/user/upload_pic`, formData, {
         headers: {
           Authorization: "Bearer " + authToken,
           "Content-Type": "multipart/form-data",

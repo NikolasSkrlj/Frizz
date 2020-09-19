@@ -54,7 +54,7 @@ const LoginModal = () => {
       toggleIsLoggedIn();
       toggleShowLoginModal();
       setUserType(userTypeRadio);
-      history.push(`/${userTypeRadio}`);
+      history.push(`/${userTypeRadio}/appointments`);
     } catch (err) {
       if (err.response) {
         console.log("Došlo je do pogreške kod prijave!", err);

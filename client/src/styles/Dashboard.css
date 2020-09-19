@@ -13,6 +13,7 @@
   width: calc(100% - 16rem);
   margin-left: 16rem;
   transition: all 0.4s;
+  padding-right: 0;
   overflow: hidden;
 }
 

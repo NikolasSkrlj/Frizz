@@ -65,7 +65,7 @@ const UserProfile = () => {
     setIsLoading(true);
     const getData = async () => {
       try {
-        const res = await axios.get(`/user/${params.id}/get_profile`, {
+        const res = await axios.get(`/user/get_profile`, {
           // ovo mozemo jer smo stavili proxy u package.json
           headers: {
             Authorization: authToken,
@@ -95,7 +95,7 @@ const UserProfile = () => {
     setMessage("");
     try {
       const res = await axios.put(
-        `/user/${params.id}/update`,
+        `/user/update_profile`,
         {
           email,
           age,
