@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useRef } from "react";
 import { Navbar, Nav, Button, Container } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
@@ -23,6 +23,11 @@ const NavbarContainer = () => {
 
   const [toggled, setToggled] = useState(false);
   const history = useHistory();
+
+  const toggle = useRef();
+  const toggleNav = () => {
+    toggle.current.click();
+  };
 
   const handleLogout = async () => {
     try {
@@ -84,16 +89,21 @@ const NavbarContainer = () => {
         >
           Frizz.hr
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Toggle ref={toggle} aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mr-auto"></Nav>
-          <Nav>
+          {/* <Nav className="mr-auto">
+            <Nav.Link></Nav.Link>
+          </Nav> */}
+          <Nav className="ml-auto">
             {isLoggedIn ? (
               <Button
-                data-toggle="collapse"
-                data-target="#basic-navbar-nav"
                 variant="outline-light"
-                onClick={() => handleLogout()}
+                onClick={() => {
+                  handleLogout();
+                  if (window.innerWidth <= 765) {
+                    toggleNav();
+                  }
+                }}
                 className={`justify-content-sm-center ${
                   window.innerWidth <= 765 && "mt-3 mb-1"
                 }`}
@@ -106,16 +116,27 @@ const NavbarContainer = () => {
                   variant="outline-light"
                   onClick={() => {
                     toggleShowLoginModal();
+
+                    // jer bootstrapavo ponasanje ne trpi bas buttone u navbaru ovako rucno zatvaramo navbar u moblinom prikazu
+                    if (window.innerWidth <= 765) {
+                      toggleNav();
+                    }
                   }}
                   className="mx-1 my-1 justify-content-sm-center "
-                  eventKey="1"
                 >
                   Prijava
                 </Button>
+
                 <Button
                   variant="light"
                   eventKey="1"
                   href="#reg"
+                  onClick={() => {
+                    // jer bootstrapavo ponasanje ne trpi bas buttone u navbaru ovako rucno zatvaramo navbar u moblinom prikazu
+                    if (window.innerWidth <= 765) {
+                      toggleNav();
+                    }
+                  }}
                   className="mx-1 my-1 justify-content-sm-center text-muted "
                 >
                   Registracija
