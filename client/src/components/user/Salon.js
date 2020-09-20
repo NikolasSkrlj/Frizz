@@ -797,10 +797,25 @@ const Salon = ({ salonData }) => {
                         <Dropdown.Item
                           as="button"
                           key={hairdresser.id}
-                          className="d-flex"
+                          className="d-flex align-center"
                           onClick={() => handleHairdresserSelect(hairdresser)}
                         >
-                          <div>{hairdresser.name}</div>
+                          {hairdresser.name}
+                          <span className="text-muted ml-auto">
+                            <small className="align-bottom mr-1">
+                              {hairdresser.globalRating}
+                            </small>
+                            <StarRatings
+                              starDimension="15px"
+                              rating={hairdresser.globalRating}
+                              starRatedColor="yellow"
+                              numberOfStars={1}
+                              name="Ocjena"
+                              //className="align-top"
+                            >
+                              ocjena
+                            </StarRatings>
+                          </span>
                         </Dropdown.Item>
                       );
                     })}
