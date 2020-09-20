@@ -47,7 +47,7 @@ const UserDashboard = () => {
           <button
             id="sidebarCollapse"
             type="button"
-            className="btn btn-light bg-white d-md-none shadow-sm  pr-2 position-fixed fixed-left toggle-button"
+            className="btn btn-light bg-white d-md-none shadow-sm px-2 position-fixed fixed-left toggle-button"
             onClick={handleClick}
           >
             {!sidebarToggled ? <FaAngleDoubleLeft /> : <FaAngleDoubleRight />}
