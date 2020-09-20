@@ -104,7 +104,7 @@ const SalonFeed = () => {
     const getData = async () => {
       try {
         const res = await axios.get(
-          `/user/salons?q=${searchTerm}&filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
+          `/user/get_salons?q=${searchTerm}&filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
             sortOptions.option
           }_${sortOptions.isAsc ? "asc" : "desc"}&page=${page}`,
           {

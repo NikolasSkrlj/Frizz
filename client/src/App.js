@@ -6,6 +6,7 @@ import NavbarContainer from "./containers/Navbar";
 import LandingPage from "../src/containers/LandingPage";
 import UserDashboard from "../src/containers/UserDashboard";
 import SalonDashboard from "../src/containers/SalonDashboard";
+import DummyContent from "../src/containers/DummyContent";
 //import LoginModal from "./containers/LoginModal";
 import { Route, Switch } from "react-router-dom";
 import ProtectedRoute from "./utils/ProtectedRoute";
@@ -16,6 +17,7 @@ function App() {
       <NavbarContainer />
       <Switch>
         <Route exact path="/" component={LandingPage}></Route>
+
         <ProtectedRoute
           forUser="salon"
           path="/hairsalon"
@@ -23,14 +25,9 @@ function App() {
         />
         <ProtectedRoute forUser="user" path="/user" component={UserDashboard} />
 
+        <Route component={DummyContent}></Route>
         {/*  <Route path="/user" component={UserDashboard}></Route>
         <Route path="/hairsalon" component={SalonDashboard}></Route> */}
-        <Route
-          path="/"
-          render={() => {
-            return <div>404 - Stranica koju ste tražili nije pronađena </div>;
-          }}
-        ></Route>
       </Switch>
     </GlobalContextProvider>
   );

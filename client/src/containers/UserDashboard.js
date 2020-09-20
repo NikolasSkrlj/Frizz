@@ -54,9 +54,13 @@ const UserDashboard = () => {
           </button>
 
           <Switch>
-            <Route path={`${path}/salons`} component={SalonFeed} />
-            <Route path={`${path}/appointments`} component={UserAppointments} />
-            <Route path={`${path}/profile`} component={UserProfile} />
+            <Route exact path={`${path}/salons`} component={SalonFeed} />
+            <Route
+              exact
+              path={`${path}/appointments`}
+              component={UserAppointments}
+            />
+            <Route exact path={`${path}/profile`} component={UserProfile} />
             <Route path={path} component={DummyContent} />
           </Switch>
         </div>

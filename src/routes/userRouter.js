@@ -67,7 +67,7 @@ router.route("/get_appointments").get(auth, getAppointments);
 router.route("/delete_appointment").delete(auth, deleteAppointment);
 
 //salon feed
-router.route("/salons").get(auth, getSalons);
+router.route("/get_salons").get(auth, getSalons);
 router.route("/salon/:salonId").get(auth, getSalonById);
 
 //reviews

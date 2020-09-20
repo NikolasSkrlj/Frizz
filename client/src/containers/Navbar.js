@@ -74,7 +74,13 @@ const NavbarContainer = () => {
 
         <Navbar.Brand
           as={Link}
-          to={isLoggedIn ? (userType === "user" ? "/user" : "/hairsalon") : "/"}
+          to={
+            isLoggedIn
+              ? userType === "user"
+                ? "/user/salons"
+                : "/hairsalon/appointments"
+              : "/"
+          }
         >
           Frizz.hr
         </Navbar.Brand>
