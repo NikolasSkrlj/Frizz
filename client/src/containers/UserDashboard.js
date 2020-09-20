@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { GlobalContext } from "../contexts/GlobalContext";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaAngleDoubleRight, FaAngleDoubleLeft } from "react-icons/fa";
 import {
   Link,
   withRouter,
@@ -47,10 +47,10 @@ const UserDashboard = () => {
           <button
             id="sidebarCollapse"
             type="button"
-            className="btn btn-light bg-white d-md-none rounded-pill shadow-sm px-4 position-fixed fixed-left toggle-button"
+            className="btn btn-light bg-white d-md-none shadow-sm  pr-2 position-fixed fixed-left toggle-button"
             onClick={handleClick}
           >
-            <FaBars />
+            {!sidebarToggled ? <FaAngleDoubleLeft /> : <FaAngleDoubleRight />}
           </button>
 
           <Switch>

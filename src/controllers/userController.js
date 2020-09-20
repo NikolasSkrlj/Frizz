@@ -301,7 +301,7 @@ module.exports.getProfilePic = async (req, res, next) => {
 };
 
 // Desc: Getting salons
-// Route: GET /user/salons
+// Route: GET /user/get_salons
 // Access: Authenticated
 module.exports.getSalons = async (req, res, next) => {
   try {

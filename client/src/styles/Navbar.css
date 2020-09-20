@@ -1,3 +1,5 @@
 .toggle-button {
   z-index: 100;
+  top: 50%;
+  margin-left: -20px;
 }
