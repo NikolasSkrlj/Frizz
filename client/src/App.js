@@ -19,7 +19,7 @@ function App() {
         <Route exact path="/" component={LandingPage}></Route>
 
         <ProtectedRoute
-          forUser="salon"
+          forUser="hairsalon"
           path="/hairsalon"
           component={SalonDashboard}
         />

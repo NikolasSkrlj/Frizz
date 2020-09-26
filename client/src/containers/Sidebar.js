@@ -27,8 +27,11 @@ const Sidebar = ({
 
   //ovo nam koristi kad se refresha stranica da se ne izgube podaci, po defaultu se koristi proslijedjen user is props
 
-  const [user, setUser] = useState({});
-  const [salon, setSalon] = useState({});
+  const user = loggedUser;
+  const salon = loggedSalon;
+
+  /* const [user, setUser] = useState({});
+  const [salon, setSalon] = useState({}); */
 
   //ili user koji je spremljen u global contextu ili u sessionstorageu
   //const user = loggedUser ? { ...loggedUser } : { ...storedUser };
@@ -47,36 +50,16 @@ const Sidebar = ({
     }
   };
 
-  /*  useEffect(()=> {
-    const getData = async () => {
-      try {
-        const res = await axios.get("/user/salons", {
-          // ovo mozemo jer smo stavili proxy u package.json
-          headers: {
-            Authorization: authToken,
-          },
-        });
-
-        setSalons(res.data.salons);
-        setIsLoading(false);
-      } catch (err) {
-        if (err.response) {
-          setFetchSuccess(false);
-          setIsLoading(false);
-        }
-      }
-    };
-    getData();
-  }) */
   /* useEffect(() => {
     setStoredUser(JSON.parse(sessionStorage.getItem("user")));
     setStoredSalon(JSON.parse(sessionStorage.getItem("salon")));
   }, []);
 */
-  useEffect(() => {
+  /*  useEffect(() => {
     setUser(JSON.parse(sessionStorage.getItem("user")));
+    setSalon(JSON.parse(sessionStorage.getItem("salon")));
     // setStoredSalon(JSON.parse(sessionStorage.getItem("salon")));
-  }, []);
+  }, []); */
 
   //ovdje moze doc podaci o prijavljenom korisniku/salonu uz avatar
   return (
@@ -184,7 +167,7 @@ const Sidebar = ({
               <Link
                 className="nav-link text-dark text-bold bg-light"
                 onClick={handleLinkClick}
-                to={`${url}/${salon._id}/profile`}
+                to={`${url}/profile`}
               >
                 <FaRegUser className="mr-3" />
                 Profil

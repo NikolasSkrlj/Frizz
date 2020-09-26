@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { GlobalContext } from "../contexts/GlobalContext";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { FaBars, FaAngleDoubleRight, FaAngleDoubleLeft } from "react-icons/fa";
@@ -22,13 +22,20 @@ const UserDashboard = () => {
   const history = useHistory();
   const [sidebarToggled, setSidebarToggled] = useState(true);
   const { path, url } = useRouteMatch();
-  const { user, salon } = useContext(GlobalContext);
+
+  const [user, setUser] = useState({});
+
   const base = "page-content pt-3 ";
   const classNameHtml = !sidebarToggled ? base + " active" : base; // kad sidebar i content ima klasu active onda je sidebar sakriven i content full screen sa gumbom
 
   const handleClick = () => {
     setSidebarToggled(!sidebarToggled);
   };
+
+  useEffect(() => {
+    setUser(JSON.parse(sessionStorage.getItem("user")));
+  }, []);
+
   return (
     <>
       {/* <Container fluid> */}
