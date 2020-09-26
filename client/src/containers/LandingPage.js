@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import UserRegForm from "../components/UserRegForm";
 import SalonRegForm from "../components/SalonRegForm";
 
+import "../styles/Landing.css";
 import search from "../search.png";
 import review from "../review.png";
 import booking from "../booking.png";
@@ -28,11 +29,10 @@ const LandingPage = () => {
               <h1 className="display-4 pt-5 pb-3 text-info">
                 A 'ko tebe šiša?
               </h1>
-              <p className="lead font-italic">
+              <p className="lead font-italic text-light">
                 Želite se ošišati no trenutni frizer vam je oduzeo centimetre
-                koji su nepovratni? Na pravom ste mjestu. Pronađite svoj novi
-                omiljeni salon u svega nekoliko klikova, jer dobra frizura pola
-                je zdravlja.
+                koji su nepovratni? Pronađite svoj novi omiljeni salon u svega
+                nekoliko klikova, jer dobra frizura pola je zdravlja.
               </p>
             </Col>
           </Row>
@@ -152,6 +152,9 @@ const LandingPage = () => {
             from{" "}
             <a href="https://www.flaticon.com/" title="Flaticon">
               www.flaticon.com
+            </a>
+            <a href="https://www.freepik.com/photos/hair">
+              Hair photo created by freepik - www.freepik.com
             </a>
           </div>
         </Card>

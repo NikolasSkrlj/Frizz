@@ -463,6 +463,7 @@ module.exports.checkDate = async (req, res, next) => {
 
     const appointments = await Appointment.find({
       salonId,
+      confirmed: true, // gledaju se samo potvrdjeni termini
       appointmentDate: { $gte: dayStart, $lte: dayEnd },
     })
       .sort("appointmentDate")

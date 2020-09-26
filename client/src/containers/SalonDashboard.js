@@ -13,6 +13,7 @@ import Sidebar from "./Sidebar";
 /* import SalonFeed from "../components/user/SalonFeed";
 import UserProfile from "./UserProfile";
 import UserAppointments from "./UserAppointments"; */
+import SalonAppointments from "../components/salon/SalonAppointments";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 
@@ -62,7 +63,7 @@ const SalonDashboard = () => {
             <Route
               exact
               path={`${path}/appointments`}
-              component={DummyContent}
+              component={SalonAppointments}
             />
             <Route exact path={`${path}/profile`} component={DummyContent} />
             <Route path={path} component={DummyContent} />

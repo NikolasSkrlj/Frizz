@@ -14,7 +14,7 @@ import {
 import Sidebar from "./Sidebar";
 import SalonFeed from "../components/user/SalonFeed";
 import UserProfile from "./UserProfile";
-import UserAppointments from "./UserAppointments";
+import UserAppointments from "../components/user/UserAppointments";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 

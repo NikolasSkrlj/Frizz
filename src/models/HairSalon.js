@@ -45,6 +45,10 @@ const HairSalonSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    description: {
+      type: String,
+      trim: true,
+    },
     phone: {
       type: String, //treba validacija
       required: true,

@@ -10,6 +10,7 @@ const appointmentSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      ref: "User",
     },
     hairdresserId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,8 +29,11 @@ const appointmentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    confirmed: {
+      type: Boolean,
+      default: false,
+    },
     startTime: {
-      // ovo je prototip, mozda da bude type Date objekt vidjet cu jos sta se koristi
       hours: {
         type: Number,
         required: true,

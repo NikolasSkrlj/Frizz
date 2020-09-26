@@ -80,9 +80,6 @@ module.exports.logoutSalon = async (req, res, next) => {
   }
 };
 
-/*
-OVDJE TREBA DORADITI POPULATE SA $match, $sort, $project itd TAKO DA SE IMA MOGUCNOST FILTRIRANJA PODATAKA
-*/
 // Desc: Getting all info for the logged in hair salon
 // Route: GET /hairsalon/get
 // Access: Authenticated
@@ -102,6 +99,61 @@ module.exports.getSalon = async (req, res, next) => {
     //await salon.hairdressers.populate("reviews").execPopulate(); isto radi ali nama treba gornji izraz zbog gnjijezdenja
 
     res.send({ success: true, salon });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Getting appointments for a salon
+// Route: GET /hairsalon/get_appointments
+// Access: Authenticated
+module.exports.getAppointments = async (req, res, next) => {
+  try {
+    const salon = req.salon;
+    const searchDate = req.query.searchDate;
+
+    console.log(new Date(searchDate), req.params);
+
+    const dayStart = new Date(searchDate).setHours(0, 0, 0);
+    const dayEnd = new Date(searchDate).setHours(23, 59, 59);
+
+    //pet reviewa po stranici cemo prikazivati
+    const sort = {};
+    //const limit = 3; nema limita jer ih nece puno bit
+
+    if (req.query.sortBy) {
+      const values = req.query.sortBy.split("_");
+      const term = values[0];
+      sort[term] = values[1] === "asc" ? 1 : -1;
+    }
+
+    const filter = req.query.filter;
+    const search = {
+      salonId: salon._id,
+      appointmentDate: { $gte: dayStart, $lte: dayEnd },
+    };
+
+    if (filter === "active") {
+      search.completed = false;
+    } else if (filter === "archived") {
+      search.completed = true;
+    } // inace baca sve skupa
+    //const reviewsCnt = await Review.countDocuments(search);
+
+    //console.log(sort);
+    //const skip = req.query.page ? req.query.page * limit : null;
+    const appointments = await Appointment.find(search, null, {
+      sort,
+    }).populate("userId hairdresserId appointmentType");
+
+    res.send({
+      success: true,
+      appointments,
+    });
   } catch (err) {
     res.status(500).send({
       success: false,
