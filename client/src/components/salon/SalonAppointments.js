@@ -2,6 +2,9 @@ import React, { useState, useContext, useEffect } from "react";
 import { useHistory, useRouteMatch, useParams } from "react-router-dom";
 import { GlobalContext } from "../../contexts/GlobalContext";
 import axios from "axios";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import hr from "date-fns/locale/hr";
 import {
   Card,
   Spinner,
@@ -16,21 +19,21 @@ import {
   ToggleButton,
   ButtonGroup,
 } from "react-bootstrap";
-import { FaTrash } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const SalonAppointments = () => {
   const { authToken } = useContext(GlobalContext);
 
   const [salon, setSalon] = useState({});
-  const [searchDate, setSearchDate] = useState(new Date("2020-09-04"));
+  const [searchDate, setSearchDate] = useState(new Date());
   const [sortOption, setSortOption] = useState({
-    option: "updatedAt",
-    isAsc: false,
+    option: "appointmentDate",
+    isAsc: true,
   });
   const [sortButtonLabel, setSortButtonLabel] = useState("Sortiraj");
 
   const [filterButtonLabel, setFilterButtonLabel] = useState("Filtriraj");
-  const [filter, setFilter] = useState("archived");
+  const [filter, setFilter] = useState("onHold");
 
   const [appointments, setAppointments] = useState([]);
 
@@ -41,6 +44,8 @@ const SalonAppointments = () => {
   //za error handling i loading indikator
   const [fetchSuccess, setFetchSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // da se ne pojavi error odmah mali bug
+
+  registerLocale("hr", hr);
 
   /* const [show, setShow] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
@@ -59,21 +64,8 @@ const SalonAppointments = () => {
     setShow(true);
   };
  */
-  const handleFilterClick = (term) => {
-    setFilterButtonLabel(term);
-    switch (term) {
-      case "Svi":
-        setFilter("all");
-        break;
-      case "Aktivni":
-        setFilter("active");
-        break;
-      case "Arhivirani":
-        setFilter("archived");
-        break;
-      default:
-        return;
-    }
+  const handleDateChange = (date) => {
+    setSearchDate(new Date(date.setHours(0, 0, 0)));
   };
 
   const handleSortClick = (term) => {
@@ -122,7 +114,7 @@ const SalonAppointments = () => {
         setIsLoading(false);
       }
     }
-  }, [sortOption, filter]);
+  }, [sortOption, filter, searchDate]);
 
   useEffect(() => {
     setSalon(JSON.parse(sessionStorage.getItem("salon")));
@@ -160,30 +152,46 @@ const SalonAppointments = () => {
     }
   };
  */
+  const DateInput = ({ onClick }) => {
+    return (
+      <div>
+        <Button disabled variant="light" style={{ pointerEvents: "none" }}>
+          {new Date(searchDate).toLocaleDateString()}
+        </Button>
+
+        <Button variant="outline-info" onClick={onClick}>
+          <FaCalendarAlt />
+        </Button>
+      </div>
+    );
+  };
+
   return (
-    <Card>
+    <Card style={{ minHeight: "100vh" }}>
       <Card.Header className="d-flex">
         <h3 className="align-self-start"> Termini</h3>
       </Card.Header>
 
       <Card.Body>
         <div>
-          <div className="d-flex">
-            <div className="mr-auto">
+          <Row className="d-flex">
+            <Col sm={6} className="align-content-stretch">
               <ButtonGroup toggle>
                 <ToggleButton
                   type="radio"
                   variant="info"
                   name="radio"
-                  checked={true}
+                  checked={filter === "onHold"}
+                  onChange={() => setFilter("onHold")}
                 >
-                  Na čekanju
+                  Za potvrdu
                 </ToggleButton>
                 <ToggleButton
                   type="radio"
                   variant="info"
                   name="radio"
-                  checked={false}
+                  checked={filter === "active"}
+                  onChange={() => setFilter("active")}
                 >
                   Aktivni
                 </ToggleButton>
@@ -191,67 +199,67 @@ const SalonAppointments = () => {
                   type="radio"
                   variant="info"
                   name="radio"
-                  checked={false}
+                  checked={filter === "archived"}
+                  onChange={() => setFilter("archived")}
                 >
                   Arhivirani
                 </ToggleButton>
               </ButtonGroup>
-            </div>
+            </Col>
+            <Col sm={6} className="my-2">
+              <h5>
+                Na dan:
+                <DatePicker
+                  selected={searchDate}
+                  onChange={handleDateChange}
+                  customInput={<DateInput />}
+                  locale="hr"
+                  //  minDate={new Date()}
+                  closeOnScroll
+                  dateFormat="Pp"
+                  style={{ zIndex: 100 }}
+                />
+              </h5>
+            </Col>
+          </Row>
 
-            <div className="ml-auto">
-              {/*  <DropdownButton
-                as={ButtonGroup}
-                id="dropdown-basic-button"
-                title={filterButtonLabel}
-                variant="outline-info"
-                className="ml-auto"
-                size="sm"
-              >
-                <Dropdown.Item onClick={() => handleFilterClick("Svi")}>
-                  Svi
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleFilterClick("Aktivni")}>
-                  Aktivni
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleFilterClick("Arhivirani")}>
-                  Arhivirani
-                </Dropdown.Item>
-              </DropdownButton> */}
-              <DropdownButton
-                as={ButtonGroup}
-                id="dropdown-basic-button"
-                title={sortButtonLabel}
-                variant="outline-secondary"
-                className="ml-auto"
-                size="sm"
-              >
-                <Dropdown.Item onClick={() => handleSortClick("Najnovije")}>
-                  Najnoviji
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => handleSortClick("Najstarije")}>
-                  Najstariji
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => handleSortClick("Po datumu termina uzlazno")}
-                >
-                  Po datumu termina uzlazno
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => handleSortClick("Po datumu termina silazno")}
-                >
-                  Po datumu termina silazno
-                </Dropdown.Item>
-              </DropdownButton>
-            </div>
-          </div>
           <hr />
-          <h4 className="my-4">
-            {filter === "active"
-              ? "Aktivni termini"
-              : filter === "archived"
-              ? "Arhivirani termini"
-              : "Svi termini"}
-          </h4>
+          <div>
+            <h4 className="my-4 d-flex">
+              {filter === "active"
+                ? "Aktivni termini"
+                : filter === "archived"
+                ? "Arhivirani termini"
+                : "Na čekanju za potvrdu"}
+              <div className="ml-auto">
+                <DropdownButton
+                  as={ButtonGroup}
+                  id="dropdown-basic-button"
+                  title={sortButtonLabel}
+                  variant="outline-secondary"
+                  className="ml-auto"
+                  size="sm"
+                >
+                  <Dropdown.Item onClick={() => handleSortClick("Najnovije")}>
+                    Najnoviji
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => handleSortClick("Najstarije")}>
+                    Najstariji
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleSortClick("Po datumu termina uzlazno")}
+                  >
+                    Po datumu termina uzlazno
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleSortClick("Po datumu termina silazno")}
+                  >
+                    Po datumu termina silazno
+                  </Dropdown.Item>
+                </DropdownButton>
+              </div>
+            </h4>
+          </div>
         </div>
         {isLoading ? (
           <div className="text-center text-muted justify-content-center">
@@ -317,8 +325,10 @@ const SalonAppointments = () => {
                             <b className="text-dark">Status: </b>
                             {app.completed ? (
                               <b className="text-warning">arhiviran</b>
-                            ) : (
+                            ) : app.confirmed ? (
                               <b className="text-success">aktivan</b>
+                            ) : (
+                              <b className="text-danger">na čekanju</b>
                             )}
                           </ListGroup.Item>
                         </ListGroup>

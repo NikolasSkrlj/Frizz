@@ -135,7 +135,7 @@ const UserProfile = () => {
   };
 
   return (
-    <Card>
+    <Card style={{ minHeight: "100vh" }}>
       <Card.Header className="d-flex">
         <h3 className="align-self-start"> Profil</h3>
 

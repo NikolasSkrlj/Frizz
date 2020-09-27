@@ -159,7 +159,7 @@ const UserAppointments = () => {
   };
 
   return (
-    <Card>
+    <Card style={{ minHeight: "100vh" }}>
       <Card.Header className="d-flex">
         <h3 className="align-self-start"> Termini</h3>
       </Card.Header>

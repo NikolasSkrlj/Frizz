@@ -133,7 +133,7 @@ const SalonFeed = () => {
   }, [salons]);
 
   return (
-    <Card body>
+    <Card body style={{ minHeight: "100vh" }}>
       <Card className="mb-4">
         <Card.Header>
           <Row className="d-flex mb-xs-2">

@@ -116,8 +116,6 @@ module.exports.getAppointments = async (req, res, next) => {
     const salon = req.salon;
     const searchDate = req.query.searchDate;
 
-    console.log(new Date(searchDate), req.params);
-
     const dayStart = new Date(searchDate).setHours(0, 0, 0);
     const dayEnd = new Date(searchDate).setHours(23, 59, 59);
 
@@ -137,12 +135,15 @@ module.exports.getAppointments = async (req, res, next) => {
       appointmentDate: { $gte: dayStart, $lte: dayEnd },
     };
 
-    if (filter === "active") {
+    if (filter === "onHold") {
+      search.completed = false;
+      search.confirmed = false;
+    } else if (filter === "active") {
+      search.confirmed = true;
       search.completed = false;
     } else if (filter === "archived") {
-      search.completed = true;
+      search.completed = true; // termin ce imati completed true automatski kad prodje datum termina neovisno o fizičkom izvršetku
     } // inace baca sve skupa
-    //const reviewsCnt = await Review.countDocuments(search);
 
     //console.log(sort);
     //const skip = req.query.page ? req.query.page * limit : null;

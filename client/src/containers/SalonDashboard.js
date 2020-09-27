@@ -44,7 +44,7 @@ const SalonDashboard = () => {
       />
       <Container
         fluid
-        className="pt-5 "
+        className="pt-5 h-100"
         style={{ paddingRight: "5px", paddingLeft: "10px" }}
       >
         <div className={classNameHtml} id="content">
