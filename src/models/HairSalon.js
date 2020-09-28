@@ -27,13 +27,13 @@ const workingHoursSchema = new mongoose.Schema({
     type: Number,
     min: 0,
     max: 24,
-    default: null,
+    default: 0,
   },
   endWorktime: {
     type: Number,
     min: 0,
     max: 24,
-    default: null,
+    default: 0,
   },
 });
 

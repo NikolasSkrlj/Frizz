@@ -119,39 +119,39 @@ const SalonAppointments = () => {
   useEffect(() => {
     setSalon(JSON.parse(sessionStorage.getItem("salon")));
   }, []);
-  /* 
-  const handleDeleteClick = async (appointmentId) => {
+
+  const handleConfirmClick = async (action, appointmentId) => {
     setMessageToggled(false);
     setMessage("");
-    try {
-      const res = await axios.delete(
-        `/user/delete_appointment`,
+    if (action === "confirm") {
+      try {
+        const res = await axios.post(
+          `/hairsalon/confirm_appointment`,
+          { appointmentId },
+          {
+            headers: {
+              Authorization: "Bearer " + authToken,
+            },
+          }
+        );
 
-        {
-          headers: {
-            Authorization: "Bearer " + authToken,
-          },
-          data: {
-            appointmentId,
-          },
+        if (res.data.success) {
+          setSubmitSuccess(true);
+          setMessage(res.data.message);
+          setMessageToggled(true);
         }
-      );
-
-      if (res.data.success) {
-        setSubmitSuccess(true);
-        setMessage(res.data.message);
-        setMessageToggled(true);
+      } catch (err) {
+        //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
+        if (err.response) {
+          setSubmitSuccess(false);
+          setMessage(err.response.data.message || "Došlo je do pogreške!");
+          setMessageToggled(true);
+        }
       }
-    } catch (err) {
-      //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
-      if (err.response) {
-        setSubmitSuccess(false);
-        setMessage(err.response.data.message || "Došlo je do pogreške!");
-        setMessageToggled(true);
-      }
+    } else {
     }
   };
- */
+
   const DateInput = ({ onClick }) => {
     return (
       <div>
@@ -217,7 +217,6 @@ const SalonAppointments = () => {
                   //  minDate={new Date()}
                   closeOnScroll
                   dateFormat="Pp"
-                  style={{ zIndex: 100 }}
                 />
               </h5>
             </Col>
@@ -270,7 +269,7 @@ const SalonAppointments = () => {
           appointments.length ? (
             appointments.map((app) => {
               return (
-                <Row className="my-2">
+                <Row className="my-2" key={app._id}>
                   <Col xs={12}>
                     <Card>
                       <Card.Body>
@@ -332,6 +331,38 @@ const SalonAppointments = () => {
                             )}
                           </ListGroup.Item>
                         </ListGroup>
+
+                        {!app.completed && !app.confirmed && (
+                          <>
+                            <hr />
+                            <Row>
+                              <Col>
+                                <Button
+                                  className="mx-1"
+                                  variant="success"
+                                  block
+                                  onClick={() => {
+                                    handleConfirmClick("confirm", app._id);
+                                  }}
+                                >
+                                  Potvrdi
+                                </Button>
+                              </Col>
+                              <Col>
+                                <Button
+                                  className="mx-2"
+                                  variant="danger"
+                                  block
+                                  onClick={() => {
+                                    handleConfirmClick("reject", app._id);
+                                  }}
+                                >
+                                  Odbaci
+                                </Button>
+                              </Col>
+                            </Row>
+                          </>
+                        )}
                       </Card.Body>
                     </Card>
                   </Col>

@@ -183,6 +183,8 @@ const UserProfile = () => {
                 isValid,
                 errors,
                 setErrors,
+                setValues,
+                initialValues,
               }) => (
                 <Row>
                   <Col sm={12}>
@@ -233,7 +235,7 @@ const UserProfile = () => {
                                   isInvalid={!!errors.fullName}
                                 />
                                 <Form.Control.Feedback type="invalid">
-                                  {errors.name}
+                                  {errors.fullName}
                                 </Form.Control.Feedback>
                               </Col>
                             </Row>
@@ -349,6 +351,7 @@ const UserProfile = () => {
                                 className="mr-1 w-100"
                                 onClick={() => {
                                   setErrors({});
+                                  setValues(initialValues);
                                   setIsEditable(false);
                                 }}
                               >

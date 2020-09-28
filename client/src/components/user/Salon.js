@@ -555,7 +555,14 @@ const Salon = ({ salonData }) => {
                 <ListGroup.Item>
                   <h4>Adresa</h4>
                   {`${address.street}, ${address.postalCode} ${address.city}`}
-                  {/* <a href="#">vidi na karti</a> */}
+                  <br />
+                  <a
+                    href={`http://maps.google.com/?q=${address.street}, ${address.postalCode} ${address.city}`}
+                    target="_BLANK"
+                  >
+                    {" "}
+                    Prikaži na karti
+                  </a>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <h4>E-mail</h4>

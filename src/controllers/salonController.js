@@ -81,7 +81,7 @@ module.exports.logoutSalon = async (req, res, next) => {
 };
 
 // Desc: Getting all info for the logged in hair salon
-// Route: GET /hairsalon/get
+// Route: GET /hairsalon/get_profile
 // Access: Authenticated
 module.exports.getSalon = async (req, res, next) => {
   try {
@@ -99,6 +99,32 @@ module.exports.getSalon = async (req, res, next) => {
     //await salon.hairdressers.populate("reviews").execPopulate(); isto radi ali nama treba gornji izraz zbog gnjijezdenja
 
     res.send({ success: true, salon });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+// Desc: Confirm an appointment
+// Route: GET /hairsalon/get
+// Access: Authenticated
+module.exports.confirmSalon = async (req, res, next) => {
+  try {
+    const salon = req.salon;
+    const { appointmentId } = req.body;
+
+    const appointment = await Appointment.findOne({ _id: appointmentId });
+
+    if (!appointment) {
+      res.status(400).send({
+        success: false,
+        message: "Termin ne postoji ili je izbrisan!",
+      });
+    }
+
+    res.send({ success: true, message: "Termin uspješno potvrđen" });
   } catch (err) {
     res.status(500).send({
       success: false,
