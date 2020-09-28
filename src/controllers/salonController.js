@@ -39,6 +39,52 @@ module.exports.createSalon = async (req, res, next) => {
   }
 };
 
+// Desc: Updating profile data(password not allowed on this route)
+// Route: PUT /hairsalon/update_profile
+// Access: Authenticated
+module.exports.updateProfile = async (req, res, next) => {
+  const updates = Object.keys(req.body); // vraca array keyeva
+  const allowedUpdates = ["name", "email", "workingHours", "address", "phone"]; // koja polja mozemo mijenjati
+
+  // ovo nije potrebno ali dobro je useru dat feedback
+  //every radi kao for each ali vraca boolean ovisno o svakom elementu arraya
+  const isValid = updates.every((key) => {
+    return allowedUpdates.includes(key);
+  });
+
+  if (!isValid) {
+    return res.status(400).send({
+      success: false,
+      message: "Pokušali ste mijenjati nedozvoljene podatke!",
+    });
+  }
+
+  try {
+    const salon = req.salon;
+    if (!salon) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Salon ne postoji!" });
+    }
+    updates.forEach((update) => {
+      salon[update] = req.body[update]; // dinamicko updatanje keyseva sa [] operatorom
+    });
+    await salon.save();
+
+    res.send({
+      success: true,
+      salon,
+      message: "Profil salona uspješno ažuriran!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
 // Desc: Logging in the hair salon account
 // Route: POST /hairsalon/login
 // Access: Public

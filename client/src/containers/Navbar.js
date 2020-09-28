@@ -40,6 +40,7 @@ const NavbarContainer = () => {
           },
         }
       );
+      history.push("/");
       //ovo da moze kod refresha ostat podaci vidljivi
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("loggedIn");
@@ -54,7 +55,6 @@ const NavbarContainer = () => {
       }
       setAuthToken("");
       toggleIsLoggedIn();
-      history.push("/");
     } catch (err) {
       if (err.response) {
         console.log("dap nesto se sjebalo", err);

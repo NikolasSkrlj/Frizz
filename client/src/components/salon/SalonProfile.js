@@ -105,15 +105,30 @@ const SalonProfile = () => {
     getData();
   }, []);
 
-  const handleSubmit = async ({ fullName, email, age, gender, phone }) => {
+  const handleSubmit = async ({
+    name,
+    email,
+    phone,
+    street,
+    city,
+    county,
+    wh,
+    postalCode,
+  }) => {
     setMessageToggled(false);
     setMessage("");
     try {
+      const address = { street, postalCode, city, county };
+      // console.log(address);
+
       const res = await axios.put(
         `/hairsalon/update_profile`,
         {
           email,
-          name: fullName,
+          name,
+          address,
+          phone,
+          workingHours: wh,
         },
         {
           headers: {
@@ -173,8 +188,8 @@ const SalonProfile = () => {
             <Formik
               validationSchema={schema}
               onSubmit={(values) => {
-                console.log(values);
-                // handleSubmit(values);
+                //console.log(values);
+                handleSubmit(values);
               }}
               validateOnChange={false}
               initialValues={{
