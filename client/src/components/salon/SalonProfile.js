@@ -17,7 +17,7 @@ import { FaUserEdit } from "react-icons/fa";
 import { Formik } from "formik";
 import * as yup from "yup";
 //import "./../styles/UserProfile.css";
-//import ChangePassword from "./../components/user/ChangePassword";
+import ChangePassword from "./ChangePassword";
 //import UploadProfilePic from "./../components/user/UploadProfilePic";
 
 //yup je vanjski library za validaciju kojeg koristi formik i lagano je jer ima schemu ovako
@@ -67,7 +67,6 @@ const schema = yup.object({
 
 const SalonProfile = () => {
   const { authToken, salon, setSalon } = useContext(GlobalContext);
-  //const [user, setUser] = useState({});
 
   const [message, setMessage] = useState("");
   const [messageToggled, setMessageToggled] = useState(false);
@@ -78,7 +77,8 @@ const SalonProfile = () => {
   //za error handling i loading indikator
   const [fetchSuccess, setFetchSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // da se ne pojavi error odmah mali bug
-  const params = useParams();
+
+  const [isUpdated, setIsUpdated] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -616,13 +616,72 @@ const SalonProfile = () => {
                                   </Col>
                                   <Col sm={8}>
                                     <Form.Control
-                                      type="text"
+                                      as="select"
                                       name="county"
-                                      placeholder="Županija"
                                       value={values.county}
                                       onChange={handleChange}
                                       isInvalid={!!errors.county}
-                                    />
+                                    >
+                                      <option value="ZAGREBAČKA">
+                                        ZAGREBAČKA
+                                      </option>
+                                      <option value="KRAPINSKO-ZAGORSKA">
+                                        KRAPINSKO-ZAGORSKA
+                                      </option>
+                                      <option value="SISAČKO-MOSLAVAČKA">
+                                        SISAČKO-MOSLAVAČKA
+                                      </option>
+                                      <option value="KARLOVAČKA">
+                                        KARLOVAČKA
+                                      </option>
+                                      <option value="VARAŽDINSKA">
+                                        VARAŽDINSKA
+                                      </option>
+                                      <option value="KOPRIVNIČKO-KRIŽEVAČKA">
+                                        KOPRIVNIČKO-KRIŽEVAČKA
+                                      </option>
+                                      <option value="BJELOVARSKO-BILOGORSKA">
+                                        BJELOVARSKO-BILOGORSKA
+                                      </option>
+                                      <option value="PRIMORSKO-GORANSKA">
+                                        PRIMORSKO-GORANSKA
+                                      </option>
+                                      <option value="LIČKO-SENJSKA">
+                                        LIČKO-SENJSKA
+                                      </option>
+                                      <option value="VIROVITIČKO-PODRAVSKA">
+                                        VIROVITIČKO-PODRAVSKA
+                                      </option>
+                                      <option value="POŽEŠKO-SLAVONSKA">
+                                        POŽEŠKO-SLAVONSKA
+                                      </option>
+                                      <option value="BRODSKO-POSAVSKA">
+                                        BRODSKO-POSAVSKA
+                                      </option>
+                                      <option value="ZADARSKA">ZADARSKA</option>
+                                      <option value="OSJEČKO-BARANJSKA">
+                                        OSJEČKO-BARANJSKA
+                                      </option>
+                                      <option value="ŠIBENSKO-KNINSKA">
+                                        ŠIBENSKO-KNINSKA
+                                      </option>
+                                      <option value="VUKOVARSKO-SRIJEMSKA">
+                                        VUKOVARSKO-SRIJEMSKA
+                                      </option>
+                                      <option value="SPLITSKO-DALMATINSKA">
+                                        SPLITSKO-DALMATINSKA
+                                      </option>
+                                      <option value="ISTARSKA">ISTARSKA</option>
+                                      <option value="DUBROVAČKO-NERETVANSKA">
+                                        DUBROVAČKO-NERETVANSKA
+                                      </option>
+                                      <option value="MEĐIMURSKA">
+                                        MEĐIMURSKA
+                                      </option>
+                                      <option value="GRAD ZAGREB">
+                                        GRAD ZAGREB
+                                      </option>
+                                    </Form.Control>
                                     <Form.Control.Feedback type="invalid">
                                       {errors.county}
                                     </Form.Control.Feedback>
@@ -675,12 +734,10 @@ const SalonProfile = () => {
             {/* Za promjenu lozinke */}
             <h3 className="my-4">Opcije</h3>
             <Row className="my-5">
-              {/* <Col sm={6}>
+              <Col sm={6}>
                 <b>Promjena lozinke</b>
               </Col>
-              <Col sm={6}>
-                {<ChangePassword />}
-              </Col> */}
+              <Col sm={6}>{<ChangePassword updateSalon={setIsUpdated} />}</Col>
             </Row>
 
             <Row className="my-5">

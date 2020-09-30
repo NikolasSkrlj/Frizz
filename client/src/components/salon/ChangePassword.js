@@ -31,14 +31,12 @@ const ChangePassword = () => {
   const [messageToggled, setMessageToggled] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
-  const params = useParams();
-
   const handleSubmit = async ({ oldPassword, newPassword }) => {
     setMessageToggled(false);
     setMessage("");
     try {
       const res = await axios.put(
-        `/user/change_password`,
+        `/hairsalon/change_password`,
         {
           oldPassword,
           newPassword,
@@ -52,7 +50,6 @@ const ChangePassword = () => {
       if (res.data.success) {
         setSubmitSuccess(true);
         setMessage(res.data.message);
-        //setUser(res.data.user);
 
         setMessageToggled(true);
 
@@ -62,7 +59,6 @@ const ChangePassword = () => {
         }, 2000);
       }
     } catch (err) {
-      //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
       if (err.response) {
         setSubmitSuccess(false);
         setMessage(
@@ -77,7 +73,7 @@ const ChangePassword = () => {
   return (
     <Formik
       validationSchema={passwordSchema}
-      onSubmit={(values) => {
+      onSubmit={(values, props) => {
         //console.log(values);
         handleSubmit(values);
       }}

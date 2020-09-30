@@ -5,6 +5,8 @@ const Appointment = require("../models/Appointment");
 const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
 
+const bcrypt = require("bcrypt");
+
 // Desc: Creating hair salon account
 // Route: POST /hairsalon/create
 // Access: Public
@@ -145,6 +147,52 @@ module.exports.getSalon = async (req, res, next) => {
     //await salon.hairdressers.populate("reviews").execPopulate(); isto radi ali nama treba gornji izraz zbog gnjijezdenja
 
     res.send({ success: true, salon });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Changing password for a user
+// Route: PUT /user/change_password
+// Access: Authenticated
+module.exports.changePassword = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  try {
+    const salon = req.salon;
+
+    if (!salon) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Salon ne postoji!" });
+    }
+
+    const match = await bcrypt.compare(oldPassword, salon.password);
+    if (!match) {
+      return res.status(400).send({
+        success: false,
+        message: "Promijena lozinke nije dozvoljena!",
+      });
+    }
+
+    if (oldPassword === newPassword) {
+      return res.status(400).send({
+        success: false,
+        message: "Nova lozinka ne može biti stara lozinka!",
+      });
+    }
+
+    salon.password = newPassword;
+    await salon.save();
+
+    res.send({
+      success: true,
+      message: "Lozinka uspješno promijenjena!",
+    });
   } catch (err) {
     res.status(500).send({
       success: false,
