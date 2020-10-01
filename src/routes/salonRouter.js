@@ -19,6 +19,7 @@ const {
   getAppointmentTypes,
   updateAppointmentType,
   deleteAppointmentType,
+  getReviews,
 } = require("../controllers/salonController");
 
 //routes for the hair salon handling
@@ -32,6 +33,7 @@ router.route("/get_profile").get(auth, getSalon);
 router.route("/update_profile").put(auth, updateProfile);
 
 //frizeri
+router.route("/add_hairdresser").post(auth, addHairdresser);
 router.route("/get_hairdressers").get(auth, getHairdressers);
 router.route("/update_hairdresser").put(auth, updateHairdresser);
 router.route("/delete_hairdresser").delete(auth, deleteHairdresser);
@@ -43,6 +45,7 @@ router.route("/add_appointmentType").post(auth, addAppointmentType);
 router.route("/update_appointmentType").put(auth, updateAppointmentType);
 router.route("/delete_appointmentType").delete(auth, deleteAppointmentType);
 
-router.route("/add_hairdresser").post(auth, addHairdresser);
+//recenzije
+router.route("/get_reviews").get(auth, getReviews);
 
 module.exports = router;

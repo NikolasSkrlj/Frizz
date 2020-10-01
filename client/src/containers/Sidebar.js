@@ -204,7 +204,7 @@ const Sidebar = ({
               <Link
                 className="nav-link text-dark text-bold bg-light"
                 onClick={handleLinkClick}
-                to={`${url}/profile`}
+                to={`${url}/reviews`}
               >
                 <FaListAlt className="mr-3" />
                 Recenzije

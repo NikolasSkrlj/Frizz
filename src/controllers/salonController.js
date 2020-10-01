@@ -624,3 +624,52 @@ module.exports.getAppointments = async (req, res, next) => {
     });
   }
 };
+
+// Desc: Get all reviews
+// Route: GET /hairsalon/get_reviews
+// Access: Authenticated
+module.exports.getReviews = async (req, res, next) => {
+  try {
+    const salonId = req.salon._id;
+
+    const sort = {};
+    const limit = 10;
+
+    if (req.query.sortBy) {
+      const values = req.query.sortBy.split("_");
+      const term = values[0];
+      sort[term] = values[1] === "asc" ? 1 : -1;
+    }
+
+    const filter = req.query.filter;
+    const search = { salonId };
+    if (filter === "salon") {
+      search.hairdresserId = null;
+    } else if (filter === "hairdressers") {
+      search.hairdresserId = { $ne: null };
+    }
+
+    const reviewsCnt = await Review.countDocuments(search);
+
+    //console.log(sort);
+    const skip = req.query.page ? req.query.page * limit : null;
+
+    const reviews = await Review.find(search, null, {
+      sort,
+      limit,
+      skip,
+    }).populate("userId hairdresserId");
+
+    res.send({
+      success: true,
+      reviews,
+      totalReviewsCnt: reviewsCnt,
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};

@@ -22,7 +22,7 @@ const AppointmentTypes = () => {
   const { authToken } = useContext(GlobalContext);
 
   // const [salon, setSalon] = useState({});
-  const [appointmentTypes, setAppointmentTypes] = useState({});
+  const [appointmentTypes, setAppointmentTypes] = useState([]);
 
   const [sortOption, setSortOption] = useState({
     option: "updatedAt",

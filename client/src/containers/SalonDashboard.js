@@ -10,15 +10,14 @@ import {
   Switch,
 } from "react-router-dom";
 import Sidebar from "./Sidebar";
-/* import SalonFeed from "../components/user/SalonFeed";
-import UserProfile from "./UserProfile";
-import UserAppointments from "./UserAppointments"; */
+
 import SalonAppointments from "../components/salon/SalonAppointments";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 import SalonProfile from "../components/salon/SalonProfile";
 import Hairdressers from "../components/salon/Hairdressers";
 import AppointmentTypes from "../components/salon/AppointmentTypes";
+import Reviews from "../components/salon/Reviews";
 
 const SalonDashboard = () => {
   const [sidebarToggled, setSidebarToggled] = useState(true);
@@ -79,6 +78,7 @@ const SalonDashboard = () => {
               path={`${path}/appointmentTypes`}
               component={AppointmentTypes}
             />
+            <Route exact path={`${path}/reviews`} component={Reviews} />
             <Route path={path} component={DummyContent} />
           </Switch>
         </div>
