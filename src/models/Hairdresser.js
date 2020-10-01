@@ -24,13 +24,11 @@ const workHours = new mongoose.Schema({
     type: Number,
     min: 0,
     max: 24,
-    default: null,
   },
   endTime: {
     type: Number,
     min: 0,
     max: 24,
-    default: null,
   },
 });
 
@@ -69,6 +67,8 @@ const hairdresserSchema = new mongoose.Schema(
     ],
   },
   {
+    timestamps: true,
+
     toObject: {
       virtuals: true,
     },

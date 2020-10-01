@@ -310,7 +310,7 @@ const SalonProfile = () => {
                               </Col>
                             </Row>
                           </Form.Group>
-                          <Form.Group as={Col} md="12" controlId="wh">
+                          <Form.Group as={Col} md="12">
                             <Row>
                               <Col sm={6}>
                                 <Form.Label>
@@ -540,7 +540,7 @@ const SalonProfile = () => {
                               </Col>
                             </Row>
                           </Form.Group>
-                          <Form.Group as={Col} md="12" controlId="address">
+                          <Form.Group as={Col} md="12">
                             <Row>
                               <Col sm={6}>
                                 <Form.Label>
@@ -558,6 +558,7 @@ const SalonProfile = () => {
                                     <Form.Control
                                       type="text"
                                       name="street"
+                                      id="street"
                                       placeholder="Ulica i broj"
                                       value={values.street}
                                       onChange={handleChange}
@@ -578,6 +579,7 @@ const SalonProfile = () => {
                                     <Form.Control
                                       type="number"
                                       name="postalCode"
+                                      id="postalCode"
                                       placeholder="Poštanski broj"
                                       value={values.postalCode}
                                       onChange={handleChange}
@@ -600,6 +602,7 @@ const SalonProfile = () => {
                                       name="city"
                                       placeholder="Grad/Općina"
                                       value={values.city}
+                                      id="city"
                                       onChange={handleChange}
                                       isInvalid={!!errors.city}
                                     />
@@ -618,6 +621,7 @@ const SalonProfile = () => {
                                     <Form.Control
                                       as="select"
                                       name="county"
+                                      id="county"
                                       value={values.county}
                                       onChange={handleChange}
                                       isInvalid={!!errors.county}

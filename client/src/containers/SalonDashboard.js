@@ -17,6 +17,7 @@ import SalonAppointments from "../components/salon/SalonAppointments";
 import DummyContent from "../containers/DummyContent";
 import "../styles/Navbar.css";
 import SalonProfile from "../components/salon/SalonProfile";
+import Hairdressers from "../components/salon/Hairdressers";
 
 const SalonDashboard = () => {
   const [sidebarToggled, setSidebarToggled] = useState(true);
@@ -67,6 +68,11 @@ const SalonDashboard = () => {
               component={SalonAppointments}
             />
             <Route exact path={`${path}/profile`} component={SalonProfile} />
+            <Route
+              exact
+              path={`${path}/hairdressers`}
+              component={Hairdressers}
+            />
             <Route path={path} component={DummyContent} />
           </Switch>
         </div>

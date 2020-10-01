@@ -122,7 +122,7 @@ console.log({} == null);
 const test = new Date();
 console.log(test, test.toISOString());
  */
-const toIsoString = (date) => {
+/* const toIsoString = (date) => {
   var tzo = -date.getTimezoneOffset(),
     dif = tzo >= 0 ? "+" : "-",
     pad = function (num) {
@@ -152,3 +152,5 @@ const test = new Date();
 console.log(test);
 console.log(test.toISOString());
 console.log(toIsoString(test));
+ */
+console.log(null == 0);

@@ -164,15 +164,15 @@ const EditReviewModal = ({
   return (
     <div>
       <ButtonGroup className="ml-auto">
-        <Button variant="danger" size="sm" onClick={() => handleShow("delete")}>
-          <FaTrash />
-        </Button>
         <Button
           variant="secondary"
           size="sm"
           onClick={() => handleShow("edit")}
         >
           <FaRegEdit />
+        </Button>
+        <Button variant="danger" size="sm" onClick={() => handleShow("delete")}>
+          <FaTrash />
         </Button>
       </ButtonGroup>
 

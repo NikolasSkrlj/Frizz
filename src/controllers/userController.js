@@ -620,7 +620,7 @@ module.exports.deleteReview = async (req, res, next) => {
     });
   }
 };
-// Desc: Edit a review
+// Desc: Submit a review
 // Route: PUT /user/submit_review
 // Access: Authenticated
 module.exports.submitReview = async (req, res, next) => {

@@ -8,10 +8,13 @@ const {
   loginSalon,
   logoutSalon,
   getSalon,
+  getHairdressers,
   getAppointments,
   submitReview,
   createAppointmentType,
   addHairdresser,
+  updateHairdresser,
+  deleteHairdresser,
   updateProfile,
   changePassword,
 } = require("../controllers/salonController");
@@ -21,7 +24,10 @@ router.route("/create").post(createSalon);
 router.route("/login").post(loginSalon);
 router.route("/logout").post(auth, logoutSalon);
 router.route("/get_profile").get(auth, getSalon);
+router.route("/get_hairdressers").get(auth, getHairdressers);
 router.route("/update_profile").put(auth, updateProfile);
+router.route("/update_hairdresser").put(auth, updateHairdresser);
+router.route("/delete_hairdresser").delete(auth, deleteHairdresser);
 router.route("/change_password").put(auth, changePassword);
 
 router.route("/get_appointments").get(auth, getAppointments);

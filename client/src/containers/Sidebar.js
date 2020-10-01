@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { FaNewspaper, FaRegUser, FaCalendarDay } from "react-icons/fa";
+import {
+  FaChair,
+  FaRegUser,
+  FaUserFriends,
+  FaCalendarDay,
+  FaCut,
+  FaListAlt,
+} from "react-icons/fa";
 import { FiScissors } from "react-icons/fi";
 
 import { GlobalContext } from "../contexts/GlobalContext";
@@ -169,8 +176,38 @@ const Sidebar = ({
                 onClick={handleLinkClick}
                 to={`${url}/profile`}
               >
-                <FaRegUser className="mr-3" />
-                Profil
+                <FaCut className="mr-3" />
+                Salon
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link text-dark text-bold bg-light"
+                onClick={handleLinkClick}
+                to={`${url}/hairdressers`}
+              >
+                <FaUserFriends className="mr-3" />
+                Frizeri
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link text-dark text-bold bg-light"
+                onClick={handleLinkClick}
+                to={`${url}/profile`}
+              >
+                <FaChair className="mr-3" />
+                Vrste termina
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                className="nav-link text-dark text-bold bg-light"
+                onClick={handleLinkClick}
+                to={`${url}/profile`}
+              >
+                <FaListAlt className="mr-3" />
+                Recenzije
               </Link>
             </li>
           </ul>
