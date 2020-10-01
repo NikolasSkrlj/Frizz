@@ -156,6 +156,53 @@ module.exports.getSalon = async (req, res, next) => {
   }
 };
 
+// Desc: Adding hairdressers for a logged in hair salon
+// Route: POST /hairsalon/add_hairdresser
+// Access: Authenticated
+module.exports.addHairdresser = async (req, res, next) => {
+  try {
+    const { name, phone, workDays } = req.body;
+
+    const salon = await HairSalon.findOne({ _id: req.salon.id });
+
+    if (!salon) {
+      res.status(404).send({
+        success: false,
+        message: "Salon s navedenim id-om ne postoji!",
+      });
+    }
+
+    const hairdresser = new Hairdresser({
+      salonId: req.salon.id,
+      name,
+      phone,
+      workDays,
+    });
+
+    //spremanje u hairdresser model
+    await hairdresser.save(() => {
+      console.log("Hairdresser saved!");
+    });
+
+    //povezivanje salona sa frizerom
+    salon.hairdressers.push(hairdresser);
+    await salon.save(() => {
+      console.log("Salon hairdressers updated!");
+    });
+    res.send({
+      success: true,
+      hairdresser,
+      message: "Frizer/ka uspjesno unesen/a!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
 // Desc: Getting all hairdressers
 // Route: GET /hairsalon/get_hairdressers
 // Access: Authenticated
@@ -185,8 +232,8 @@ module.exports.getHairdressers = async (req, res, next) => {
   }
 };
 
-// Desc: Edit submitted review
-// Route: PUT /hairsalon/update_review/
+// Desc: Update hairdresser info
+// Route: PUT /hairsalon/update_hairdresser/
 // Access: Authenticated
 module.exports.updateHairdresser = async (req, res, next) => {
   try {
@@ -272,6 +319,184 @@ module.exports.deleteHairdresser = async (req, res, next) => {
     });
   }
 };
+
+// Desc: Adding appointment types for a logged in hair salon
+// Route: POST /hairsalon/add_appointmentType
+// Access: Authenticated
+module.exports.addAppointmentType = async (req, res, next) => {
+  try {
+    const { name, price, duration, description, intendedGender } = req.body;
+
+    if (!name || !price || !duration) {
+      return res.status(400).send({
+        success: false,
+        message: "Nedostaju name, price ili duration!",
+      });
+    }
+    //ako se next(new Error("nesto")) baci isto je ok baci error ali ovako dobijemo porukicu
+
+    const salon = req.salon;
+
+    const appoint = new AppointmentType({
+      salonId: req.salon.id,
+      name,
+      price,
+      duration,
+      description,
+      intendedGender,
+    });
+
+    await appoint.save(async (err, app) => {
+      if (err) {
+        new Error(err);
+      }
+      console.log("Appointment type saved!");
+      salon.appointmentTypes.push(appoint);
+      await salon.save(() => {
+        console.log("Salon appointment types updated");
+      });
+    });
+
+    res.send({ success: true, message: "Usluga uspjesno unesena!" });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Getting all hairdressers
+// Route: GET /hairsalon/get_appointmentTypes
+// Access: Authenticated
+module.exports.getAppointmentTypes = async (req, res, next) => {
+  try {
+    const salon = req.salon;
+
+    const sort = {};
+
+    if (req.query.sortBy) {
+      const values = req.query.sortBy.split("_");
+      const term = values[0];
+      sort[term] = values[1] === "asc" ? 1 : -1;
+    }
+    //console.log(sort);
+    const appointmentTypes = await AppointmentType.find(
+      { salonId: salon._id },
+      null,
+      {
+        sort,
+      }
+    );
+
+    res.send({ success: true, appointmentTypes });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Update appointment type info
+// Route: PUT /hairsalon/update_appointmentType/
+// Access: Authenticated
+module.exports.updateAppointmentType = async (req, res, next) => {
+  try {
+    const { appointmentTypeId } = req.body;
+
+    const updates = Object.keys(req.body); // vraca array keyeva
+    updates.pop("appointmentTypeId");
+    const allowedUpdates = [
+      "name",
+      "price",
+      "duration",
+      "intendedGender",
+      "description",
+    ]; // koja polja mozemo mijenjati
+
+    //every radi kao for each ali vraca boolean ovisno o svakom elementu arraya
+    const isValid = updates.every((key) => {
+      return allowedUpdates.includes(key);
+    });
+
+    if (!isValid) {
+      return res.status(400).send({
+        success: false,
+        message: "Pokušali ste mijenjati nedozvoljene podatke!",
+      });
+    }
+
+    const appointmentType = await AppointmentType.findOne({
+      _id: appointmentTypeId,
+    });
+    if (!appointmentType) {
+      return res
+        .status(404)
+        .send({ success: false, message: "Ta vrsta termina ne postoji!" });
+    }
+    updates.forEach((update) => {
+      appointmentType[update] = req.body[update]; // dinamicko updatanje keyseva sa [] operatorom
+    });
+    await appointmentType.save();
+
+    res.send({
+      success: true,
+      message: "Vrsta termina uspješno ažurirana!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
+// Desc: Delete an appointment type
+// Route: DEL /hairsalon/delete_appointmentType
+// Access: Authenticated
+module.exports.deleteAppointmentType = async (req, res, next) => {
+  try {
+    const { appointmentTypeId } = req.body;
+
+    const appointmentType = await AppointmentType.findOne({
+      _id: appointmentTypeId,
+    });
+
+    if (!appointmentType) {
+      return res
+        .status(400)
+        .send({ success: false, message: "Ta vrsta termina više ne postoji!" });
+    }
+
+    //trebalo bi updateat rating salona ako je izbrisan frizer koji ima ocjene
+    appointmentType.remove(async (err, appType) => {
+      if (err) {
+        res.status(500).send({
+          success: false,
+          message: "Došlo je do pogreške pri brisanju vrste termina!",
+        });
+      }
+      console.log("callback: appointment type deleted!");
+      //await review.updateRatings();
+    });
+
+    res.send({
+      success: true,
+      message: "Vrsta termina uspješno izbrisana!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      success: false,
+      message: "Dogodila se pogreška",
+      error: err.toString(),
+    });
+  }
+};
+
 // Desc: Changing password for a user
 // Route: PUT /user/change_password
 // Access: Authenticated
@@ -391,105 +616,6 @@ module.exports.getAppointments = async (req, res, next) => {
       success: true,
       appointments,
     });
-  } catch (err) {
-    res.status(500).send({
-      success: false,
-      message: "Dogodila se pogreška",
-      error: err.toString(),
-    });
-  }
-};
-
-// Desc: Adding hairdressers for a logged in hair salon
-// Route: POST /hairsalon/add_hairdresser
-// Access: Authenticated
-module.exports.addHairdresser = async (req, res, next) => {
-  try {
-    const { name, phone, workDays } = req.body;
-
-    const salon = await HairSalon.findOne({ _id: req.salon.id });
-
-    if (!salon) {
-      res.status(404).send({
-        success: false,
-        message: "Salon s navedenim id-om ne postoji!",
-      });
-    }
-
-    const hairdresser = new Hairdresser({
-      salonId: req.salon.id,
-      name,
-      phone,
-      workDays,
-    });
-
-    //spremanje u hairdresser model
-    await hairdresser.save(() => {
-      console.log("Hairdresser saved!");
-    });
-
-    //povezivanje salona sa frizerom
-    salon.hairdressers.push(hairdresser);
-    await salon.save(() => {
-      console.log("Salon hairdressers updated!");
-    });
-    res.send({
-      success: true,
-      hairdresser,
-      message: "Frizer/ka uspjesno unesen/a!",
-    });
-  } catch (err) {
-    res.status(500).send({
-      success: false,
-      message: "Dogodila se pogreška",
-      error: err.toString(),
-    });
-  }
-};
-
-// Desc: Adding appointment types for a logged in hair salon
-// Route: POST /hairsalon/create_appointment_type
-// Access: Authenticated
-module.exports.createAppointmentType = async (req, res, next) => {
-  try {
-    const { name, price, duration, description, intendedGender } = req.body;
-
-    if (!name || !price || !duration) {
-      return res.status(400).send({
-        success: false,
-        message: "Nedostaju name, price ili duration!",
-      });
-    }
-    //ako se next(new Error("nesto")) baci isto je ok baci error ali ovako dobijemo porukicu
-
-    const salon = await HairSalon.findOne({ _id: req.salon.id });
-
-    if (salon) {
-      const appoint = new AppointmentType({
-        salonId: req.salon.id,
-        name,
-        price,
-        duration,
-        description,
-        intendedGender,
-      });
-
-      await appoint.save(() => {
-        console.log("Appointment type saved!");
-      });
-
-      salon.appointmentTypes.push(appoint);
-      await salon.save(() => {
-        console.log("Salon appointment types updated");
-      });
-
-      res.send({ success: true, appoint, message: "Usluga uspjesno unesena!" });
-    } else {
-      res.status(404).send({
-        success: false,
-        message: "Salon s navedenim id-om ne postoji!",
-      });
-    }
   } catch (err) {
     res.status(500).send({
       success: false,

@@ -194,7 +194,7 @@ const Sidebar = ({
               <Link
                 className="nav-link text-dark text-bold bg-light"
                 onClick={handleLinkClick}
-                to={`${url}/profile`}
+                to={`${url}/appointmentTypes`}
               >
                 <FaChair className="mr-3" />
                 Vrste termina

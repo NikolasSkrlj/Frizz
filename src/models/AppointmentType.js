@@ -30,6 +30,7 @@ const appointmentTypeSchema = new mongoose.Schema(
     },
   },
   {
+    timestamps: true,
     toObject: {
       virtuals: true,
     },

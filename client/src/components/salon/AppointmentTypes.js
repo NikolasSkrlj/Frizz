@@ -15,14 +15,14 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
-import Hairdresser from "./Hairdresser";
-import AddHairdresser from "./AddHairdresser";
+import AppointmentType from "./AppointmentType";
+import AddAppointmentType from "./AddAppointmentType";
 
-const Hairdressers = () => {
+const AppointmentTypes = () => {
   const { authToken } = useContext(GlobalContext);
 
   // const [salon, setSalon] = useState({});
-  const [hairdressers, setHairdressers] = useState([]);
+  const [appointmentTypes, setAppointmentTypes] = useState({});
 
   const [sortOption, setSortOption] = useState({
     option: "updatedAt",
@@ -38,24 +38,24 @@ const Hairdressers = () => {
   const [fetchSuccess, setFetchSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [addHairdresserToggle, setAddHairdresserToggle] = useState(false);
+  const [addAppTypeToggle, setAddAppTypeToggle] = useState(false);
 
   const [isUpdated, setIsUpdated] = useState(false);
 
   const handleSortClick = (term) => {
     setSortButtonLabel(term);
     switch (term) {
-      /* case "Najnovije":
-        setSortOption({ option: "updatedAt", isAsc: false });
+      case "S dužim trajanjem":
+        setSortOption({ option: "duration", isAsc: false });
         break;
-      case "Najstarije":
-        setSortOption({ option: "updatedAt", isAsc: true });
-        break; */
-      case "S većom ocjenom":
-        setSortOption({ option: "globalRating", isAsc: false });
+      case "S kraćim trajanjem":
+        setSortOption({ option: "duration", isAsc: true });
         break;
-      case "S manjom ocjenom":
-        setSortOption({ option: "globalRating", isAsc: true });
+      case "S većom cijenom":
+        setSortOption({ option: "price", isAsc: false });
+        break;
+      case "S manjom cijenom":
+        setSortOption({ option: "price", isAsc: true });
         break;
       default:
         return;
@@ -68,7 +68,7 @@ const Hairdressers = () => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/hairsalon/get_hairdressers?sortBy=${sortOption.option}_${
+          `/hairsalon/get_appointmentTypes?sortBy=${sortOption.option}_${
             sortOption.isAsc ? "asc" : "desc"
           }`,
           {
@@ -77,7 +77,7 @@ const Hairdressers = () => {
             },
           }
         );
-        setHairdressers(res.data.hairdressers);
+        setAppointmentTypes(res.data.appointmentTypes);
         setFetchSuccess(true);
         setIsLoading(false);
       };
@@ -97,7 +97,7 @@ const Hairdressers = () => {
   return (
     <Card style={{ minHeight: "100vh" }}>
       <Card.Header className="d-flex">
-        <h3 className="align-self-start"> Frizeri</h3>
+        <h3 className="align-self-start">Vrste termina</h3>
       </Card.Header>
 
       <Card.Body>
@@ -105,7 +105,7 @@ const Hairdressers = () => {
           <div className="d-flex">
             <Button
               variant="info"
-              onClick={() => setAddHairdresserToggle(!addHairdresserToggle)}
+              onClick={() => setAddAppTypeToggle(!addAppTypeToggle)}
             >
               Dodaj <FaPlus className="ml-2" />
             </Button>
@@ -118,26 +118,30 @@ const Hairdressers = () => {
               className="ml-auto"
               size="sm"
             >
-              {/* <Dropdown.Item onClick={() => handleSortClick("Najnovije")}>
-                Najnoviji
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleSortClick("Najstarije")}>
-                Najstariji
-              </Dropdown.Item> */}
-              <Dropdown.Item onClick={() => handleSortClick("S većom ocjenom")}>
-                S većom ocjenom
+              <Dropdown.Item onClick={() => handleSortClick("S većom cijenom")}>
+                S većom cijenom
               </Dropdown.Item>
               <Dropdown.Item
-                onClick={() => handleSortClick("S manjom ocjenom")}
+                onClick={() => handleSortClick("S manjom cijenom")}
               >
-                S manjom ocjenom
+                S manjom cijenom
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => handleSortClick("S dužim trajanjem")}
+              >
+                S dužim trajanjem
+              </Dropdown.Item>
+              <Dropdown.Item
+                onClick={() => handleSortClick("S kraćim trajanjem")}
+              >
+                S kraćim trajanjem
               </Dropdown.Item>
             </DropdownButton>
           </div>
-          {addHairdresserToggle && (
-            <AddHairdresser
-              updateHairdressers={setIsUpdated}
-              toggleAdd={() => setAddHairdresserToggle(!addHairdresserToggle)}
+          {addAppTypeToggle && (
+            <AddAppointmentType
+              updateAppTypes={setIsUpdated}
+              toggleAdd={() => setAddAppTypeToggle(!addAppTypeToggle)}
             />
           )}
 
@@ -145,18 +149,18 @@ const Hairdressers = () => {
         </div>
         {isLoading ? (
           <div className="text-center text-muted justify-content-center">
-            <h6 className="pb-2">...Učitavanje frizera...</h6>
+            <h6 className="pb-2">...Učitavanje vrsta termina...</h6>
             <Spinner animation="border" variant="info" />
           </div>
         ) : fetchSuccess ? (
-          hairdressers.length ? (
-            hairdressers.map((hd) => {
+          appointmentTypes.length ? (
+            appointmentTypes.map((at) => {
               return (
-                <Row className="my-2" key={hd._id}>
+                <Row className="my-2" key={at._id}>
                   <Col xs={12}>
-                    <Hairdresser
-                      hairdresser={hd}
-                      updateHairdressers={setIsUpdated}
+                    <AppointmentType
+                      appointmentType={at}
+                      updateAppTypes={setIsUpdated}
                     />
                   </Col>
                 </Row>
@@ -164,7 +168,7 @@ const Hairdressers = () => {
             })
           ) : (
             <h6 className="text-muted text-center">
-              Trenutno nema upisanih frizera.
+              Trenutno nema upisanih vrsta termina.
             </h6>
           )
         ) : (
@@ -178,4 +182,4 @@ const Hairdressers = () => {
   );
 };
 
-export default Hairdressers;
+export default AppointmentTypes;
