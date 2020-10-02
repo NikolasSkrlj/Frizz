@@ -50,7 +50,7 @@ const SalonAppointments = () => {
   const [isUpdated, setIsUpdated] = useState(false);
 
   const handleDateChange = (date) => {
-    setSearchDate(new Date(date.setHours(0, 0, 0)));
+    setSearchDate(new Date(date.setHours(18, 0, 0)));
   };
 
   const handleSortClick = (term) => {
