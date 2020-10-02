@@ -159,8 +159,8 @@ const SubmitReviewForm = ({ salon, updateReviews, setPage, updateSalon }) => {
                         }
                         numberOfStars={5}
                         name="Ocjena"
-                        starRatedColor="yellow"
-                        starHoverColor="yellow"
+                        starRatedColor="orange"
+                        starHoverColor="orange"
                       />
                     </div>
                     <Form className="d-block">

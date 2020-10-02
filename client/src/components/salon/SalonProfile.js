@@ -52,7 +52,7 @@ const schema = yup.object({
     ),
   phone: yup
     .string()
-    .min(9, "Unesite valjan tel. broj")
+    .min(6, "Unesite valjan tel. broj")
     .max(10, "Unesite valjan tel. broj")
     .required("Obavezno polje!"),
   postalCode: yup
@@ -107,6 +107,7 @@ const SalonProfile = () => {
 
   const handleSubmit = async ({
     name,
+    description,
     email,
     phone,
     street,
@@ -126,6 +127,7 @@ const SalonProfile = () => {
         {
           email,
           name,
+          description,
           address,
           phone,
           workingHours: wh,
@@ -194,6 +196,7 @@ const SalonProfile = () => {
               validateOnChange={false}
               initialValues={{
                 name: salon.name,
+                description: salon.description,
                 email: salon.email,
                 phone: salon.phone,
                 wh: salon.workingHours,
@@ -263,7 +266,30 @@ const SalonProfile = () => {
                               </Col>
                             </Row>
                           </Form.Group>
-                          <hr />
+                          <Form.Group as={Col} md="12" controlId="desc">
+                            <Row>
+                              <Col sm={6}>
+                                {" "}
+                                <Form.Label>
+                                  <b>Opis salona</b>
+                                </Form.Label>
+                              </Col>
+                              <Col sm={6}>
+                                {" "}
+                                <Form.Control
+                                  type="text"
+                                  name="description"
+                                  value={values.description}
+                                  onChange={handleChange}
+                                  isInvalid={!!errors.description}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.description}
+                                </Form.Control.Feedback>
+                              </Col>
+                            </Row>
+                          </Form.Group>
+
                           <Form.Group as={Col} md="12" controlId="email">
                             <Row>
                               <Col sm={6}>

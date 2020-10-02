@@ -97,7 +97,7 @@ const UserRegForm = () => {
     <Formik
       validationSchema={schema}
       onSubmit={(values) => {
-        console.log(values);
+        //console.log(values);
         handleSubmit(values);
       }}
       validateOnChange={false}
@@ -120,7 +120,7 @@ const UserRegForm = () => {
             onSubmit={handleSubmit}
             className="mx-auto text-left"
           >
-            <Col md={{ span: 4, offset: 4 }}>
+            <Col md={{ span: 6, offset: 3 }}>
               <Form.Row>
                 <Form.Group as={Col} md="12" controlId="ime">
                   <Form.Label>Ime i prezime</Form.Label>

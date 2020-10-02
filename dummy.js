@@ -153,4 +153,32 @@ console.log(test);
 console.log(test.toISOString());
 console.log(toIsoString(test));
  */
-console.log(null == 0);
+const salon = {
+  tags: [],
+};
+const name = "Frizerski salon Kiki";
+const address = {
+  street: "Vukovarska 47a",
+  city: "Rijeka",
+  postalCode: 52000,
+  county: "ISTARSKA",
+};
+
+const createTags = (salon, name, address) => {
+  salon.tags.push(name, name.toLowerCase());
+  salon.tags.push(address.street, address.street.toLowerCase());
+  salon.tags.push(
+    address.street.split(" ")[0],
+    address.street.split(" ")[0].toLowerCase()
+  );
+  salon.tags.push(address.city, address.city.toLowerCase());
+  salon.tags.push(address.county, address.county.toLowerCase());
+
+  const nameSpread = name.split(" ");
+  nameSpread.forEach((part) => {
+    salon.tags.push(part, part.toLowerCase());
+  });
+};
+
+createTags(salon, name, address);
+console.log(salon);

@@ -113,8 +113,8 @@ const HairdresserReviewSubmit = ({
               changeRating={(rating) => setReview({ ...review, rating })}
               numberOfStars={5}
               name="Ocjena"
-              starRatedColor="yellow"
-              starHoverColor="yellow"
+              starRatedColor="orange"
+              starHoverColor="orange"
             />
           </Col>
         </Row>

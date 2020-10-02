@@ -59,11 +59,11 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-/* .navbar {
+.navbar {
   background: #17a2b8;
   background: -webkit-linear-gradient(to right, #17a2b8, #c2e59c);
   background: linear-gradient(to right, #17a2b8, #c2e59c);
-} */
+}
 
 .separator {
   margin: 3rem 0;

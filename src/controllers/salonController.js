@@ -7,20 +7,46 @@ const User = require("../models/User");
 
 const bcrypt = require("bcrypt");
 
+const createTags = (salon, name, address) => {
+  salon.tags.push(name, name.toLowerCase());
+  salon.tags.push(address.street, address.street.toLowerCase());
+  salon.tags.push(
+    address.street.split(" ")[0],
+    address.street.split(" ")[0].toLowerCase()
+  );
+  salon.tags.push(address.city, address.city.toLowerCase());
+  salon.tags.push(address.county, address.county.toLowerCase());
+
+  const nameSpread = name.split(" ");
+  nameSpread.forEach((part) => {
+    salon.tags.push(part, part.toLowerCase());
+  });
+};
 // Desc: Creating hair salon account
 // Route: POST /hairsalon/create
 // Access: Public
 module.exports.createSalon = async (req, res, next) => {
-  const { name, address, email, phone, workingHours, password } = req.body;
+  const {
+    name,
+    description,
+    address,
+    email,
+    phone,
+    workingHours,
+    password,
+  } = req.body;
 
   const salon = new HairSalon({
     name,
+    description,
     address,
     email,
     password,
     phone,
     workingHours,
   });
+
+  createTags(salon, name, address);
 
   try {
     await salon.save();
@@ -30,7 +56,7 @@ module.exports.createSalon = async (req, res, next) => {
       success: true,
       salon,
       token,
-      message: "Salon uspjesno unesen!",
+      message: "Salon uspješno unesen!",
     });
   } catch (err) {
     res.status(500).send({
@@ -46,7 +72,14 @@ module.exports.createSalon = async (req, res, next) => {
 // Access: Authenticated
 module.exports.updateProfile = async (req, res, next) => {
   const updates = Object.keys(req.body); // vraca array keyeva
-  const allowedUpdates = ["name", "email", "workingHours", "address", "phone"]; // koja polja mozemo mijenjati
+  const allowedUpdates = [
+    "name",
+    "description",
+    "email",
+    "workingHours",
+    "address",
+    "phone",
+  ]; // koja polja mozemo mijenjati
 
   // ovo nije potrebno ali dobro je useru dat feedback
   //every radi kao for each ali vraca boolean ovisno o svakom elementu arraya

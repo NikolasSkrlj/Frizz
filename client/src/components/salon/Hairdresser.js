@@ -164,25 +164,29 @@ const Hairdresser = ({ hairdresser, updateHairdressers }) => {
     <Card>
       <Card.Body>
         <Card.Title className="text-dark d-flex">
-          <span className="py-0 align-bottom">{hairdresser.name}</span>
-          {hairdresser.globalRating ? (
-            <span className="text-muted mx-2 py-0">
-              <small className="mr-1">{hairdresser.globalRating}</small>
-              <span className="pb-4">
-                <StarRatings
-                  starDimension="17px"
-                  rating={hairdresser.globalRating}
-                  starRatedColor="yellow"
-                  numberOfStars={1}
-                  name="Ocjena"
-                ></StarRatings>
+          <span className="py-0 ">
+            <span className="align"> {hairdresser.name}</span>
+            {hairdresser.globalRating ? (
+              <span className="text-muted mx-2 py-0">
+                <small className="mr-1">
+                  <span className="align-bottom">
+                    {hairdresser.globalRating}
+                  </span>{" "}
+                  <StarRatings
+                    starDimension="17px"
+                    rating={hairdresser.globalRating}
+                    starRatedColor="orange"
+                    numberOfStars={1}
+                    name="Ocjena"
+                  ></StarRatings>
+                </small>
               </span>
-            </span>
-          ) : (
-            <small className="text-muted align-bottom mx-1">
-              (nema ocjena)
-            </small>
-          )}
+            ) : (
+              <small className="text-muted align-bottom mx-1">
+                (nema ocjena)
+              </small>
+            )}
+          </span>
 
           <ButtonGroup className="ml-auto">
             <Button

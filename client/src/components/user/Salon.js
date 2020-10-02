@@ -40,14 +40,15 @@ const Salon = ({ salonData }) => {
   const {
     id,
     name,
+    description,
     email,
     address,
-    gallery,
+    //gallery,
     workingHours,
     appointmentTypes,
     hairdressers,
     phone,
-    reviews,
+    //reviews,
     globalRating,
   } = salon;
 
@@ -506,7 +507,7 @@ const Salon = ({ salonData }) => {
                 starDimension="18px"
                 starSpacing="3px"
                 rating={globalRating}
-                starRatedColor="yellow"
+                starRatedColor="orange"
                 numberOfStars={5}
                 name="Ocjena"
               />
@@ -546,11 +547,7 @@ const Salon = ({ salonData }) => {
         <Tab.Content>
           <Tab.Pane eventKey="about">
             <Card.Body id="about">
-              <Card.Text>
-                {name} je frizerski salon smješten u centru Buzeta gdje već
-                nekoliko godina uspješno posluje i stoji građanima na
-                raspolaganju.
-              </Card.Text>
+              <Card.Text>{description}</Card.Text>
               <ListGroup variant="flush">
                 <ListGroup.Item>
                   <h4>Adresa</h4>
@@ -629,7 +626,7 @@ const Salon = ({ salonData }) => {
             </Card.Body>{" "}
           </Tab.Pane>
           <Tab.Pane eventKey="reviews">
-            <Card.Body>
+            <Card.Body style={{ minHeight: "100vh" }}>
               <SalonReviews salon={salonData} updateSalon={setIsSalonUpdated} />
             </Card.Body>
           </Tab.Pane>
@@ -815,13 +812,11 @@ const Salon = ({ salonData }) => {
                             <StarRatings
                               starDimension="15px"
                               rating={hairdresser.globalRating}
-                              starRatedColor="yellow"
+                              starRatedColor="orange"
                               numberOfStars={1}
                               name="Ocjena"
                               //className="align-top"
-                            >
-                              ocjena
-                            </StarRatings>
+                            ></StarRatings>
                           </span>
                         </Dropdown.Item>
                       );

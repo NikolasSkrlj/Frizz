@@ -240,7 +240,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
                               starDimension="18px"
                               starSpacing="3px"
                               rating={review.rating}
-                              starRatedColor="yellow"
+                              starRatedColor="orange"
                               numberOfStars={5}
                               name="Ocjena"
                               className="d-inline-block align-middle"
@@ -284,7 +284,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
                   variant="outline-secondary"
                   onClick={() => handlePageChange("prev")}
                   disabled={page <= 0}
-                  size={window.innerWidth <= 765 ? "sm" : ""}
+                  size="sm"
                 >
                   <FaAngleLeft />
                 </Button>
@@ -296,7 +296,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
                 <Button
                   variant="secondary"
                   style={{ pointerEvents: "none" }}
-                  size={window.innerWidth <= 765 ? "sm" : ""}
+                  size="sm"
                 >
                   Stranica {page + 1} od{" "}
                   {Math.floor(
@@ -308,7 +308,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
                   variant="outline-secondary"
                   onClick={() => handlePageChange("next")}
                   disabled={(page + 1) * limit >= totalReviewsCnt}
-                  size={window.innerWidth <= 765 ? "sm" : ""}
+                  size="sm"
                 >
                   <FaAngleRight />
                 </Button>

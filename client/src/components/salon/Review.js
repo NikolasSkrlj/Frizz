@@ -40,7 +40,7 @@ const Review = ({ review }) => {
                   starDimension="18px"
                   starSpacing="3px"
                   rating={review.rating}
-                  starRatedColor="yellow"
+                  starRatedColor="orange"
                   numberOfStars={5}
                   name="Ocjena"
                   className="d-inline-block align-middle"
