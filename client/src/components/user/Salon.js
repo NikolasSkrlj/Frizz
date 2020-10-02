@@ -202,11 +202,21 @@ const Salon = ({ salonData }) => {
             ) &&
             timeChecked
           ) {
-            setMessage(
-              "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
-            );
-            setMessageToggled(true);
-            return false;
+            if (appointment.confirmed) {
+              setMessage(
+                "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s postojećim, molimo provjerite tablicu popunjenih termina i odaberite ponovno."
+              );
+              setMessageToggled(true);
+              return false;
+            } else {
+              console.log("UDJE U PROVJERU");
+              setMessageVariant("warning");
+              setMessage(
+                "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s terminom koji još nije potvrđen, pa postoji mogućnost da vaša rezervacija bude odbijena. Kako bi to izbjegli molimo provjerite tablicu termina i odaberite ponovno."
+              );
+              setMessageToggled(true);
+              return true;
+            }
           }
         }
       }
