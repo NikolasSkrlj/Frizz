@@ -18,6 +18,7 @@ import "../styles/Landing.css";
 import search from "../search.png";
 import review from "../review.png";
 import booking from "../booking.png";
+import Footer from "./Footer";
 
 const LandingPage = () => {
   return (
@@ -39,7 +40,7 @@ const LandingPage = () => {
         </Container>
       </Jumbotron>
       <Container className="mt-0">
-        <Card className="text-center pt-3 bg-white" bg="light">
+        <Card className="text-center pt-3 pb-4 bg-white" bg="light">
           <Card.Body>
             <Card.Title className="display-4">Zašto Frizz.hr?</Card.Title>
             <Card.Text className="py-4 text-muted lead">
@@ -131,34 +132,9 @@ const LandingPage = () => {
               </Card>
             </div>
           </Card.Body>
-          <div>
-            {/* zbog icona treba dati im credit, to ce bit u footeru.
-             */}
-            Icons made by{" "}
-            <a href="https://www.flaticon.com/authors/freepik" title="Freepik">
-              Freepik
-            </a>
-            ,{" "}
-            <a
-              href="https://www.flaticon.com/authors/photo3idea-studio"
-              title="photo3idea_studio"
-            >
-              photo3idea_studio
-            </a>
-            , and{" "}
-            <a href="https://icon54.com/" title="Pixel perfect">
-              Pixel perfect
-            </a>{" "}
-            from{" "}
-            <a href="https://www.flaticon.com/" title="Flaticon">
-              www.flaticon.com
-            </a>
-            <a href="https://www.freepik.com/photos/hair">
-              Hair photo created by freepik - www.freepik.com
-            </a>
-          </div>
         </Card>
       </Container>
+      <Footer />
     </>
   );
 };

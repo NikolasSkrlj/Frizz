@@ -199,12 +199,12 @@ const SalonRegForm = () => {
           >
             <Col md={{ span: 6, offset: 3 }}>
               <Form.Row>
-                <Form.Group as={Col} md="12" controlId="ime">
+                <Form.Group as={Col} md="12" controlId="ime2">
                   <Form.Label>Naziv salona</Form.Label>
                   <Form.Control
                     type="text"
                     name="name"
-                    placeholder="Frizerski salon Kiki"
+                    placeholder="Naziv salona"
                     value={values.name}
                     onChange={handleChange}
                     isInvalid={!!errors.name}
@@ -213,11 +213,14 @@ const SalonRegForm = () => {
                     {errors.name}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="12" controlId="ime">
-                  <Form.Label>Opis(opcionalno)</Form.Label>
+                <Form.Group as={Col} md="12" controlId="desc">
+                  <Form.Label>
+                    Opis<small className="mx-1 text-muted">(opcionalno)</small>
+                  </Form.Label>
                   <Form.Control
                     type="text"
                     name="description"
+                    placeholder="Opis salona"
                     value={values.description}
                     onChange={handleChange}
                     isInvalid={!!errors.description}
@@ -226,7 +229,7 @@ const SalonRegForm = () => {
                     {errors.description}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="12" controlId="email">
+                <Form.Group as={Col} md="12" controlId="email2">
                   <Form.Label>E-mail</Form.Label>
 
                   <Form.Control
@@ -242,7 +245,7 @@ const SalonRegForm = () => {
                     {errors.email}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="12" controlId="lozinka">
+                <Form.Group as={Col} md="12" controlId="lozinka2">
                   <Form.Label>Lozinka</Form.Label>
 
                   <Form.Control
@@ -257,7 +260,7 @@ const SalonRegForm = () => {
                     {errors.password}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="12" controlId="ponovljena">
+                <Form.Group as={Col} md="12" controlId="ponovljena2">
                   <Form.Label>Ponovljena lozinka</Form.Label>
 
                   <Form.Control
@@ -272,7 +275,7 @@ const SalonRegForm = () => {
                     {errors.repeatedPass}
                   </Form.Control.Feedback>
                 </Form.Group>
-                <Form.Group as={Col} md="12" controlId="tel">
+                <Form.Group as={Col} md="12" controlId="tel2">
                   <Form.Label>Telefon</Form.Label>
                   <Form.Control
                     type="text"
@@ -524,7 +527,8 @@ const SalonRegForm = () => {
                   <Form.Control.Feedback type="invalid">
                     {errors.street}
                   </Form.Control.Feedback>
-
+                </Form.Group>
+                <Form.Group as={Col} md="12">
                   <Form.Label>Poštanski broj</Form.Label>
 
                   <Form.Control
@@ -539,7 +543,9 @@ const SalonRegForm = () => {
                   <Form.Control.Feedback type="invalid">
                     {errors.postalCode}
                   </Form.Control.Feedback>
+                </Form.Group>
 
+                <Form.Group as={Col} md="12">
                   <Form.Label>Grad/Općina</Form.Label>
 
                   <Form.Control
@@ -554,7 +560,9 @@ const SalonRegForm = () => {
                   <Form.Control.Feedback type="invalid">
                     {errors.city}
                   </Form.Control.Feedback>
+                </Form.Group>
 
+                <Form.Group as={Col} md="12">
                   <Form.Label>Županija</Form.Label>
 
                   <Form.Control
