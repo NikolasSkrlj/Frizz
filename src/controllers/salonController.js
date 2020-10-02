@@ -576,12 +576,12 @@ module.exports.changePassword = async (req, res, next) => {
   }
 };
 // Desc: Confirm an appointment
-// Route: GET /hairsalon/get
+// Route: POST /hairsalon/confirm_appointment
 // Access: Authenticated
-module.exports.confirmSalon = async (req, res, next) => {
+module.exports.confirmAppointment = async (req, res, next) => {
   try {
     const salon = req.salon;
-    const { appointmentId } = req.body;
+    const { appointmentId, action } = req.body;
 
     const appointment = await Appointment.findOne({ _id: appointmentId });
 
@@ -592,7 +592,25 @@ module.exports.confirmSalon = async (req, res, next) => {
       });
     }
 
-    res.send({ success: true, message: "Termin uspješno potvrđen" });
+    if (action === "confirm") {
+      appointment.confirmed = true;
+    } else {
+      appointment.completed = true;
+    }
+    await appointment.save((err, app) => {
+      if (err) {
+        return res.status(500).send({
+          success: false,
+          message: "Došlo je do pogreške pri potvrdi termina",
+        });
+      }
+    });
+    const message =
+      action === "confirm"
+        ? "Termin uspješno potvrđen"
+        : "Termin uspješno odbijen";
+
+    res.send({ success: true, message });
   } catch (err) {
     res.status(500).send({
       success: false,

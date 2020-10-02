@@ -385,15 +385,17 @@ module.exports.getAppointments = async (req, res, next) => {
       const term = values[0];
       sort[term] = values[1] === "asc" ? 1 : -1;
     }
-
-    const filter = req.query.filter;
     const search = { userId: user._id };
-    if (filter === "active") {
+    const filter = req.query.filter;
+    if (filter === "onHold") {
+      search.completed = false;
+      search.confirmed = false;
+    } else if (filter === "active") {
+      search.confirmed = true;
       search.completed = false;
     } else if (filter === "archived") {
-      search.completed = true;
-    } // inace baca sve skupa
-    //const reviewsCnt = await Review.countDocuments(search);
+      search.completed = true; // termin ce imati completed true automatski kad prodje datum termina neovisno o fizičkom izvršetku
+    }
 
     //console.log(sort);
     //const skip = req.query.page ? req.query.page * limit : null;
@@ -414,11 +416,10 @@ module.exports.getAppointments = async (req, res, next) => {
   }
 };
 // Desc: Deleting an appointment
-// Route: DEL /user/delete_appointment/:appointmentId
+// Route: DEL /user/delete_appointment
 // Access: Authenticated
 module.exports.deleteAppointment = async (req, res, next) => {
   try {
-    const user = req.user;
     const appointmentId = req.body.appointmentId;
 
     const appointment = await Appointment.findOne({ _id: appointmentId });
@@ -432,13 +433,16 @@ module.exports.deleteAppointment = async (req, res, next) => {
 
     await appointment.remove((err, app) => {
       if (err) {
-        throw new Error();
+        return res.status(500).send({
+          success: false,
+          message: "Došlo je do pogreške pri brisanju termina",
+        });
       }
       console.log("Termin uspjesno izbrisan");
-    });
-    res.send({
-      success: true,
-      message: "Termin uspješno obrisan",
+      res.send({
+        success: true,
+        message: "Termin uspješno obrisan",
+      });
     });
   } catch (err) {
     res.status(500).send({

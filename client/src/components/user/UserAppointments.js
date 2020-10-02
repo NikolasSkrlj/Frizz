@@ -29,7 +29,7 @@ const UserAppointments = () => {
   const [sortButtonLabel, setSortButtonLabel] = useState("Sortiraj");
 
   const [filterButtonLabel, setFilterButtonLabel] = useState("Filtriraj");
-  const [filter, setFilter] = useState("active");
+  const [filter, setFilter] = useState("all");
 
   const [appointments, setAppointments] = useState([]);
 
@@ -66,6 +66,9 @@ const UserAppointments = () => {
         break;
       case "Aktivni":
         setFilter("active");
+        break;
+      case "Na čekanju":
+        setFilter("onHold");
         break;
       case "Arhivirani":
         setFilter("archived");
@@ -179,6 +182,9 @@ const UserAppointments = () => {
                 <Dropdown.Item onClick={() => handleFilterClick("Svi")}>
                   Svi
                 </Dropdown.Item>
+                <Dropdown.Item onClick={() => handleFilterClick("Na čekanju")}>
+                  Na čekanju
+                </Dropdown.Item>
                 <Dropdown.Item onClick={() => handleFilterClick("Aktivni")}>
                   Aktivni
                 </Dropdown.Item>
@@ -219,8 +225,27 @@ const UserAppointments = () => {
               ? "Aktivni termini"
               : filter === "archived"
               ? "Arhivirani termini"
+              : filter === "onHold"
+              ? "Termini na čekanju"
               : "Svi termini"}
           </h4>
+          <p className="text-muted">
+            Status termina može sadržavati sljedeće vrijednosti:
+            <ul>
+              <li>
+                <span className="text-danger">na čekanju</span> - termin čeka na
+                potvrdu od strane salona
+              </li>
+              <li>
+                <span className="text-success">aktivan</span> - termin je
+                potvrđen od strane salona
+              </li>
+              <li>
+                <span className="text-warning">arhiviran</span> - termin je
+                odbijen od strane salona ili je prošao datum termina
+              </li>
+            </ul>
+          </p>
         </div>
         {isLoading ? (
           <div className="text-center text-muted justify-content-center">
@@ -358,8 +383,10 @@ const UserAppointments = () => {
                             <b className="text-dark">Status: </b>
                             {app.completed ? (
                               <b className="text-warning">arhiviran</b>
-                            ) : (
+                            ) : app.confirmed ? (
                               <b className="text-success">aktivan</b>
+                            ) : (
+                              <b className="text-danger">na čekanju</b>
                             )}
                           </ListGroup.Item>
                         </ListGroup>

@@ -209,7 +209,6 @@ const Salon = ({ salonData }) => {
               setMessageToggled(true);
               return false;
             } else {
-              console.log("UDJE U PROVJERU");
               setMessageVariant("warning");
               setMessage(
                 "Vrijeme termina kojeg ste odabrali je zauzeto ili se preklapa s terminom koji još nije potvrđen, pa postoji mogućnost da vaša rezervacija bude odbijena. Kako bi to izbjegli molimo provjerite tablicu termina i odaberite ponovno."
@@ -254,11 +253,20 @@ const Salon = ({ salonData }) => {
             ) &&
             timeChecked
           ) {
-            setMessage(
-              "Frizer kojeg ste odabrali nije slobodan u odabranom vremenu termina. Molimo izaberite drugo vrijeme ili postavite izbornik frizera kao 'Neodređen/a'."
-            );
-            setMessageToggled(true);
-            return false;
+            if (appointment.confirmed) {
+              setMessage(
+                "Frizer kojeg ste odabrali nije slobodan u odabranom vremenu termina. Molimo izaberite drugo vrijeme ili postavite izbornik frizera kao 'Neodređen/a'."
+              );
+              setMessageToggled(true);
+              return false;
+            } else {
+              setMessageVariant("warning");
+              setMessage(
+                "Frizer kojeg ste odabrali u odabranom vremenu termina je već odabran u terminu koji još nije potvrđen, pa postoji mogućnost da vaša rezervacija bude odbijena. Kako bi to izbjegli molimo provjerite tablicu termina i odaberite ponovno. ili postavite izbornik frizera kao 'Neodređen/a'."
+              );
+              setMessageToggled(true);
+              return true;
+            }
           }
         }
       }
@@ -389,8 +397,15 @@ const Salon = ({ salonData }) => {
       if (res.data.success) {
         setMessageVariant("success");
         setAppointmentValid(false);
-        setMessage("Rezervacija uspješno spremljena!");
+        setMessage(
+          "Rezervacija uspješno spremljena i prosljeđena salonu na potvrdu! Status rezervacije možete vidjeti na kartici 'Termini'."
+        );
         setMessageToggled(true);
+
+        setTimeout(() => {
+          setMessage("");
+          setMessageToggled(false);
+        }, 3000);
         //treba se sad redirectat negdje ili nesto
       }
     } catch (err) {

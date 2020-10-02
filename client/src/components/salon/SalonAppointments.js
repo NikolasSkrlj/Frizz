@@ -33,7 +33,7 @@ const SalonAppointments = () => {
   const [sortButtonLabel, setSortButtonLabel] = useState("Sortiraj");
 
   const [filterButtonLabel, setFilterButtonLabel] = useState("Filtriraj");
-  const [filter, setFilter] = useState("onHold");
+  const [filter, setFilter] = useState("all");
 
   const [appointments, setAppointments] = useState([]);
 
@@ -47,23 +47,8 @@ const SalonAppointments = () => {
 
   registerLocale("hr", hr);
 
-  /* const [show, setShow] = useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
- */
-  /* const handleClose = () => {
-    setShow(false);
-    //ako je uspjesno unesena recenzija, pri zatvaranju modala se rerenderaju recenzije i prikaze se najnovija unesena recenzija prva
-    if (submitSuccess) {
-      setIsUpdated(!isUpdated);
-      setMessage("");
-      setMessageToggled(false);
-      setSubmitSuccess(false);
-    }
-  };
-  const handleShow = (action) => {
-    setShow(true);
-  };
- */
+
   const handleDateChange = (date) => {
     setSearchDate(new Date(date.setHours(0, 0, 0)));
   };
@@ -71,18 +56,13 @@ const SalonAppointments = () => {
   const handleSortClick = (term) => {
     setSortButtonLabel(term);
     switch (term) {
-      case "Najnovije":
+      case "Najnoviji":
         setSortOption({ option: "updatedAt", isAsc: false });
         break;
-      case "Najstarije":
+      case "Najstariji":
         setSortOption({ option: "updatedAt", isAsc: true });
         break;
-      case "Po datumu termina uzlazno":
-        setSortOption({ option: "appointmentDate", isAsc: true });
-        break;
-      case "Po datumu termina silazno":
-        setSortOption({ option: "appointmentDate", isAsc: false });
-        break;
+
       default:
         return;
     }
@@ -114,7 +94,7 @@ const SalonAppointments = () => {
         setIsLoading(false);
       }
     }
-  }, [sortOption, filter, searchDate]);
+  }, [sortOption, filter, searchDate, isUpdated]);
 
   useEffect(() => {
     setSalon(JSON.parse(sessionStorage.getItem("salon")));
@@ -123,32 +103,36 @@ const SalonAppointments = () => {
   const handleConfirmClick = async (action, appointmentId) => {
     setMessageToggled(false);
     setMessage("");
-    if (action === "confirm") {
-      try {
-        const res = await axios.post(
-          `/hairsalon/confirm_appointment`,
-          { appointmentId },
-          {
-            headers: {
-              Authorization: "Bearer " + authToken,
-            },
-          }
-        );
 
-        if (res.data.success) {
-          setSubmitSuccess(true);
-          setMessage(res.data.message);
-          setMessageToggled(true);
+    try {
+      const res = await axios.post(
+        `/hairsalon/confirm_appointment`,
+        { appointmentId, action },
+        {
+          headers: {
+            Authorization: "Bearer " + authToken,
+          },
         }
-      } catch (err) {
-        //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
-        if (err.response) {
-          setSubmitSuccess(false);
-          setMessage(err.response.data.message || "Došlo je do pogreške!");
-          setMessageToggled(true);
-        }
+      );
+
+      if (res.data.success) {
+        setSubmitSuccess(true);
+        setMessage(res.data.message);
+        setMessageToggled(true);
+
+        setTimeout(() => {
+          setIsUpdated(!isUpdated);
+          setMessage("");
+          setMessageToggled(false);
+        }, 2000);
       }
-    } else {
+    } catch (err) {
+      //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
+      if (err.response) {
+        setSubmitSuccess(false);
+        setMessage(err.response.data.message || "Došlo je do pogreške!");
+        setMessageToggled(true);
+      }
     }
   };
 
@@ -177,6 +161,15 @@ const SalonAppointments = () => {
           <Row className="d-flex">
             <Col sm={6} className="align-content-stretch">
               <ButtonGroup toggle>
+                <ToggleButton
+                  type="radio"
+                  variant="info"
+                  name="radio"
+                  checked={filter === "all"}
+                  onChange={() => setFilter("all")}
+                >
+                  Svi
+                </ToggleButton>
                 <ToggleButton
                   type="radio"
                   variant="info"
@@ -229,7 +222,9 @@ const SalonAppointments = () => {
                 ? "Aktivni termini"
                 : filter === "archived"
                 ? "Arhivirani termini"
-                : "Na čekanju za potvrdu"}
+                : filter === "onHold"
+                ? "Na čekanju za potvrdu"
+                : "Svi termini"}
               <div className="ml-auto">
                 <DropdownButton
                   as={ButtonGroup}
@@ -239,21 +234,11 @@ const SalonAppointments = () => {
                   className="ml-auto"
                   size="sm"
                 >
-                  <Dropdown.Item onClick={() => handleSortClick("Najnovije")}>
+                  <Dropdown.Item onClick={() => handleSortClick("Najnoviji")}>
                     Najnoviji
                   </Dropdown.Item>
-                  <Dropdown.Item onClick={() => handleSortClick("Najstarije")}>
+                  <Dropdown.Item onClick={() => handleSortClick("Najstariji")}>
                     Najstariji
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleSortClick("Po datumu termina uzlazno")}
-                  >
-                    Po datumu termina uzlazno
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={() => handleSortClick("Po datumu termina silazno")}
-                  >
-                    Po datumu termina silazno
                   </Dropdown.Item>
                 </DropdownButton>
               </div>
@@ -307,6 +292,15 @@ const SalonAppointments = () => {
                           </ListGroup.Item>
 
                           <ListGroup.Item>
+                            <b className="text-dark">
+                              Datum i vrijeme kreiranja rezervacije:{" "}
+                            </b>
+
+                            <span>
+                              {new Date(app.createdAt).toLocaleString()}
+                            </span>
+                          </ListGroup.Item>
+                          <ListGroup.Item>
                             <b className="text-dark">Trajanje: </b>
                             {app.appointmentType.duration} min
                           </ListGroup.Item>
@@ -331,6 +325,11 @@ const SalonAppointments = () => {
                             )}
                           </ListGroup.Item>
                         </ListGroup>
+                        {messageToggled && (
+                          <Alert variant={submitSuccess ? "success" : "danger"}>
+                            {message}
+                          </Alert>
+                        )}
 
                         {!app.completed && !app.confirmed && (
                           <>

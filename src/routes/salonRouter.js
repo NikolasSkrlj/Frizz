@@ -20,6 +20,7 @@ const {
   updateAppointmentType,
   deleteAppointmentType,
   getReviews,
+  confirmAppointment,
 } = require("../controllers/salonController");
 
 //routes for the hair salon handling
@@ -28,6 +29,7 @@ const {
 router.route("/create").post(createSalon);
 router.route("/login").post(loginSalon);
 router.route("/logout").post(auth, logoutSalon);
+router.route("/confirm_appointment").post(auth, confirmAppointment);
 router.route("/change_password").put(auth, changePassword);
 router.route("/get_profile").get(auth, getSalon);
 router.route("/update_profile").put(auth, updateProfile);
