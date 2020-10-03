@@ -203,7 +203,11 @@ const Reviews = () => {
                   </Row>
                 );
               })}
-              {reviews.length ? (
+              {reviews.length &&
+              Math.floor(
+                totalReviewsCnt / limit +
+                  Math.ceil((totalReviewsCnt % limit) / limit)
+              ) > 1 ? (
                 <div className="d-flex">
                   <ButtonGroup className="mx-auto">
                     <Button

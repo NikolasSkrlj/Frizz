@@ -500,7 +500,11 @@ const SalonFeed = () => {
               return <Salon salonData={salon} key={salon.id} />;
             })}
 
-            {salons.length ? (
+            {salons.length &&
+            Math.floor(
+              totalSalonsCnt / limit +
+                Math.ceil((totalSalonsCnt % limit) / limit)
+            ) > 1 ? (
               <div className="d-flex">
                 <ButtonGroup className="mx-auto">
                   <Button

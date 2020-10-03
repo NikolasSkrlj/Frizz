@@ -277,7 +277,11 @@ const SalonReviews = ({ salon, updateSalon }) => {
             <h6 className="text-muted text-center">Trenutno nema recenzija.</h6>
           )}
           {/* Prikaz navigacije za stranice */}
-          {reviews.length ? (
+          {reviews.length &&
+          Math.floor(
+            totalReviewsCnt / limit +
+              Math.ceil((totalReviewsCnt % limit) / limit)
+          ) > 1 ? (
             <div className="d-flex">
               <ButtonGroup className="mx-auto">
                 <Button

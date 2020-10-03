@@ -244,6 +244,23 @@ const SalonAppointments = () => {
               </div>
             </h4>
           </div>
+          <p className="text-muted">
+            Status termina može sadržavati sljedeće vrijednosti:
+            <ul>
+              <li>
+                <span className="text-danger">na čekanju</span> - termin čeka na
+                potvrdu od strane salona
+              </li>
+              <li>
+                <span className="text-success">aktivan</span> - termin je
+                potvrđen od strane salona
+              </li>
+              <li>
+                <span className="text-warning">arhiviran</span> - termin je
+                odbijen od strane salona ili je prošao datum termina
+              </li>
+            </ul>
+          </p>
         </div>
         {isLoading ? (
           <div className="text-center text-muted justify-content-center">

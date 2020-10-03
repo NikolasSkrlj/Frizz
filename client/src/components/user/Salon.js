@@ -651,7 +651,7 @@ const Salon = ({ salonData }) => {
             </Card.Body>{" "}
           </Tab.Pane>
           <Tab.Pane eventKey="reviews">
-            <Card.Body style={{ minHeight: "100vh" }}>
+            <Card.Body>
               <SalonReviews salon={salonData} updateSalon={setIsSalonUpdated} />
             </Card.Body>
           </Tab.Pane>
@@ -689,13 +689,20 @@ const Salon = ({ salonData }) => {
                         {new Date(appointmentDate).toLocaleDateString()}
                       </h5>
                       {takenTimes.length ? (
-                        <Table striped size="sm" variant="light">
+                        <Table
+                          striped
+                          size="sm"
+                          variant="light"
+                          className="text-center"
+                          responsive
+                        >
                           <thead>
                             <tr>
                               <th>#</th>
                               <th>Početak</th>
                               <th>Završetak</th>
                               <th>Frizer</th>
+                              <th>Potvrđen</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -737,6 +744,7 @@ const Salon = ({ salonData }) => {
                                       "Neodređen/a"
                                     )}
                                   </td>
+                                  <td>{app.confirmed ? "Da" : "Ne"}</td>
                                 </tr>
                               );
                             })}
