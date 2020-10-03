@@ -16,6 +16,10 @@ app.use(cors());
 app.use("/hairsalon", salonRouter);
 app.use("/user", userRouter);
 
+const checkAppointments = require("../tasks/appointments");
+
+checkAppointments.start();
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(globalPath, "/client/build")));
   app.get("*", (req, res) => {

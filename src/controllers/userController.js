@@ -465,18 +465,25 @@ module.exports.checkDate = async (req, res, next) => {
     const dayStart = new Date(appointmentDate).setHours(0, 0, 0);
     const dayEnd = new Date(appointmentDate).setHours(23, 59, 59);
 
-    const appointments = await Appointment.find({
-      salonId,
-      // confirmed: true, // gledaju se samo potvrdjeni termini
-      appointmentDate: { $gte: dayStart, $lte: dayEnd },
-    })
-      .sort("appointmentDate")
-      .populate("appointmentType hairdresserId");
+    const appointments = await Appointment.find(
+      {
+        salonId,
+        // confirmed: true, // gledaju se samo potvrdjeni termini
+        appointmentDate: { $gte: dayStart, $lte: dayEnd },
+      },
+      null,
+      {
+        sort: {
+          appointmentDate: 1,
+        },
+      }
+    ).populate("appointmentType hairdresserId");
 
     const salon = await HairSalon.findOne({ _id: salonId }).populate(
       "appointments"
     );
 
+    //provjera ako vec ima termin na taj dan
     const userAppoints = await Appointment.findOne({
       salonId,
       userId: user.id,

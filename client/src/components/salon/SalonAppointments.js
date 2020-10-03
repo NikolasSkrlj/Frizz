@@ -20,6 +20,7 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 import { FaCalendarAlt } from "react-icons/fa";
+import SalonAppointment from "./SalonAppointment";
 
 const SalonAppointments = () => {
   const { authToken } = useContext(GlobalContext);
@@ -99,42 +100,6 @@ const SalonAppointments = () => {
   useEffect(() => {
     setSalon(JSON.parse(sessionStorage.getItem("salon")));
   }, []);
-
-  const handleConfirmClick = async (action, appointmentId) => {
-    setMessageToggled(false);
-    setMessage("");
-
-    try {
-      const res = await axios.post(
-        `/hairsalon/confirm_appointment`,
-        { appointmentId, action },
-        {
-          headers: {
-            Authorization: "Bearer " + authToken,
-          },
-        }
-      );
-
-      if (res.data.success) {
-        setSubmitSuccess(true);
-        setMessage(res.data.message);
-        setMessageToggled(true);
-
-        setTimeout(() => {
-          setIsUpdated(!isUpdated);
-          setMessage("");
-          setMessageToggled(false);
-        }, 2000);
-      }
-    } catch (err) {
-      //ovdje treba provjera ako je kod specifican vratit poruku da user postoji
-      if (err.response) {
-        setSubmitSuccess(false);
-        setMessage(err.response.data.message || "Došlo je do pogreške!");
-        setMessageToggled(true);
-      }
-    }
-  };
 
   const DateInput = ({ onClick }) => {
     return (
@@ -273,114 +238,10 @@ const SalonAppointments = () => {
               return (
                 <Row className="my-2" key={app._id}>
                   <Col xs={12}>
-                    <Card>
-                      <Card.Body>
-                        <Card.Title className="text-info d-flex">
-                          {app.appointmentType.name}
-                        </Card.Title>
-                        <ListGroup variant="flush">
-                          <ListGroup.Item>
-                            <b className="text-dark">Korisnik: </b>
-                            {app.userId.name}
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Telefon: </b>
-
-                            <a href={`tel:${app.userId.phone}`}>
-                              {app.userId.phone}
-                            </a>
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Datum termina: </b>
-                            {new Date(app.appointmentDate).toLocaleDateString()}
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Vrijeme termina: </b>
-                            {`${app.startTime.hours.toLocaleString(undefined, {
-                              minimumIntegerDigits: 2,
-                              useGrouping: false,
-                            })}:${app.startTime.minutes.toLocaleString(
-                              undefined,
-                              {
-                                minimumIntegerDigits: 2,
-                                useGrouping: false,
-                              }
-                            )}`}
-                          </ListGroup.Item>
-
-                          <ListGroup.Item>
-                            <b className="text-dark">
-                              Datum i vrijeme kreiranja rezervacije:{" "}
-                            </b>
-
-                            <span>
-                              {new Date(app.createdAt).toLocaleString()}
-                            </span>
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Trajanje: </b>
-                            {app.appointmentType.duration} min
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Cijena: </b>
-                            {app.appointmentType.price} kn
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Frizer: </b>
-                            {app.hairdresserId
-                              ? app.hairdresserId.name
-                              : "Neodređen"}
-                          </ListGroup.Item>
-                          <ListGroup.Item>
-                            <b className="text-dark">Status: </b>
-                            {app.completed ? (
-                              <b className="text-warning">arhiviran</b>
-                            ) : app.confirmed ? (
-                              <b className="text-success">aktivan</b>
-                            ) : (
-                              <b className="text-danger">na čekanju</b>
-                            )}
-                          </ListGroup.Item>
-                        </ListGroup>
-                        {messageToggled && (
-                          <Alert variant={submitSuccess ? "success" : "danger"}>
-                            {message}
-                          </Alert>
-                        )}
-
-                        {!app.completed && !app.confirmed && (
-                          <>
-                            <hr />
-                            <Row>
-                              <Col>
-                                <Button
-                                  className="mx-1"
-                                  variant="success"
-                                  block
-                                  onClick={() => {
-                                    handleConfirmClick("confirm", app._id);
-                                  }}
-                                >
-                                  Potvrdi
-                                </Button>
-                              </Col>
-                              <Col>
-                                <Button
-                                  className="mx-2"
-                                  variant="danger"
-                                  block
-                                  onClick={() => {
-                                    handleConfirmClick("reject", app._id);
-                                  }}
-                                >
-                                  Odbaci
-                                </Button>
-                              </Col>
-                            </Row>
-                          </>
-                        )}
-                      </Card.Body>
-                    </Card>
+                    <SalonAppointment
+                      appointment={app}
+                      updateAppointments={setIsUpdated}
+                    />
                   </Col>
                 </Row>
               );

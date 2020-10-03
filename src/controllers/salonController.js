@@ -6,6 +6,11 @@ const AppointmentType = require("../models/AppointmentType");
 const User = require("../models/User");
 
 const bcrypt = require("bcrypt");
+const {
+  isWithinInterval,
+  addMinutes,
+  areIntervalsOverlapping,
+} = require("date-fns");
 
 const createTags = (salon, name, address) => {
   salon.tags.push(name, name.toLowerCase());
@@ -584,7 +589,6 @@ module.exports.confirmAppointment = async (req, res, next) => {
     const { appointmentId, action } = req.body;
 
     const appointment = await Appointment.findOne({ _id: appointmentId });
-
     if (!appointment) {
       res.status(400).send({
         success: false,
@@ -592,7 +596,112 @@ module.exports.confirmAppointment = async (req, res, next) => {
       });
     }
 
+    const appointmentDate = new Date(appointment.appointmentDate);
+    const dayStart = new Date(appointmentDate).setHours(0, 0, 0);
+    const dayEnd = new Date(appointmentDate).setHours(23, 59, 59);
+
+    const appointments = await Appointment.find({
+      salonId: salon._id,
+      appointmentDate: { $gte: dayStart, $lte: dayEnd },
+      confirmed: true,
+    });
+
     if (action === "confirm") {
+      //pocetak i kraj odabranog termina u minutama
+      const appointmentDateTimeStart = new Date(appointmentDate);
+      appointmentDateTimeStart.setHours(
+        appointment.startTime.hours,
+        appointment.startTime.minutes,
+        0
+      );
+
+      const appointmentDateTimeEnd = new Date(appointmentDate);
+
+      appointmentDateTimeEnd.setHours(
+        appointment.endTime.hours,
+        appointment.endTime.minutes,
+        0
+      );
+
+      if (!appointment.hairdresserId) {
+        //prolazak kroz termine za odabrani datum i provjera ako se preklapa s nekim i vraca prikladan boolean
+        for (const app of appointments) {
+          //usporedjuju se samo termini koji nemaju frizera odredjenog
+          if (!app.hairdresserId) {
+            const start = new Date(app.appointmentDate).setHours(
+              app.startTime.hours,
+              app.startTime.minutes,
+              0
+            );
+
+            const end = new Date(app.appointmentDate).setHours(
+              app.endTime.hours,
+              app.endTime.minutes,
+              0
+            );
+
+            /* console.log("pocetak termina: ", appointmentDateTimeStart);
+            console.log("kraj termina: ", appointmentDateTimeEnd);
+            console.log("pocetak termina u petlji: ", start);
+            console.log("kraj termina u petlji: ", end); */
+            //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
+            if (
+              areIntervalsOverlapping(
+                {
+                  start: appointmentDateTimeStart,
+                  end: appointmentDateTimeEnd,
+                },
+                {
+                  start,
+                  end,
+                }
+              )
+            ) {
+              return res.status(400).send({
+                success: false,
+                message:
+                  "Nije dopušteno potvrditi termin jer se on preklapa sa nekim od postojećih termina. Molimo odbijte termin.",
+              });
+            }
+          }
+        }
+        //ako postoji hairdresser provjeravamo ako je za odabran termin on slobodan ili ne, tj ako se preklapaju termini
+      } else {
+        for (const app of appointments) {
+          if (String(appointment.hairdresserId) === String(app.hairdresserId)) {
+            const start = new Date(app.appointmentDate).setHours(
+              app.startTime.hours,
+              app.startTime.minutes,
+              0
+            );
+            const end = new Date(app.appointmentDate).setHours(
+              app.endTime.hours,
+              app.endTime.minutes,
+              0
+            );
+
+            //ako se preklapaju intervali odabranih termina i onih u bazi, cak i jedna minuta, ne dopusta se rezervacija
+            if (
+              areIntervalsOverlapping(
+                {
+                  start: appointmentDateTimeStart,
+                  end: appointmentDateTimeEnd,
+                },
+                {
+                  start,
+                  end,
+                }
+              )
+            ) {
+              return res.status(400).send({
+                success: false,
+                message:
+                  "Nije dopušteno potvrditi termin jer se on preklapa sa nekim od postojećih termina. Molimo odbijte termin.",
+              });
+            }
+          }
+        }
+      }
       appointment.confirmed = true;
     } else {
       appointment.completed = true;
