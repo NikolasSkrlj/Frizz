@@ -1,10 +1,49 @@
-# Zavrsni-rad
+# Frizz
 
-Node.js i React.js aplikacija za pametno pretraživanje frizerskih salona u Hrvatskoj po različitim kriterijima, mogućnost online rezervacije termina i ocjenjivanje salona.
+Frizz is a MERN stack application for making hair salon appointments that are based in Croatia. It also includes the features for smart search of hair salons and a review system in which users can give feedback for the hair salon and/or hairdressers.   
 
-# Bilješke
+# URL
 
-- Model salona ima svoj email i pass, i user ima svoj email pass -> odvojeni auth ali radi na isti princip
-- Svaki frizer ima array recenzija pomocu kojih se racuna globalni rating.
-- format kalendara je tesko napraviti za spremiti u bazu: spremat ce se samo termini i na frontendu kroz date-picker ce se znati koji su termini slobodni.
-  Jedan use case: odabere se neki datum, napravi se upit za taj datum koji su termini slobodni(sati) -> to ce se na frontendu racunat
+https://frizz-app.herokuapp.com/
+
+*Application is hosted on Heroku for exemplary purposes. 
+
+# Technology
+
+ - Backend:
+    - Node and Express for making REST API endpoints
+    - MongoDB and Mongoose for data storing, querying and manipulation
+    - Utilities: 
+      - date-fns for handling dates
+      - node-cron for handling periodic tasks
+      - JWT for authentication system
+      - Bcrypt for safely storing passwords
+      - Multer and sharp middleware for handling file upload(pictures)
+ - Frontend:
+    - React, React Hooks and Context API for creating application interfaces and state managing
+    - Bootstrap and React-Bootstrap for styling the application
+    - Utilities: 
+      - axios for making Ajax requests
+      - Formik and yup for handling form validation and submission
+      - react-icons for using Font Awesome icons
+      - react-datepicker for handling date picking features
+  
+# Features
+
+ Application is structured so that users can register as two types of users, end users and hair salon owners/administrators. The features of each are following:
+ 
+  - End Users
+    - Searching for a specific hair salon with search functionality backed up by a sorting and filtration system
+    - Appointment handling (User can delete his appointment if it's not confirmed)
+    - Making appointments at a certain hair salon by picking the date and time of the appointment, appointment type and hairdresser if the user wants to specify that.
+    - Submitting reviews for a hair salon or a hairdresser in a standard five star rating system
+    - Each review user makes can be edited or deleted
+    - User information handling (general info, change of password, uploading a profile picture)
+    
+  - Hair salon admins
+    - Preview of all appointments for a specific date
+    - Appointment handling (confirming or denying a certain appointment)
+    - Appointment types handling (adding new ones, editing, deleting)
+    - Hairdresser handling (adding new ones, editing, deleting)
+    - Hair salon info handling (general info, change of password, editing working hours)
+    - Preview of all reviews for that hair salon
