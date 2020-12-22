@@ -51,28 +51,37 @@ https://frizz-app.herokuapp.com/
 # Screenshots
  
   - Landing page
+  
     [![pocetna.png](https://i.postimg.cc/Hsxjjv36/pocetna.png)](https://postimg.cc/mhvT5wv9)
  -------------------------------------------------------------------------------------------
   - User salon feed
+  
     [![user-feed.png](https://i.postimg.cc/gk6N9sRT/user-feed.png)](https://postimg.cc/1fspwpvG)
 -------------------------------------------------------------------------------------------
   - Search options
+  
     [![salon-search.png](https://i.postimg.cc/2jdX323L/salon-search.png)](https://postimg.cc/c6Hcb7Rd)
  -------------------------------------------------------------------------------------------
   - Appointment reservation form
+  
     [![rezervacija-termina.png](https://i.postimg.cc/mgn9bWs3/rezervacija-termina.png)](https://postimg.cc/zynvjM33)
  -------------------------------------------------------------------------------------------
   - Reviews
+  
     [![recenzije.png](https://i.postimg.cc/Z5n3tK1K/recenzije.png)](https://postimg.cc/hXFhVgDH)
  -------------------------------------------------------------------------------------------
   - Salon appointments feed
+  
     [![salon-termini.png](https://i.postimg.cc/SxtDMPWV/salon-termini.png)](https://postimg.cc/68nrsYbG)
 -------------------------------------------------------------------------------------------
   - Salon hairdressers
+  
     [![salon-frizeri.png](https://i.postimg.cc/T1ywNpKZ/salon-frizeri.png)](https://postimg.cc/tnjpYRt5)
 -------------------------------------------------------------------------------------------
   - Salon profile page
+  
     [![salon-profil.png](https://i.postimg.cc/xC1qHsnj/salon-profil.png)](https://postimg.cc/1gb91r8b)
 -------------------------------------------------------------------------------------------
   - Salon reviews feed
+  
     [![salon-recenzije.png](https://i.postimg.cc/LsHsKyqk/salon-recenzije.png)](https://postimg.cc/4YSGpQQn)
