@@ -35,12 +35,16 @@ const UploadProfilePic = () => {
     setMessageToggled(false);
     setMessage("");
     try {
-      const res = await axios.post(`/user/upload_pic`, formData, {
-        headers: {
-          Authorization: "Bearer " + authToken,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/user/upload_pic`,
+        formData,
+        {
+          headers: {
+            Authorization: "Bearer " + authToken,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       if (res.data.success) {
         setSubmitSuccess(true);
         setMessage(res.data.message);

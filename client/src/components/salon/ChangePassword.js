@@ -36,7 +36,7 @@ const ChangePassword = () => {
     setMessage("");
     try {
       const res = await axios.put(
-        `/hairsalon/change_password`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/change_password`,
         {
           oldPassword,
           newPassword,

@@ -93,12 +93,15 @@ const Salon = ({ salonData }) => {
     //setIsLoading(true);
     const getData = async () => {
       try {
-        const res = await axios.get(`/user/salon/${id}`, {
-          // ovo mozemo jer smo stavili proxy u package.json
-          headers: {
-            Authorization: authToken,
-          },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/salon/${id}`,
+          {
+            // ovo mozemo jer smo stavili proxy u package.json
+            headers: {
+              Authorization: authToken,
+            },
+          }
+        );
 
         setSalon(res.data.salon);
 
@@ -311,7 +314,7 @@ const Salon = ({ salonData }) => {
       //vraca salon i termine koji ima tog datuma
       setAppointmentsLoading(true);
       const res = await axios.post(
-        `/user/${id}/check_date`,
+        `${process.env.REACT_APP_API_URL}/user/${id}/check_date`,
         {
           appointmentDate: date.toISOString(),
         },
@@ -371,7 +374,7 @@ const Salon = ({ salonData }) => {
 
     try {
       const res = await axios.post(
-        `/user/${id}/create_appointment`,
+        `${process.env.REACT_APP_API_URL}/user/${id}/create_appointment`,
         {
           //sve podatke vadimo iz statea
           appointmentDate: appointmentDateTime,

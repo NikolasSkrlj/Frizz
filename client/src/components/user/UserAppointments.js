@@ -103,7 +103,9 @@ const UserAppointments = () => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/user/get_appointments?filter=${filter}&sortBy=${
+          `${
+            process.env.REACT_APP_API_URL
+          }/user/get_appointments?filter=${filter}&sortBy=${
             sortOption.option
           }_${sortOption.isAsc ? "asc" : "desc"}`,
           {
@@ -134,7 +136,7 @@ const UserAppointments = () => {
     setMessage("");
     try {
       const res = await axios.delete(
-        `/user/delete_appointment`,
+        `${process.env.REACT_APP_API_URL}/user/delete_appointment`,
 
         {
           headers: {

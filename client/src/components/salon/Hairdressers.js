@@ -68,9 +68,9 @@ const Hairdressers = () => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/hairsalon/get_hairdressers?sortBy=${sortOption.option}_${
-            sortOption.isAsc ? "asc" : "desc"
-          }`,
+          `${process.env.REACT_APP_API_URL}/hairsalon/get_hairdressers?sortBy=${
+            sortOption.option
+          }_${sortOption.isAsc ? "asc" : "desc"}`,
           {
             headers: {
               Authorization: "Bearer " + authToken,

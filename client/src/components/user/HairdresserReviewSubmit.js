@@ -32,9 +32,8 @@ const HairdresserReviewSubmit = ({
 
   // frizer kojeg ce odabrat
   const [hairdresserId, setHairdresserId] = useState("");
-  const [hairdresserDropdownLabel, setHairdresserDropdownLabel] = useState(
-    "Odaberi frizera"
-  );
+  const [hairdresserDropdownLabel, setHairdresserDropdownLabel] =
+    useState("Odaberi frizera");
 
   const [review, setReview] = useState({ rating: 0, comment: "" });
 
@@ -49,7 +48,7 @@ const HairdresserReviewSubmit = ({
     setMessage("");
     try {
       const res = await axios.post(
-        `/user/${salon._id}/submit_review`,
+        `${process.env.REACT_APP_API_URL}/user/${salon._id}/submit_review`,
         {
           rating: review.rating,
           comment: review.comment,

@@ -78,7 +78,7 @@ const AppointmentType = ({ appointmentType, updateAppTypes }) => {
     setMessage("");
     try {
       const res = await axios.put(
-        `/hairsalon/update_appointmentType`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/update_appointmentType`,
         {
           name,
           intendedGender,
@@ -120,7 +120,7 @@ const AppointmentType = ({ appointmentType, updateAppTypes }) => {
     setMessage("");
     try {
       const res = await axios.delete(
-        `/hairsalon/delete_appointmentType`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/delete_appointmentType`,
 
         {
           headers: {

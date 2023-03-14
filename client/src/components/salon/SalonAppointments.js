@@ -75,7 +75,9 @@ const SalonAppointments = () => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/hairsalon/get_appointments?searchDate=${searchDate.toISOString()}&filter=${filter}&sortBy=${
+          `${
+            process.env.REACT_APP_API_URL
+          }/hairsalon/get_appointments?searchDate=${searchDate.toISOString()}&filter=${filter}&sortBy=${
             sortOption.option
           }_${sortOption.isAsc ? "asc" : "desc"}`,
           {

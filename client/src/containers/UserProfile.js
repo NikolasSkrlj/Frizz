@@ -65,12 +65,15 @@ const UserProfile = () => {
     setIsLoading(true);
     const getData = async () => {
       try {
-        const res = await axios.get(`/user/get_profile`, {
-          // ovo mozemo jer smo stavili proxy u package.json
-          headers: {
-            Authorization: authToken,
-          },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/get_profile`,
+          {
+            // ovo mozemo jer smo stavili proxy u package.json
+            headers: {
+              Authorization: authToken,
+            },
+          }
+        );
 
         setUser(res.data.user);
         sessionStorage.setItem("user", JSON.stringify(res.data.user));
@@ -95,7 +98,7 @@ const UserProfile = () => {
     setMessage("");
     try {
       const res = await axios.put(
-        `/user/update_profile`,
+        `${process.env.REACT_APP_API_URL}/user/update_profile`,
         {
           email,
           age,
@@ -193,7 +196,7 @@ const UserProfile = () => {
                         className="profile-pic"
                         src={
                           user.profilePic
-                            ? `/user/${user._id}/profile_pic`
+                            ? `${process.env.REACT_APP_API_URL}/user/${user._id}/profile_pic`
                             : user.gender === "M"
                             ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
                             : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"

@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const Appointment = require("../src/models/Appointment");
+const Appointment = require("../models/Appointment");
 
 //provjerava ako je prosao datum termina i stavlja ga kao arhiviranoh(completed = true)
 //svakih 20 minuta

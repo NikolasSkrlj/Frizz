@@ -103,7 +103,9 @@ const Reviews = () => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/hairsalon/get_reviews?page=${page}&filter=${filter}&sortBy=${
+          `${
+            process.env.REACT_APP_API_URL
+          }/hairsalon/get_reviews?page=${page}&filter=${filter}&sortBy=${
             sortOption.option
           }_${sortOption.isAsc ? "asc" : "desc"}`,
           {

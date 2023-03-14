@@ -34,7 +34,7 @@ const SalonAppointments = ({ appointment, updateAppointments }) => {
 
     try {
       const res = await axios.post(
-        `/hairsalon/confirm_appointment`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/confirm_appointment`,
         { appointmentId, action },
         {
           headers: {

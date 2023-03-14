@@ -93,7 +93,7 @@ const Hairdresser = ({ hairdresser, updateHairdressers }) => {
     setMessage("");
     try {
       const res = await axios.put(
-        `/hairsalon/update_hairdresser`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/update_hairdresser`,
         {
           name,
           phone,
@@ -133,7 +133,7 @@ const Hairdresser = ({ hairdresser, updateHairdressers }) => {
     setMessage("");
     try {
       const res = await axios.delete(
-        `/hairsalon/delete_hairdresser`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/delete_hairdresser`,
 
         {
           headers: {

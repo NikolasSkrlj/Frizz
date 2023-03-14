@@ -34,14 +34,12 @@ const SalonFeed = () => {
   const [totalSalonsCnt, setTotalSalonsCnt] = useState(0);
   const [page, setPage] = useState(0);
 
-  const [ratingFilterButtonLabel, setRatingFilterButtonLabel] = useState(
-    "Odaberi"
-  );
+  const [ratingFilterButtonLabel, setRatingFilterButtonLabel] =
+    useState("Odaberi");
   const [ratingFilter, setRatingFilter] = useState("0");
 
-  const [countyFilterButtonLabel, setCountyFilterButtonLabel] = useState(
-    "Odaberi"
-  );
+  const [countyFilterButtonLabel, setCountyFilterButtonLabel] =
+    useState("Odaberi");
   const [countyFilter, setCountyFilter] = useState("any");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -104,7 +102,9 @@ const SalonFeed = () => {
     const getData = async () => {
       try {
         const res = await axios.get(
-          `/user/get_salons?q=${searchTerm}&filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
+          `${
+            process.env.REACT_APP_API_URL
+          }/user/get_salons?q=${searchTerm}&filters=globalRating_${ratingFilter}|county_${countyFilter}&sortBy=${
             sortOptions.option
           }_${sortOptions.isAsc ? "asc" : "desc"}&page=${page}`,
           {

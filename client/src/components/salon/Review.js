@@ -15,7 +15,7 @@ const Review = ({ review }) => {
         className="mr-3 rounded-circle"
         src={
           review.userId.profilePic
-            ? `/user/${review.userId._id}/profile_pic`
+            ? `${process.env.REACT_APP_API_URL}/user/${review.userId._id}/profile_pic`
             : review.userId.gender === "M"
             ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
             : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"

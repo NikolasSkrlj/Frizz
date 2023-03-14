@@ -73,7 +73,7 @@ const AddHairdresser = ({ updateHairdressers, toggleAdd }) => {
     setMessage("");
     try {
       const res = await axios.post(
-        `/hairsalon/add_hairdresser`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/add_hairdresser`,
         {
           name,
           phone,

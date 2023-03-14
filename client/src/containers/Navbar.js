@@ -1,9 +1,9 @@
-import React, { useState, useContext, useRef } from "react";
-import { Navbar, Nav, Button, Container } from "react-bootstrap";
+import axios from "axios";
+import React, { useContext, useRef, useState } from "react";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
 import LoginModal from "./LoginModal";
-import axios from "axios";
 
 const NavbarContainer = () => {
   const {
@@ -32,7 +32,7 @@ const NavbarContainer = () => {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        `/${userType}/logout`,
+        `${process.env.REACT_APP_API_URL}/${userType}/logout`,
         {},
         {
           headers: {

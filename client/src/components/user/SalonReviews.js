@@ -119,9 +119,11 @@ const SalonReviews = ({ salon, updateSalon }) => {
     try {
       const getData = async () => {
         const res = await axios.get(
-          `/user/${salon._id}/reviews?filter=${filter}&sortBy=${
-            sortOptions.option
-          }_${sortOptions.isAsc ? "asc" : "desc"}&page=${page}`,
+          `${process.env.REACT_APP_API_URL}/user/${
+            salon._id
+          }/reviews?filter=${filter}&sortBy=${sortOptions.option}_${
+            sortOptions.isAsc ? "asc" : "desc"
+          }&page=${page}`,
           {
             headers: {
               Authorization: "Bearer " + authToken,
@@ -215,7 +217,7 @@ const SalonReviews = ({ salon, updateSalon }) => {
                     className="mr-3 rounded-circle"
                     src={
                       review.userId.profilePic
-                        ? `/user/${review.userId._id}/profile_pic`
+                        ? `${process.env.REACT_APP_API_URL}/user/${review.userId._id}/profile_pic`
                         : review.userId.gender === "M"
                         ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
                         : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"

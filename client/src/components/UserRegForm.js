@@ -69,15 +69,18 @@ const UserRegForm = () => {
     setMessageToggled(false);
     setMessage("");
     try {
-      const res = await axios.post(`/user/create`, {
-        email,
-        password,
-        age,
-        gender,
-        repeatedPass,
-        phone,
-        name: fullName,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/user/create`,
+        {
+          email,
+          password,
+          age,
+          gender,
+          repeatedPass,
+          phone,
+          name: fullName,
+        }
+      );
       if (res.data.success) {
         setSubmitSuccess(true);
         setMessage(res.data.message);

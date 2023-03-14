@@ -93,15 +93,18 @@ const SalonRegForm = () => {
     try {
       const address = { street, postalCode, city, county };
 
-      const res = await axios.post(`/hairsalon/create`, {
-        email,
-        password,
-        name,
-        description,
-        address,
-        phone,
-        workingHours: wh,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/hairsalon/create`,
+        {
+          email,
+          password,
+          name,
+          description,
+          address,
+          phone,
+          workingHours: wh,
+        }
+      );
       if (res.data.success) {
         setSubmitSuccess(true);
         setMessage(res.data.message);

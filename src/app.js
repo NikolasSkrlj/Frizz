@@ -3,7 +3,7 @@ require("./db/mongoose.js");
 const cors = require("cors");
 
 const path = require("path");
-const { globalPath } = require("../globalPath"); // jer inace ako je se koristi .. u pathu za build folder express ne dopusta
+const { globalPath } = require("./globalPath"); // jer inace ako je se koristi .. u pathu za build folder express ne dopusta
 const app = express();
 
 //importing routers
@@ -16,18 +16,26 @@ app.use(cors());
 app.use("/hairsalon", salonRouter);
 app.use("/user", userRouter);
 
-const checkAppointments = require("../tasks/appointments");
+const checkAppointments = require("./tasks/appointments");
 
 checkAppointments.start();
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(globalPath, "/client/build")));
+  app.use(express.static(path.join(globalPath, "../client/build")));
   app.get("*", (req, res) => {
-    res.sendFile(path.join(globalPath, "/client/build/index.html"));
+    res.sendFile(path.join(globalPath, "../client/build/index.html"));
   });
 } else {
   const morgan = require("morgan");
   app.use(morgan("dev"));
 }
+
+/* app.post("/", function (req, res) {
+  res.send("POST request to the homepage");
+});
+
+app.get("/", function (req, res) {
+  res.send("GET request to the homepage");
+}); */
 
 module.exports = app;

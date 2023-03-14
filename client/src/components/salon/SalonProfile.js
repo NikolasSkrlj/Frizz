@@ -84,12 +84,15 @@ const SalonProfile = () => {
     setIsLoading(true);
     const getData = async () => {
       try {
-        const res = await axios.get(`/hairsalon/get_profile`, {
-          // ovo mozemo jer smo stavili proxy u package.json
-          headers: {
-            Authorization: authToken,
-          },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_URL}/hairsalon/get_profile`,
+          {
+            // ovo mozemo jer smo stavili proxy u package.json
+            headers: {
+              Authorization: authToken,
+            },
+          }
+        );
 
         setSalon(res.data.salon);
         sessionStorage.setItem("salon", JSON.stringify(res.data.salon));
@@ -123,7 +126,7 @@ const SalonProfile = () => {
       // console.log(address);
 
       const res = await axios.put(
-        `/hairsalon/update_profile`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/update_profile`,
         {
           email,
           name,

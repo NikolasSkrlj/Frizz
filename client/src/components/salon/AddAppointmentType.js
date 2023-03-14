@@ -59,7 +59,7 @@ const AddAppointmentType = ({ updateAppTypes, toggleAdd }) => {
     setMessage("");
     try {
       const res = await axios.post(
-        `/hairsalon/add_appointmentType`,
+        `${process.env.REACT_APP_API_URL}/hairsalon/add_appointmentType`,
         {
           name,
           price,

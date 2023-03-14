@@ -53,7 +53,7 @@ const SubmitReviewForm = ({ salon, updateReviews, setPage, updateSalon }) => {
     setMessage("");
     try {
       const res = await axios.post(
-        `/user/${salon._id}/submit_review`,
+        `${process.env.REACT_APP_API_URL}/user/${salon._id}/submit_review`,
         {
           rating: review.rating,
           comment: review.comment,

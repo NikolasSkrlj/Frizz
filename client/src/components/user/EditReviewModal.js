@@ -44,10 +44,8 @@ const EditReviewModal = ({
   // Ako je review za frizera
   // frizer kojeg ce odabrat
   const [editedHairdresserId, setEditedHairdresserId] = useState("");
-  const [
-    editedHairdresserDropdownLabel,
-    setEditedHairdresserDropdownLabel,
-  ] = useState("Odaberi frizera");
+  const [editedHairdresserDropdownLabel, setEditedHairdresserDropdownLabel] =
+    useState("Odaberi frizera");
 
   //pri prvom renderu postavljamo vrijednost recenzije
   useEffect(() => {
@@ -93,7 +91,7 @@ const EditReviewModal = ({
     setMessage("");
     try {
       const res = await axios.put(
-        `/user/edit_review`,
+        `${process.env.REACT_APP_API_URL}/user/edit_review`,
         {
           rating: editedReview.rating,
           comment: editedReview.comment,
@@ -134,7 +132,7 @@ const EditReviewModal = ({
     setMessage("");
     try {
       const res = await axios.delete(
-        `/user/delete_review`,
+        `${process.env.REACT_APP_API_URL}/user/delete_review`,
 
         {
           headers: {

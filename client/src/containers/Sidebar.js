@@ -1,25 +1,17 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import {
-  FaChair,
-  FaRegUser,
-  FaUserFriends,
   FaCalendarDay,
+  FaChair,
   FaCut,
   FaListAlt,
+  FaRegUser,
+  FaUserFriends,
 } from "react-icons/fa";
 import { FiScissors } from "react-icons/fi";
 
 import { GlobalContext } from "../contexts/GlobalContext";
 
-import {
-  Link,
-  withRouter,
-  useHistory,
-  useRouteMatch,
-  useParams,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import "../styles/Dashboard.css";
 
 const Sidebar = ({
@@ -77,12 +69,12 @@ const Sidebar = ({
             src={
               user
                 ? user.profilePic
-                  ? `/user/${user._id}/profile_pic`
+                  ? `${process.env.REACT_APP_API_URL}/user/${user._id}/profile_pic`
                   : user.gender === "M"
                   ? "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
                   : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
                 : salon.profilePic
-                ? `/salon/${salon._id}/profile_pic`
+                ? `${process.env.REACT_APP_API_URL}/salon/${salon._id}/profile_pic`
                 : "https://cdn.iconscout.com/icon/free/png-512/avatar-370-456322.png"
             }
             alt="profile picture"
