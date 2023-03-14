@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     image: frizz_api:1.0
     build:
-      context: .
+      context: server
       dockerfile: Dockerfile
       target: production
     ports:

@@ -10,7 +10,7 @@
     "server": "env-cmd -f config/dev.env nodemon ./src/index.js",
     "devserver": "env-cmd -f config/dev.env node ./src/index.js",
     "test": "env-cmd -f config/test.env jest --watch --runInBand",
-    "client": "cd client && npm start",
+    "client": "cd ../client && npm start",
     "build": "tsc"
   },
   "repository": {
