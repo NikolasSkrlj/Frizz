@@ -1,13 +1,13 @@
 name: frizz
 region: fra
 static_sites:
-  - build_command: npm run build
+  - build_command: npm run build --output-path=/usr/src/client/build
     environment_slug: node-js
     github:
       branch: master
       deploy_on_push: true
     name: frizz
-    output_dir: build
+    output_dir: client/build
     routes:
       - path: /
         status: 200
