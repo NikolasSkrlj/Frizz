@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node ./src/index.js",
     "start-prod": "node dist/index.js",
+    "start-prod-local": "env-cmd -f config/dev.env node dist/index.js",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "env-cmd -f config/dev.env nodemon ./src/index.js",
     "devserver": "env-cmd -f config/dev.env node ./src/index.js",
