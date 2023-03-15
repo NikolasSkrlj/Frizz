@@ -12,6 +12,6 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+RUN npm run build --output-path=/usr/src/client/build
 
 CMD ["sh", "-c", "npm run start"]
