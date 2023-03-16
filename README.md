@@ -1,10 +1,11 @@
 # Frizz
 
-Frizz is a MERN stack application for making hair salon appointments that are based in Croatia. It also includes the features for smart search of hair salons and a review system in which users can give feedback for the hair salon and/or hairdressers.   
+Frizz is a MERN stack application for making hair salon appointments that are based in Croatia. It also includes the features for smart search of hair salons and a review system in which users can give feedback for the hair salon and/or hairdressers. This app was created as a part of my final project for Bachelor's degree in computer science, but as it was my first dive into web development, it contains mostly beginner level code practices :) .
 
 # URL
 
 https://frizz-me.com/
+
 
 # Technology
 
