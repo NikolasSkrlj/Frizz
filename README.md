@@ -4,9 +4,7 @@ Frizz is a MERN stack application for making hair salon appointments that are ba
 
 # URL
 
-https://frizz-app.herokuapp.com/
-
-*Application is hosted on Heroku for exemplary purposes. 
+https://frizz-me.com/
 
 # Technology
 
