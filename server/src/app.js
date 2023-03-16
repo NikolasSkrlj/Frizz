@@ -13,8 +13,8 @@ const userRouter = require("./routes/userRouter");
 app.use(express.json());
 app.use(cors());
 //ovo mora biti iznad ovog ispod idk why al bez toga u productionu ne rade requesti get
-app.use("/api/hairsalon", salonRouter);
-app.use("/api/user", userRouter);
+app.use("/hairsalon", salonRouter);
+app.use("/user", userRouter);
 
 const checkAppointments = require("./tasks/appointments");
 
