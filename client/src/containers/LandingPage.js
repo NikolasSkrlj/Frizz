@@ -42,7 +42,7 @@ const LandingPage = () => {
       <Container className="mt-0">
         <Card className="text-center pt-3 pb-4 bg-white" bg="light">
           <Card.Body>
-            <Card.Title className="display-4">Zašto Frizz.hr?</Card.Title>
+            <Card.Title className="display-4">Zašto Frizz?</Card.Title>
             <Card.Text className="py-4 text-muted lead">
               Iskusite brojne pogodnosti uz brz i jednostavan <i>online</i>{" "}
               pristup frizerskim salonima diljem zemlje

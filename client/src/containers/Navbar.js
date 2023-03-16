@@ -87,7 +87,7 @@ const NavbarContainer = () => {
               : "/"
           }
         >
-          Frizz.hr
+          Frizz
         </Navbar.Brand>
         <Navbar.Toggle ref={toggle} aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

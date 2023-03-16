@@ -10,7 +10,7 @@ const Footer = (params) => {
       <Container>
         <p className="font-weight-light pt-3 pb-2">
           {" "}
-          Copyright &copy; {new Date().getFullYear()} Nikolas Škrlj
+          Copyright &copy; 2020 Nikolas Škrlj
         </p>
         <small className="text-muted pb-3">
           {/* zbog icona treba dati im credit, to ce bit u footeru.
