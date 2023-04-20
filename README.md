@@ -4,7 +4,8 @@ Frizz is a MERN stack application for making hair salon appointments that are ba
 
 # URL
 
-https://frizz-me.com/
+https://frizz-me.com or https://sea-turtle-app-i3zje.ondigitalocean.app
+
 
 
 # Technology
